@@ -20,6 +20,8 @@ interface Props {
     setEmail: (props: any) => void;
     setPassword: (props: any) => void;
     handleSubmit: (e: any) => void;
+    saveFormDataIntoStore: (state: object) => void;
+    initAuthentication: () => void;
     location: any;
 }
 
@@ -28,7 +30,29 @@ const lifecycleMethods = {
         const { isUserLoggedIn, pushRouter } = this.props;
         isUserLoggedIn && pushRouter("/dashboard");
     }
-}
+};
+
+const handlers = {
+    setUsername: (props: Props) => (e: any) => {
+        const { setFormState, formState } = props;
+        setFormState({ ...formState, username: e.target.value });
+    },
+    setEmail: (props: Props) => (e: any) => {
+        const { setFormState, formState } = props;
+        setFormState({ ...formState, email: e.target.value });
+    },
+    setPassword: (props: Props) => (e: any) => {
+        const { setFormState, formState } = props;
+        setFormState({ ...formState, password: e.target.value });
+    },
+    handleSubmit: (props: Props) => (e: any) => {
+        e.preventDefault();
+
+        props.saveFormDataIntoStore(props.formState);
+        props.initAuthentication();
+        props.saveFormDataIntoStore({});
+    }
+};
 
 const FormComponent: ComponentType<Props> = ({ formState, setUsername, setEmail, setPassword, location, handleSubmit }: Props) => {
     const currentRoute = location.pathname.toLowerCase().slice(1);
@@ -66,26 +90,6 @@ export const Form = compose(
         email: "",
         password: ""
     }),
-    lifecycle<Props, {}>(lifecycleMethods),
-    withHandlers({
-        setUsername: (props: any) => (e: any) => {
-            const { setFormState, formState } = props;
-            setFormState({ ...formState, username: e.target.value });
-        },
-        setEmail: (props: any) => (e: any) => {
-            const { setFormState, formState } = props;
-            setFormState({ ...formState, email: e.target.value });
-        },
-        setPassword: (props: any) => (e: any) => {
-            const { setFormState, formState } = props;
-            setFormState({ ...formState, password: e.target.value });
-        },
-        handleSubmit: (props: any) => (e: any) => {
-            e.preventDefault();
-
-            props.saveFormDataIntoStore(props.formState);
-            props.initAuthentication();
-            props.saveFormDataIntoStore({});
-        }
-    })
+    withHandlers(handlers),
+    lifecycle<Props, {}>(lifecycleMethods)
 )(FormComponent);

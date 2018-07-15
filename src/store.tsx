@@ -17,6 +17,11 @@ export interface User {
     userData: UserData
 }
 
+export interface Users {
+    general: object,
+    selectedRoom: object
+}
+
 export interface Chats {
     general: object[];
     selectedRoom: object[];
@@ -25,6 +30,10 @@ export interface Chats {
 export interface Rooms {
     active: string;
     list: object;
+}
+
+export interface Canvas {
+    drawingPoints: object[];
 }
 
 export interface Global {
@@ -40,10 +49,11 @@ export interface State {
     users: object;
     rooms: Rooms;
     chats: Chats;
+    canvas: Canvas;
     router: RouterState
 }
 
-const initialState: DeepPartial<{}> = {
+export const initialState: DeepPartial<{}> = {
     global: {
         isLoading: true,
         isUserLoggedIn: false,
@@ -62,6 +72,9 @@ const initialState: DeepPartial<{}> = {
         general: [],
         selectedRoom: []
     },
+    canvas: {
+        drawingPoints: []
+    },
     user: {
         userData: {
             username: "",
@@ -78,6 +91,7 @@ export const store: Store<State> = createStore(
     initialState,
     composeWithDevTools(applyMiddleware(routerMiddleware(history), epicMiddleWare))
 );
-store.subscribe(() => console.log(store.getState()))
 
 epicMiddleWare.run(rootEpic);
+
+store.subscribe(() => console.log(store.getState()))

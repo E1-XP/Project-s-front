@@ -7,12 +7,12 @@ const URL = 'http://localhost:3001';
 
 export let Socket: SocketIOClient.Socket | null;
 
-export const startSocketService = async (data: any): Promise<any> => {
-    console.log(data, 'received by socketInit')
+export const startSocketService = async (v: any): Promise<any> => {
+    console.log(v, 'received by socketInit')
     // if (!data.payload.email || !data.payload.email.length) return null;
 
     Socket = await io(URL,
-        { query: `user=${data.username}&id=${data.id}` });
+        { query: `user=${v.data.username}&id=${v.data.id}` });
 
     Socket.on('general/users', (data: string[]) =>
         store.dispatch(actions.users.setUsers(data)));
@@ -31,5 +31,5 @@ export const startSocketService = async (data: any): Promise<any> => {
     console.log('SOCKET STARTED');
     store.dispatch(actions.global.setSocketConnectionStatus(true));
 
-    return new Promise((res, rej) => setTimeout(() => res(data), 500));
+    return new Promise((res, rej) => setTimeout(() => res(v), 500));
 };

@@ -13,9 +13,7 @@ type Props = {
 
 const lifecycleMethods = {
     componentDidMount() {
-        localStorage.getItem('isAuth') ?
-            actions.global.initSessionAuth() :
-            actions.global.setIsLoading(false)
+        this.props.initializeApp();
     }
 }
 
