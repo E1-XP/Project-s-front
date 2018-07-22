@@ -6,8 +6,6 @@ import { plainAction } from './index';
 export const chatsReducer: Reducer = (state: any = {}, action: plainAction) => {
     switch (action.type) {
         case types.SET_MESSAGES: {
-            console.log(action.payload, 'RECEIVED MESSAGES FROM THE SERVER');
-
             const newState: any = {
                 ...state,
                 general: state.general.concat(),

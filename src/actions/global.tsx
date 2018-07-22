@@ -6,22 +6,30 @@ export const setIsLoading: ActionType = (bool: boolean) => ({
     payload: bool
 });
 
-export const initApp: ActionType = () =>
-    ({ type: types.INIT_APP });
+export const initApp: ActionType = () => ({
+    type: types.INIT_APP
+});
 
-export const initAuthentication: ActionType = () =>
-    ({ type: types.INIT_AUTHENTICATION });
+export const initAuthentication: ActionType = (data: object) => ({
+    type: types.INIT_AUTHENTICATION,
+    payload: data
+});
 
-export const initLogout: ActionType = () =>
-    ({ type: types.INIT_LOGOUT });
+export const authSuccess: ActionType = (data) => ({
+    type: types.AUTH_SUCCESS,
+    payload: data
+});
+
+export const authFailure: ActionType = (data) => ({
+    type: types.AUTH_FAILURE
+});
+
+export const initLogout: ActionType = () => ({
+    type: types.INIT_LOGOUT
+});
 
 export const initSessionAuth: ActionType = () => ({
     type: types.INIT_SESSION_AUTH
-});
-
-export const saveFormDataIntoStore: ActionType = (data: object) => ({
-    type: types.SAVE_FORM_DATA_INTO_STORE,
-    payload: data
 });
 
 export const setIsUserLoggedIn: ActionType = (bool: boolean) => ({

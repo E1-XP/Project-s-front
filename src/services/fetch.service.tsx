@@ -1,4 +1,4 @@
-export const fetchStreamService = async (url: string, method: string, data?: any) => {
+export const fetchStreamService = async (url: string, method: string, data?: any): Promise<any> => {
     try {
         const response = await fetch(url, {
             method,

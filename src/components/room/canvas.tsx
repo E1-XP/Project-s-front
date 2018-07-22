@@ -1,9 +1,14 @@
 import React, { ComponentType, MouseEvent } from "react";
 import { compose, lifecycle, withHandlers, withState } from "recompose";
 import { connect, Dispatch } from "react-redux";
-import { actions } from "../actions";
+import _throttle from "lodash.throttle";
 
-import { State } from "../store";
+import { actions } from "../../actions";
+import { State } from "../../store";
+
+interface BroadcastedDrawingPoints {
+    [key: string]: DrawingPoint[][]
+}
 
 interface Props {
     onRef: (ref: any) => any;
@@ -11,15 +16,17 @@ interface Props {
     boardState: BoardState;
     setBoardState: (v: object) => void;
     drawingPoints: DrawingPoint[][];
+    broadcastedDrawingPoints: BroadcastedDrawingPoints;
     setSelectedColor: (e: any) => void;
     setIsMouseDown: (val: boolean) => void;
     setIsMouseDownFalse: () => void;
     handleMouseDown: (e: MouseEvent) => void;
     handleMouseUp: (e: MouseEvent) => void;
     handleMouseMove: (e: MouseEvent) => void;
-    setDrawingPoints: (v: DrawingPoint) => void;
-    setNewDrawingPointsGroup: () => void;
-    clearDrawingPoints: () => void;
+    setDrawingPoint: (v: DrawingPoint) => Dispatch;
+    setNewDrawingPointsGroup: () => Dispatch;
+    initClearDrawingPoints: () => Dispatch;
+    initDrawingBroadcast: () => Dispatch;
     renderImage: () => void;
     handleResetBtn: () => void;
 }
@@ -43,6 +50,12 @@ const lifecycleMethods = {
     },
     componentWillUnmount() {
         this.props.prepareForUnmount();
+    },
+    componentWillReceiveProps(nextP: Props) {
+        const { broadcastedDrawingPoints } = this.props;
+
+        nextP.broadcastedDrawingPoints !== broadcastedDrawingPoints &&
+            this.props.renderImage();
     }
 };
 
@@ -98,10 +111,13 @@ const handlers1 = () => {
             };
 
             props.drawingPoints.map(itm => itm.map(drawFn));
+            Object.keys(props.broadcastedDrawingPoints).map(key => {
+                props.broadcastedDrawingPoints[key].map(itm => itm.map(drawFn));
+            });
         },
-        handleResetBtn: (props: Props) => (e: any) => {
+        handleResetBtn: (props: Props) => (e: HTMLButtonElement) => {
             ctx.clearRect(0, 0, boardRef.width, boardRef.height);
-            props.clearDrawingPoints();
+            props.initClearDrawingPoints();
         }
     }
 };
@@ -113,13 +129,13 @@ const handlers2 = {
 
         props.setNewDrawingPointsGroup();
 
-        props.setDrawingPoints({
+        props.setDrawingPoint({
             x: clientX - left,
             y: clientY - top,
             fill: '#333333',
             weight: 2
         });
-        props.setDrawingPoints({
+        props.setDrawingPoint({
             x: clientX - left + 2,
             y: clientY - top + 2,
             fill: '#333333',
@@ -135,9 +151,7 @@ const handlers2 = {
         const { selectedColor } = props.boardState;
         const { top, left } = props.getBoardRef().getBoundingClientRect();
 
-        console.log('draw');
-
-        props.setDrawingPoints({
+        props.setDrawingPoint({
             x: clientX - left,
             y: clientY - top,
             fill: selectedColor,
@@ -159,19 +173,22 @@ export const CanvasComponent: ComponentType<Props> = (props: Props) => {
         </nav>
         <canvas
             ref={onRef} onMouseDown={handleMouseDown} onMouseUp={handleMouseUp}
-            onMouseMove={boardState.isMouseDown ? handleMouseMove : null}
-            width={window.innerWidth * 0.6} height={window.innerHeight * 0.6}
+            onMouseMove={boardState.isMouseDown ? _throttle(handleMouseMove, 50) : null}
+            width={window.innerWidth * 0.6} height={window.innerHeight * 0.9}
             style={{ float: 'left', border: '1px solid black' }}
         />
     </div>);
 };
 
-const mapStateToProps = ({ canvas }: State) => ({ drawingPoints: canvas.drawingPoints });
+const mapStateToProps = ({ canvas }: State) => ({
+    drawingPoints: canvas.drawingPoints,
+    broadcastedDrawingPoints: canvas.broadcastedDrawingPoints
+});
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({
-    setDrawingPoints: (v: DrawingPoint) => dispatch(actions.canvas.setDrawingPoints(v)),
+    setDrawingPoint: (v: DrawingPoint) => dispatch(actions.canvas.setDrawingPoint(v)),
     setNewDrawingPointsGroup: () => dispatch(actions.canvas.setNewDrawingPointsGroup()),
-    clearDrawingPoints: () => dispatch(actions.canvas.clearDrawingPoints())
+    initClearDrawingPoints: () => dispatch(actions.canvas.initClearDrawingPoints())
 });
 
 //multiple handlers to gain access to the upper in the ones lower via props

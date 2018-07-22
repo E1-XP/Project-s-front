@@ -15,3 +15,6 @@ export const App = (props: any) => {
         </Provider>
     );
 };
+
+document.body.style.backgroundColor = '#555';
+document.body.style.color = '#eee';

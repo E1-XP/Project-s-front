@@ -34,13 +34,13 @@ export interface Rooms {
 
 export interface Canvas {
     drawingPoints: object[];
+    broadcastedDrawingPoints: object;
 }
 
 export interface Global {
     isLoading: boolean;
     isUserLoggedIn: boolean;
     isSocketConnected: boolean;
-    formState: object;
 }
 
 export interface State {
@@ -57,8 +57,7 @@ export const initialState: DeepPartial<{}> = {
     global: {
         isLoading: true,
         isUserLoggedIn: false,
-        isSocketConnected: false,
-        formState: {}
+        isSocketConnected: false
     },
     users: {
         general: {},
@@ -73,7 +72,8 @@ export const initialState: DeepPartial<{}> = {
         selectedRoom: []
     },
     canvas: {
-        drawingPoints: []
+        drawingPoints: [],
+        broadcastedDrawingPoints: {}
     },
     user: {
         userData: {

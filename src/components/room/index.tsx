@@ -1,5 +1,5 @@
 import React from 'react';
-import { compose, lifecycle } from "recompose";
+import { compose, lifecycle, withHandlers } from "recompose";
 import { connect } from "react-redux";
 import { BrowserRouterProps } from 'react-router-dom';
 import { Dispatch } from 'redux';
@@ -8,7 +8,7 @@ import { State } from "../../store";
 import { actions } from "../../actions";
 import { Socket } from '../../services/socket.service';
 
-import { Canvas } from "../canvas";
+import { Canvas } from "./canvas";
 
 interface Props {
     math: BrowserRouterProps;
@@ -17,12 +17,16 @@ interface Props {
 
 const lifecycleMethods = {
     componentDidMount() {
-        this.props.initRoomEnter();
-
+        console.log('SOCKET CONNECTED?' + this.props.isSocketConnected);
+        setTimeout(this.props.initRoomEnter, 500);
     },
     componentWillUnmount() {
         this.props.initRoomLeave();
     }
+};
+
+const handlers = {
+
 };
 
 export const RoomComponent = (props: any) => {
@@ -89,5 +93,6 @@ const mapDispatchToProps = (dispatch: Dispatch) => ({
 
 export const Room = compose(
     connect(mapStateToProps, mapDispatchToProps),
+    withHandlers(handlers),
     lifecycle<Props, {}>(lifecycleMethods)
 )(RoomComponent);

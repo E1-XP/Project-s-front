@@ -20,8 +20,7 @@ interface Props {
     setEmail: (props: any) => void;
     setPassword: (props: any) => void;
     handleSubmit: (e: any) => void;
-    saveFormDataIntoStore: (state: object) => void;
-    initAuthentication: () => void;
+    initAuthentication: (data: FormState) => void;
     location: any;
 }
 
@@ -48,9 +47,7 @@ const handlers = {
     handleSubmit: (props: Props) => (e: any) => {
         e.preventDefault();
 
-        props.saveFormDataIntoStore(props.formState);
-        props.initAuthentication();
-        props.saveFormDataIntoStore({});
+        props.initAuthentication(props.formState);
     }
 };
 
@@ -78,8 +75,7 @@ const mapStateToProps = ({ router, global }: State) => ({
 });
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({
-    saveFormDataIntoStore: (data: FormState) => dispatch(actions.global.saveFormDataIntoStore(data)),
-    initAuthentication: () => dispatch(actions.global.initAuthentication()),
+    initAuthentication: (data: FormState) => dispatch(actions.global.initAuthentication(data)),
     pushRouter: (str: string) => dispatch(push(str))
 });
 
