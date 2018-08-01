@@ -13,7 +13,8 @@ export const canvasReducer: Reducer = (state: Canvas | any = {}, action: plainAc
             return { ...state, drawingPoints };
         }
         case types.SET_BROADCASTED_DRAWING_POINT: {
-            const { userId, data } = action.payload;
+            const { userId } = action.payload;
+            const data = action.payload;
 
             const keys = Object.keys(state.broadcastedDrawingPoints);
             const broadcastedDrawingPoints = keys.length ? keys
@@ -26,6 +27,41 @@ export const canvasReducer: Reducer = (state: Canvas | any = {}, action: plainAc
                 state.broadcastedDrawingPoints[userId] : [];
 
             broadcastedDrawingPoints[userId][broadcastedDrawingPoints[userId].length - 1].push(data);
+
+            return { ...state, broadcastedDrawingPoints };
+        }
+        case types.SET_BROADCASTED_DRAWING_POINTS_BULK: {
+            const groupByUserId = (acc: any, itm: any) => {
+                if (!acc[itm.userId]) acc[itm.userId] = [];
+                acc[itm.userId].push(itm);
+
+                return acc;
+            };
+
+            const groupByGroupId = (acc: any, key: string) => {
+                acc[key] = reducedByUserId[key].reduce((acc: any, itm: any) => {
+                    if (!acc[itm.arrayGroup]) acc[itm.arrayGroup] = [];
+                    acc[itm.arrayGroup].push(itm);
+
+                    return acc;
+                }, {});
+
+                return acc;
+            };
+
+            const reducedByUserId = action.payload.reduce(groupByUserId, {});
+            console.log('s1', reducedByUserId);
+            const reducedByArrayGroup = Object.keys(reducedByUserId).reduce(groupByGroupId, {});
+            console.log('s2', reducedByArrayGroup);
+
+            const broadcastedDrawingPoints = Object.keys(reducedByArrayGroup)
+                .reduce((acc: any, key: string) => {
+                    const intoArray = (acc: any, itm: string) => acc.concat([reducedByArrayGroup[key][itm]]);
+
+                    acc[key] = Object.keys(reducedByArrayGroup[key]).reduce(intoArray, []);
+                    return acc;
+                }, {});
+            console.log('s3', broadcastedDrawingPoints);
 
             return { ...state, broadcastedDrawingPoints };
         }
@@ -49,7 +85,7 @@ export const canvasReducer: Reducer = (state: Canvas | any = {}, action: plainAc
             const broadcastedDrawingPoints = {
                 ...state.broadcastedDrawingPoints,
                 [userId]: userIdPoints
-            }
+            };
 
             return { ...state, broadcastedDrawingPoints };
         }

@@ -1,4 +1,5 @@
 import io from "socket.io-client";
+import { push } from "connected-react-router";
 
 import { store } from "../store"
 import { actions } from '../actions'
@@ -28,6 +29,11 @@ export const startSocketService = async (v: any): Promise<any> => {
 
         Socket.on('rooms/get', (data: any) =>
             store.dispatch(actions.rooms.setRooms(data)));
+
+        Socket.on('room/create', (id: any) => {
+            store.dispatch(push(`/room/${id}`));
+            store.dispatch(actions.global.setIsLoading(false));
+        });
 
         Socket.on('connect', () => {
             console.log('CONNECTED!');

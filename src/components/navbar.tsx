@@ -19,6 +19,7 @@ export const NavbarComponent: ComponentType<Props> = (props: Props) => {
         <p>Welcome {username}</p>
         <nav>
             <NavLink to="/dashboard">Dashboard</NavLink>
+            <NavLink to="/Inbox">Inbox</NavLink>
             <a href="#" onClick={props.handleLogout}>Logout</a>
         </nav>
     </div>);

@@ -15,7 +15,7 @@ const lifecycleMethods = {
     componentDidMount() {
         this.props.initializeApp();
     }
-}
+};
 
 const mapStateToprops = ({ global }: State) => ({
     isLoading: global.isLoading

@@ -6,9 +6,7 @@ import _throttle from "lodash.throttle";
 import { actions } from "../../actions";
 import { State } from "../../store";
 
-interface BroadcastedDrawingPoints {
-    [key: string]: DrawingPoint[][]
-}
+import { CanvasNavbar } from "./navbar";
 
 interface Props {
     onRef: (ref: any) => any;
@@ -17,7 +15,6 @@ interface Props {
     setBoardState: (v: object) => void;
     drawingPoints: DrawingPoint[][];
     broadcastedDrawingPoints: BroadcastedDrawingPoints;
-    setSelectedColor: (e: any) => void;
     setIsMouseDown: (val: boolean) => void;
     setIsMouseDownFalse: () => void;
     handleMouseDown: (e: MouseEvent) => void;
@@ -27,8 +24,14 @@ interface Props {
     setNewDrawingPointsGroup: () => Dispatch;
     initClearDrawingPoints: () => Dispatch;
     initDrawingBroadcast: () => Dispatch;
+    initMouseUpBroadcast: () => Dispatch;
     renderImage: () => void;
+    setSelectedColor: (e: any) => void;
     handleResetBtn: () => void;
+}
+
+interface BroadcastedDrawingPoints {
+    [key: string]: DrawingPoint[][]
 }
 
 interface BoardState {
@@ -125,6 +128,7 @@ const handlers1 = () => {
 const handlers2 = {
     handleMouseDown: (props: Props) => (e: MouseEvent) => {
         const { clientX, clientY } = e;
+        const { selectedColor } = props.boardState;
         const { top, left } = props.getBoardRef().getBoundingClientRect();
 
         props.setNewDrawingPointsGroup();
@@ -132,20 +136,23 @@ const handlers2 = {
         props.setDrawingPoint({
             x: clientX - left,
             y: clientY - top,
-            fill: '#333333',
+            fill: selectedColor,
             weight: 2
         });
         props.setDrawingPoint({
             x: clientX - left + 2,
             y: clientY - top + 2,
-            fill: '#333333',
+            fill: selectedColor,
             weight: 2
         });
 
         props.renderImage();
         props.setIsMouseDown(true);
     },
-    handleMouseUp: (props: Props) => () => props.setIsMouseDown(false),
+    handleMouseUp: (props: Props) => () => {
+        props.setIsMouseDown(false);
+        props.initMouseUpBroadcast();
+    },
     handleMouseMove: (props: Props) => (e: MouseEvent) => {
         const { clientX, clientY } = e;
         const { selectedColor } = props.boardState;
@@ -163,14 +170,11 @@ const handlers2 = {
 };
 
 export const CanvasComponent: ComponentType<Props> = (props: Props) => {
-    const { onRef, boardState, setSelectedColor, handleMouseDown, handleMouseUp, handleResetBtn,
-        handleMouseMove } = props;
+    const { onRef, boardState, setSelectedColor, handleMouseDown, handleMouseUp,
+        handleResetBtn, handleMouseMove } = props;
 
     return (<div>
-        <nav>
-            <button onClick={handleResetBtn}>Reset</button>
-            <input type="color" onChange={setSelectedColor} />
-        </nav>
+        <CanvasNavbar setSelectedColor={setSelectedColor} handleResetBtn={handleResetBtn} />
         <canvas
             ref={onRef} onMouseDown={handleMouseDown} onMouseUp={handleMouseUp}
             onMouseMove={boardState.isMouseDown ? _throttle(handleMouseMove, 50) : null}
@@ -180,15 +184,17 @@ export const CanvasComponent: ComponentType<Props> = (props: Props) => {
     </div>);
 };
 
-const mapStateToProps = ({ canvas }: State) => ({
+const mapStateToProps = ({ canvas, user }: State) => ({
     drawingPoints: canvas.drawingPoints,
-    broadcastedDrawingPoints: canvas.broadcastedDrawingPoints
+    broadcastedDrawingPoints: canvas.broadcastedDrawingPoints,
+    user: user.userData
 });
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({
     setDrawingPoint: (v: DrawingPoint) => dispatch(actions.canvas.setDrawingPoint(v)),
     setNewDrawingPointsGroup: () => dispatch(actions.canvas.setNewDrawingPointsGroup()),
-    initClearDrawingPoints: () => dispatch(actions.canvas.initClearDrawingPoints())
+    initClearDrawingPoints: () => dispatch(actions.canvas.initClearDrawingPoints()),
+    initMouseUpBroadcast: () => dispatch(actions.canvas.initMouseUpBroadcast())
 });
 
 //multiple handlers to gain access to the upper in the ones lower via props
@@ -196,7 +202,7 @@ export const Canvas = compose(
     connect(mapStateToProps, mapDispatchToProps),
     withState('boardState', 'setBoardState', {
         isMouseDown: false,
-        selectedColor: '000000'
+        selectedColor: '#000000'
     }),
     withHandlers(stateHandlers),
     withHandlers(handlers1),

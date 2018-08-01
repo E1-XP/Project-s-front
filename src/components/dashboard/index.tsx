@@ -1,28 +1,36 @@
-import React from 'react';
+import React, { ComponentType } from 'react';
 import { connect } from "react-redux";
 import { push } from "connected-react-router";
 import { Dispatch } from 'redux';
 import { compose } from "recompose";
 
-import { State } from "../../store"
+import { State, Users, Rooms, UserData, ChatsGeneral } from "../../store"
 import { actions } from "../../actions";
 import { Socket } from "../../services/socket.service";
 
 interface Props {
-    user: object;
-    users: object;
-    rooms: object;
-    setUsers: (data: string[]) => object;
+    user: UserData;
+    users: Users;
+    rooms: Rooms;
+    messages: ChatsGeneral[];
+    setIsLoading: (v: boolean) => Dispatch;
+    pushRouter: (v: string) => Dispatch;
 }
 
-export const DashboardComponent = (props: any) => {
+export const DashboardComponent: ComponentType<Props> = (props) => {
     let inputVal: any;
 
     const createRoom = () => {
         const name = prompt('name?');
-        console.log(name)
+        const isPrivate = prompt('private?');
 
-        Socket.emit('room/create', name);
+        console.log(name);
+
+        Socket.emit('room/create', {
+            roomName: name,
+            userId: props.user.id
+        });
+        props.setIsLoading(true);
     }
 
     const handleSubmit = (e: any) => {
@@ -48,8 +56,8 @@ export const DashboardComponent = (props: any) => {
             <h2>Available rooms:</h2>
             <ul>
                 {Object.keys(props.rooms.list).length ?
-                    Object.keys(props.rooms.list).map((itm: string, i: number) => <li data-id={itm} key={itm}
-                        onClick={handleRoomClick}>{props.rooms.list[itm]}</li>)
+                    Object.keys(props.rooms.list).map((itm) => <li data-id={itm} key={itm}
+                        onClick={handleRoomClick}>{props.rooms.list[itm].name}</li>)
                     : 'no rooms created'}
             </ul>
             <button onClick={createRoom}>create new room</button>
@@ -76,7 +84,8 @@ const mapStateToProps = ({ user, users, chats, rooms }: State) => ({
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({
     pushRouter: (str: string) => dispatch(push(str)),
-    setMessagse: (payload: any) => dispatch(actions.chats.setMessages(payload))
+    setMessages: (payload: any) => dispatch(actions.chats.setMessages(payload)),
+    setIsLoading: (bool: boolean) => dispatch(actions.global.setIsLoading(bool))
 });
 
 export const Dashboard = compose(

@@ -22,19 +22,38 @@ export interface Users {
     selectedRoom: object
 }
 
+export interface ChatsGeneral {
+    username: string;
+    message: string;
+}
+
 export interface Chats {
-    general: object[];
+    general: ChatsGeneral[];
     selectedRoom: object[];
+}
+
+export interface Room {
+    name: string;
+    roomid: number;
+    adminId: string;
+}
+
+export interface RoomsList {
+    [key: string]: Room;
+}
+
+export interface BroadcastedDrawingPoints {
+    [key: string]: object[];
 }
 
 export interface Rooms {
     active: string;
-    list: object;
+    list: RoomsList;
 }
 
 export interface Canvas {
     drawingPoints: object[];
-    broadcastedDrawingPoints: object;
+    broadcastedDrawingPoints: BroadcastedDrawingPoints;
 }
 
 export interface Global {
