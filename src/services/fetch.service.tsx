@@ -1,8 +1,8 @@
-export const fetchStreamService = async (url: string, method: string, data?: any): Promise<any> => {
+export const fetchStreamService = async (url: string, method: string, data?: any, headers?: any): Promise<any> => {
     try {
         const response = await fetch(url, {
             method,
-            headers: {
+            headers: headers || {
                 'Content-Type': 'application/json'
             },
             credentials: 'include',

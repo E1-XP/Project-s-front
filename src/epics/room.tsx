@@ -1,6 +1,6 @@
 import { Epic } from "redux-observable";
 import { map, mergeMap, tap, ignoreElements } from "rxjs/operators";
-import { of } from "rxjs";
+import { of, from } from "rxjs";
 
 import { fetchStreamService } from '../services/fetch.service';
 import { Socket } from "../services/socket.service";
@@ -9,6 +9,8 @@ import { store } from "../store";
 
 import { types } from "../actions/types";
 import { actions } from "../actions";
+
+const URL = 'http://localhost:3001/';
 
 export const roomJoinEpic: Epic = (action$, state$) => action$
     .ofType(types.INIT_ROOM_ENTER)
@@ -79,7 +81,9 @@ export const drawingBroadcastEpic: Epic = (action$, state$) => action$
     .pipe(
         tap(v => {
             const roomId = state$.value.rooms.active;
+
             Socket.emit(`${roomId}/draw`, v.payload);
+            store.dispatch(actions.canvas.setDrawCount())
         }),
         ignoreElements()
     );
@@ -101,9 +105,22 @@ export const drawingBroadcastMouseUpEpic: Epic = (action$, state$) => action$
     .pipe(
         tap(v => {
             const roomId = state$.value.rooms.active;
+            const drawCount = state$.value.canvas.drawCount;
 
-            Socket.emit(`${roomId}/draw/mouseup`);
+            Socket.emit(`${roomId}/draw/mouseup`, drawCount);
+            store.dispatch(actions.canvas.setDrawCount(0));
         }),
+        ignoreElements()
+    );
+
+export const canvasImageSaveEpic: Epic = (action$, state$) => action$
+    .ofType(types.INIT_CANVAS_TO_IMAGE)
+    .pipe(
+        mergeMap(action => from(fetchStreamService(
+            `${URL}rooms/${state$.value.rooms.active}/drawing/save/`,
+            'POST',
+            { image: action.payload }
+        ))),
         ignoreElements()
     );
 

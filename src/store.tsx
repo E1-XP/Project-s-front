@@ -52,6 +52,7 @@ export interface Rooms {
 }
 
 export interface Canvas {
+    drawCount: number;
     drawingPoints: object[];
     broadcastedDrawingPoints: BroadcastedDrawingPoints;
 }
@@ -91,6 +92,7 @@ export const initialState: DeepPartial<{}> = {
         selectedRoom: []
     },
     canvas: {
+        drawCount: 0,
         drawingPoints: [],
         broadcastedDrawingPoints: {}
     },

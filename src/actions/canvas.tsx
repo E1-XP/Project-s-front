@@ -29,10 +29,20 @@ export const initMouseUpBroadcast: ActionType = () => ({
     type: types.INIT_MOUSE_UP_BROADCAST
 });
 
+export const setDrawCount: ActionType = (v?: number) => ({
+    type: types.SET_DRAW_COUNT,
+    payload: v
+});
+
 export const initClearDrawingPoints: ActionType = () => ({
     type: types.INIT_CLEAR_DRAWING_POINTS
 });
 
 export const clearDrawingPoints: ActionType = () => ({
     type: types.CLEAR_DRAWING_POINTS
+});
+
+export const initCanvasToImage: ActionType = (imgData: any) => ({
+    type: types.INIT_CANVAS_TO_IMAGE,
+    payload: imgData
 });

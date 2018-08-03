@@ -92,6 +92,10 @@ export const canvasReducer: Reducer = (state: Canvas | any = {}, action: plainAc
         case types.CLEAR_DRAWING_POINTS: {
             return { ...state, drawingPoints: [], broadcastedDrawingPoints: {} };
         }
+        case types.SET_DRAW_COUNT: {
+            const payloadExist = action.payload !== undefined;
+            return { ...state, drawCount: payloadExist ? action.payload : state.drawCount + 1 }
+        }
         default: return state;
     }
 };

@@ -25,6 +25,7 @@ interface Props {
     initClearDrawingPoints: () => Dispatch;
     initDrawingBroadcast: () => Dispatch;
     initMouseUpBroadcast: () => Dispatch;
+    initCanvasToImage: (v: any) => Dispatch;
     renderImage: () => void;
     setSelectedColor: (e: any) => void;
     handleResetBtn: () => void;
@@ -95,6 +96,9 @@ const handlers1 = () => {
             // const renderLoop=()=>{
             // };
 
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, boardRef.width, boardRef.height);
+
             const drawFn = (itm: DrawingPoint, i: number, arr: DrawingPoint[]) => {
                 const { x, y, fill, weight } = itm;
 
@@ -120,6 +124,9 @@ const handlers1 = () => {
         },
         handleResetBtn: (props: Props) => (e: HTMLButtonElement) => {
             ctx.clearRect(0, 0, boardRef.width, boardRef.height);
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, boardRef.width, boardRef.height);
+
             props.initClearDrawingPoints();
         }
     }
@@ -152,6 +159,10 @@ const handlers2 = {
     handleMouseUp: (props: Props) => () => {
         props.setIsMouseDown(false);
         props.initMouseUpBroadcast();
+
+        const imgB64 = props.getBoardRef().toDataURL('image/jpeg', 0.5);
+        console.log(imgB64);
+        props.initCanvasToImage(imgB64);
     },
     handleMouseMove: (props: Props) => (e: MouseEvent) => {
         const { clientX, clientY } = e;
@@ -194,7 +205,8 @@ const mapDispatchToProps = (dispatch: Dispatch) => ({
     setDrawingPoint: (v: DrawingPoint) => dispatch(actions.canvas.setDrawingPoint(v)),
     setNewDrawingPointsGroup: () => dispatch(actions.canvas.setNewDrawingPointsGroup()),
     initClearDrawingPoints: () => dispatch(actions.canvas.initClearDrawingPoints()),
-    initMouseUpBroadcast: () => dispatch(actions.canvas.initMouseUpBroadcast())
+    initMouseUpBroadcast: () => dispatch(actions.canvas.initMouseUpBroadcast()),
+    initCanvasToImage: (v: any) => dispatch(actions.canvas.initCanvasToImage(v))
 });
 
 //multiple handlers to gain access to the upper in the ones lower via props
