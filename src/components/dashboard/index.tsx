@@ -4,7 +4,7 @@ import { push } from "connected-react-router";
 import { Dispatch } from 'redux';
 import { compose } from "recompose";
 
-import { State, Users, Rooms, UserData, ChatsGeneral } from "../../store"
+import { State, Users, Rooms, UserData, ChatsGeneral } from "../../store";
 import { actions } from "../../actions";
 import { Socket } from "../../services/socket.service";
 
@@ -20,17 +20,8 @@ interface Props {
 export const DashboardComponent: ComponentType<Props> = (props) => {
     let inputVal: any;
 
-    const createRoom = () => {
-        const name = prompt('name?');
-        const isPrivate = prompt('private?');
-
-        console.log(name);
-
-        Socket.emit('room/create', {
-            roomName: name,
-            userId: props.user.id
-        });
-        props.setIsLoading(true);
+    const goToCreateRoom = () => {
+        props.pushRouter('/room/create');
     }
 
     const handleSubmit = (e: any) => {
@@ -56,11 +47,15 @@ export const DashboardComponent: ComponentType<Props> = (props) => {
             <h2>Available rooms:</h2>
             <ul>
                 {Object.keys(props.rooms.list).length ?
-                    Object.keys(props.rooms.list).map((itm) => <li data-id={itm} key={itm}
-                        onClick={handleRoomClick}>{props.rooms.list[itm].name}</li>)
+                    Object.keys(props.rooms.list).map((itm) =>
+                        <li data-id={itm} key={itm}
+                            onClick={handleRoomClick}>
+                            {props.rooms.list[itm].name}
+                            {props.rooms.list[itm].isPrivate && ' private'}
+                        </li>)
                     : 'no rooms created'}
             </ul>
-            <button onClick={createRoom}>create new room</button>
+            <button onClick={goToCreateRoom}>create new room</button>
             <h2>general chat</h2>
             <ul>
                 {props.messages.length ?

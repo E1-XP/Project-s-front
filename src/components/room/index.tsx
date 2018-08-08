@@ -21,7 +21,7 @@ interface Props extends RouteComponentProps<Params> {
     handleBeforeUnload: (e: BeforeUnloadEvent) => void;
 }
 
-const lifecycleMethods = {
+const hooks = {
     componentDidMount() {
         console.log('SOCKET CONNECTED?' + this.props.isSocketConnected);
         setTimeout(this.props.initRoomEnter, 500);
@@ -115,5 +115,5 @@ const mapDispatchToProps = (dispatch: Dispatch) => ({
 export const Room = compose(
     connect(mapStateToProps, mapDispatchToProps),
     withHandlers(handlers),
-    lifecycle<Props, {}>(lifecycleMethods)
+    lifecycle<Props, {}>(hooks)
 )(RoomComponent);

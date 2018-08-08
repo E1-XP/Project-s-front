@@ -30,9 +30,9 @@ export const startSocketService = async (v: any): Promise<any> => {
         Socket.on('rooms/get', (data: any) =>
             store.dispatch(actions.rooms.setRooms(data)));
 
-        Socket.on('room/create', (id: any) => {
-            store.dispatch(push(`/room/${id}`));
-            store.dispatch(actions.global.setIsLoading(false));
+        Socket.on('room/create', (id: string) => {
+            console.log('ROOM CREATE GET')
+            store.dispatch(actions.rooms.initHandleRoomCreate(id));
         });
 
         Socket.on('connect', () => {

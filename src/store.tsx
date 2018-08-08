@@ -15,6 +15,13 @@ export interface UserData {
 
 export interface User {
     userData: UserData
+    drawings: DrawingObject[] | null;
+}
+
+export interface DrawingObject {
+    id: number;
+    name: String;
+    creatorId: number;
 }
 
 export interface Users {
@@ -36,6 +43,7 @@ export interface Room {
     name: string;
     roomid: number;
     adminId: string;
+    isPrivate: boolean;
 }
 
 export interface RoomsList {
@@ -53,6 +61,7 @@ export interface Rooms {
 
 export interface Canvas {
     drawCount: number;
+    currentDrawing: number | null;
     drawingPoints: object[];
     broadcastedDrawingPoints: BroadcastedDrawingPoints;
 }
@@ -93,6 +102,7 @@ export const initialState: DeepPartial<{}> = {
     },
     canvas: {
         drawCount: 0,
+        currentDrawing: null,
         drawingPoints: [],
         broadcastedDrawingPoints: {}
     },
@@ -101,7 +111,8 @@ export const initialState: DeepPartial<{}> = {
             username: "",
             email: "",
             id: null
-        }
+        },
+        drawings: null
     },
 };
 

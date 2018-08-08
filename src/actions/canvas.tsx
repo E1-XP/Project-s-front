@@ -46,3 +46,12 @@ export const initCanvasToImage: ActionType = (imgData: any) => ({
     type: types.INIT_CANVAS_TO_IMAGE,
     payload: imgData
 });
+
+export const initGetImagesFromServer: ActionType = () => ({
+    type: types.INIT_GET_IMAGES_FROM_SERVER
+});
+
+export const setCurrentDrawing: ActionType = (v: number) => ({
+    type: types.SET_CURRENT_DRAWING,
+    payload: v
+});

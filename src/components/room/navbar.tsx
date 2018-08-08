@@ -12,36 +12,36 @@ interface Params {
 interface Props extends RouteComponentProps<Params> {
     rooms: Rooms;
     user: UserData
-    handleSave: () => void;
     isUserAdmin: (itm: number) => boolean;
+    handleLoadImage: () => void;
 }
 
 interface PassedProps {
     setSelectedColor: (e: any) => void;
     handleResetBtn: () => void;
-
+    setIsImageSelectorOpen: (v?: boolean) => void;
 }
 
 const handlers = {
     isUserAdmin: (props: Props) => (itm: string) => {
         return itm === props.rooms.list[props.match.params.id].adminId;
     },
-    handleSave: (props: Props) => (e: HTMLButtonElement) => {
-        alert('ok');
+    handleLoadImage: (props: Props & PassedProps) => () => {
+        props.setIsImageSelectorOpen();
     }
 }
 
 const CanvasNavbarComponent: ComponentType<Props & PassedProps> = (props) => {
-    const { handleSave, setSelectedColor, handleResetBtn, isUserAdmin, user } = props;
+    const { setSelectedColor, handleResetBtn, isUserAdmin, user,
+        handleLoadImage } = props;
 
     if (!props.rooms.active) return (<p>...loading</p>);
 
     return (
         <nav>
             {isUserAdmin(user.id) && <React.Fragment>
-                <button onClick={null}>Load Image</button>
+                <button onClick={handleLoadImage}>Load Image</button>
                 <button onClick={handleResetBtn}>Reset</button>
-                {/* <button onClick={handleSave}>Save</button> */}
                 <button>back</button>
                 <button>next</button>
             </React.Fragment>}

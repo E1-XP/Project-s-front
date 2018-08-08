@@ -18,3 +18,13 @@ export const setCurrentRoom: ActionType = (id: string) => ({
     type: types.SET_CURRENT_ROOM,
     payload: id
 });
+
+export const initHandleRoomCreate: ActionType = (id: string) => ({
+    type: types.INIT_HANDLE_ROOM_CREATE,
+    payload: id
+});
+
+export const initInRoomDrawingSelect: ActionType = (id: string) => ({
+    type: types.INIT_IN_ROOM_DRAWING_SELECT,
+    payload: id
+});

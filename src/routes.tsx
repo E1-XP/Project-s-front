@@ -7,6 +7,7 @@ import { Preloader } from "./components/preloader";
 import { Navbar } from "./components/navbar";
 import { Form } from "./components/form";
 import { Dashboard } from "./components/dashboard";
+import { RoomCreate } from "./components/roomcreate";
 import { Room } from "./components/room";
 import { NotFound } from "./components/404";
 
@@ -17,6 +18,7 @@ export const routes = (<Preloader>
     <Switch>
         <Route exact path="/" render={() => (<Redirect to="/dashboard" />)} />
         <Route path="/dashboard" component={withAuthentication(Dashboard)} />
+        <Route path="/room/create" component={withAuthentication(RoomCreate)} />
         <Route path="/room/:id" component={withAuthentication(Room)} />
         {/* <Route component={NotFound} /> */}
     </Switch>

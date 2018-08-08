@@ -96,6 +96,9 @@ export const canvasReducer: Reducer = (state: Canvas | any = {}, action: plainAc
             const payloadExist = action.payload !== undefined;
             return { ...state, drawCount: payloadExist ? action.payload : state.drawCount + 1 }
         }
+        case types.SET_CURRENT_DRAWING: {
+            return { ...state, currentDrawing: action.payload }
+        }
         default: return state;
     }
 };

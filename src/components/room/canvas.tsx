@@ -7,6 +7,7 @@ import { actions } from "../../actions";
 import { State } from "../../store";
 
 import { CanvasNavbar } from "./navbar";
+import { ImageSelector } from "./imageselector";
 
 interface Props {
     onRef: (ref: any) => any;
@@ -17,6 +18,7 @@ interface Props {
     broadcastedDrawingPoints: BroadcastedDrawingPoints;
     setIsMouseDown: (val: boolean) => void;
     setIsMouseDownFalse: () => void;
+    setIsImageSelectorOpen: (val?: boolean) => void;
     handleMouseDown: (e: MouseEvent) => void;
     handleMouseUp: (e: MouseEvent) => void;
     handleMouseMove: (e: MouseEvent) => void;
@@ -28,15 +30,18 @@ interface Props {
     initCanvasToImage: (v: any) => Dispatch;
     renderImage: () => void;
     setSelectedColor: (e: any) => void;
+    handleImageChange: (e: any) => void;
+    initInRoomDrawingSelect: (id: number) => Dispatch;
     handleResetBtn: () => void;
 }
 
 interface BroadcastedDrawingPoints {
-    [key: string]: DrawingPoint[][]
+    [key: string]: DrawingPoint[][];
 }
 
 interface BoardState {
     isMouseDown: boolean;
+    isImageSelectorOpen: boolean;
     selectedColor: string;
 }
 
@@ -70,10 +75,14 @@ const stateHandlers = {
     setIsMouseDownFalse: (props: Props) => () => {
         props.setBoardState({ ...props.boardState, isMouseDown: false })
     },
+    setIsImageSelectorOpen: (props: Props) => (v?: boolean) => {
+        const value = v || !props.boardState.isImageSelectorOpen;
+        props.setBoardState({ ...props.boardState, isImageSelectorOpen: value })
+    },
     setSelectedColor: (props: Props) => (e: any) => {
         props.setBoardState({ ...props.boardState, selectedColor: e.target.value })
     }
-}
+};
 
 const handlers1 = () => {
     let boardRef: any;
@@ -122,12 +131,20 @@ const handlers1 = () => {
                 props.broadcastedDrawingPoints[key].map(itm => itm.map(drawFn));
             });
         },
+        handleImageChange: (props: Props) => (e: any) => {
+            props.initInRoomDrawingSelect(e.target.dataset.id);
+        },
         handleResetBtn: (props: Props) => (e: HTMLButtonElement) => {
             ctx.clearRect(0, 0, boardRef.width, boardRef.height);
             ctx.fillStyle = '#ffffff';
             ctx.fillRect(0, 0, boardRef.width, boardRef.height);
 
             props.initClearDrawingPoints();
+
+            setTimeout(() => {
+                const imgB64 = boardRef.toDataURL('image/jpeg', 0.5);
+                props.initCanvasToImage(imgB64);
+            }, 500);
         }
     }
 };
@@ -160,9 +177,10 @@ const handlers2 = {
         props.setIsMouseDown(false);
         props.initMouseUpBroadcast();
 
-        const imgB64 = props.getBoardRef().toDataURL('image/jpeg', 0.5);
-        console.log(imgB64);
-        props.initCanvasToImage(imgB64);
+        setTimeout(() => {
+            const imgB64 = props.getBoardRef().toDataURL('image/jpeg', 0.5);
+            props.initCanvasToImage(imgB64);
+        }, 500);
     },
     handleMouseMove: (props: Props) => (e: MouseEvent) => {
         const { clientX, clientY } = e;
@@ -182,10 +200,12 @@ const handlers2 = {
 
 export const CanvasComponent: ComponentType<Props> = (props: Props) => {
     const { onRef, boardState, setSelectedColor, handleMouseDown, handleMouseUp,
-        handleResetBtn, handleMouseMove } = props;
+        handleResetBtn, handleMouseMove, setIsImageSelectorOpen, handleImageChange } = props;
 
-    return (<div>
-        <CanvasNavbar setSelectedColor={setSelectedColor} handleResetBtn={handleResetBtn} />
+    return (<div style={{ float: 'left' }}>
+        <CanvasNavbar setSelectedColor={setSelectedColor} handleResetBtn={handleResetBtn}
+            setIsImageSelectorOpen={setIsImageSelectorOpen} />
+        <ImageSelector isOpen={boardState.isImageSelectorOpen} handleImageChange={handleImageChange} />
         <canvas
             ref={onRef} onMouseDown={handleMouseDown} onMouseUp={handleMouseUp}
             onMouseMove={boardState.isMouseDown ? _throttle(handleMouseMove, 50) : null}
@@ -206,14 +226,15 @@ const mapDispatchToProps = (dispatch: Dispatch) => ({
     setNewDrawingPointsGroup: () => dispatch(actions.canvas.setNewDrawingPointsGroup()),
     initClearDrawingPoints: () => dispatch(actions.canvas.initClearDrawingPoints()),
     initMouseUpBroadcast: () => dispatch(actions.canvas.initMouseUpBroadcast()),
-    initCanvasToImage: (v: any) => dispatch(actions.canvas.initCanvasToImage(v))
+    initCanvasToImage: (v: any) => dispatch(actions.canvas.initCanvasToImage(v)),
+    initInRoomDrawingSelect: (v: number) => dispatch(actions.rooms.initInRoomDrawingSelect(v))
 });
 
-//multiple handlers to gain access to the upper in the ones lower via props
 export const Canvas = compose(
     connect(mapStateToProps, mapDispatchToProps),
     withState('boardState', 'setBoardState', {
         isMouseDown: false,
+        isImageSelectorOpen: false,
         selectedColor: '#000000'
     }),
     withHandlers(stateHandlers),
