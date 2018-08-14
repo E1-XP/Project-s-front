@@ -19,12 +19,41 @@ export const setCurrentRoom: ActionType = (id: string) => ({
     payload: id
 });
 
+export const initRoomCreate: ActionType = (data: any) => ({
+    type: types.INIT_ROOM_CREATE,
+    payload: data
+});
+
 export const initHandleRoomCreate: ActionType = (id: string) => ({
     type: types.INIT_HANDLE_ROOM_CREATE,
     payload: id
 });
 
+export const initRoomAdminChange: ActionType = (data: any) => ({
+    type: types.INIT_ROOM_ADMIN_CHANGE,
+    payload: data
+});
+
 export const initInRoomDrawingSelect: ActionType = (id: string) => ({
     type: types.INIT_IN_ROOM_DRAWING_SELECT,
+    payload: id
+});
+
+export const initRoomListClick: ActionType = (data: any) => ({
+    type: types.INIT_ROOM_LIST_CLICK,
+    payload: data
+});
+
+export const initCheckRoomPassword: ActionType = (data: any) => ({
+    type: types.INIT_CHECK_ROOM_PASSWORD,
+    payload: data
+});
+
+export const initCheckRoomPasswordFailure: ActionType = () => ({
+    type: types.INIT_CHECK_ROOM_PASSWORD_FAILURE
+});
+
+export const initRoomListClickSuccess: ActionType = (id: string) => ({
+    type: types.INIT_ROOM_LIST_CLICK_SUCCESS,
     payload: id
 });

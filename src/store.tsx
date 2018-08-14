@@ -24,9 +24,13 @@ export interface DrawingObject {
     creatorId: number;
 }
 
+export interface SelectedRoom {
+    [key: string]: string;
+}
+
 export interface Users {
     general: object,
-    selectedRoom: object
+    selectedRoom: SelectedRoom;
 }
 
 export interface ChatsGeneral {
@@ -34,9 +38,14 @@ export interface ChatsGeneral {
     message: string;
 }
 
+export interface RoomMessages {
+    author: string;
+    message: string;
+}
+
 export interface Chats {
     general: ChatsGeneral[];
-    selectedRoom: object[];
+    selectedRoom: RoomMessages[];
 }
 
 export interface Room {

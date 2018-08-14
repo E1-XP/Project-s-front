@@ -2,11 +2,10 @@ import React, { ComponentType } from 'react';
 import { connect } from "react-redux";
 import { push } from "connected-react-router";
 import { Dispatch } from 'redux';
-import { compose } from "recompose";
+import { compose, withHandlers, withState } from "recompose";
 
 import { State, Users, Rooms, UserData, ChatsGeneral } from "../../store";
 import { actions } from "../../actions";
-import { Socket } from "../../services/socket.service";
 
 interface Props {
     user: UserData;
@@ -15,27 +14,44 @@ interface Props {
     messages: ChatsGeneral[];
     setIsLoading: (v: boolean) => Dispatch;
     pushRouter: (v: string) => Dispatch;
+    initSendGeneralMessage: (data: any) => Dispatch;
+    initRoomListClick: (data: any) => Dispatch;
+    goToCreateRoom: () => void;
+    handleRoomClick: (e: any) => void;
+    handleMessageSubmit: (e: any) => void;
+    setMessage: (e: any) => void;
+    setState: (v: any) => void;
+    state: string;
 }
 
-export const DashboardComponent: ComponentType<Props> = (props) => {
-    let inputVal: any;
-
-    const goToCreateRoom = () => {
+const handlers = {
+    setMessage: (props: Props) => (e: any) => {
+        props.setState(e.target.value);
+    },
+    goToCreateRoom: (props: Props) => () => {
         props.pushRouter('/room/create');
-    }
+    },
+    handleRoomClick: (props: Props) => (e: any) => {
+        const id = e.target.dataset.id;
+        const isRoomPrivate = props.rooms.list[id].isPrivate;
+        let password = null;
 
-    const handleSubmit = (e: any) => {
+        if (isRoomPrivate) password = prompt('enter password:') || '';
+
+        props.initRoomListClick({ id, password });
+    },
+    handleMessageSubmit: (props: Props) => (e: any) => {
         e.preventDefault();
 
-        Socket.emit('general/messages', {
-            message: inputVal.value,
+        props.initSendGeneralMessage({
+            message: props.state,
             author: props.user.username
         });
     }
+};
 
-    const handleRoomClick = (e: any) => {
-        props.pushRouter(`/room/${e.target.dataset.id}`);
-    }
+export const DashboardComponent: ComponentType<Props> = (props) => {
+    const { handleMessageSubmit, handleRoomClick, goToCreateRoom, setMessage } = props;
 
     return (
         <div>
@@ -62,8 +78,8 @@ export const DashboardComponent: ComponentType<Props> = (props) => {
                     props.messages.map((itm: any, i: number) => <li key={i}>{itm.message}-{itm.author}</li>)
                     : 'no messages'}
             </ul>
-            <form onSubmit={handleSubmit}>
-                <input ref={node => inputVal = node} placeholder="type here..." />
+            <form onSubmit={handleMessageSubmit}>
+                <input value={props.state} onChange={setMessage} placeholder="type here..." />
                 <button >Submit</button>
             </form>
         </div>
@@ -80,9 +96,13 @@ const mapStateToProps = ({ user, users, chats, rooms }: State) => ({
 const mapDispatchToProps = (dispatch: Dispatch) => ({
     pushRouter: (str: string) => dispatch(push(str)),
     setMessages: (payload: any) => dispatch(actions.chats.setMessages(payload)),
-    setIsLoading: (bool: boolean) => dispatch(actions.global.setIsLoading(bool))
+    setIsLoading: (bool: boolean) => dispatch(actions.global.setIsLoading(bool)),
+    initRoomListClick: (data: any) => dispatch(actions.rooms.initRoomListClick(data)),
+    initSendGeneralMessage: (data: any) => dispatch(actions.chats.initSendGeneralMesssage(data))
 });
 
 export const Dashboard = compose(
-    connect(mapStateToProps, mapDispatchToProps)
+    connect(mapStateToProps, mapDispatchToProps),
+    withState('state', 'setState', ''),
+    withHandlers(handlers)
 )(DashboardComponent);

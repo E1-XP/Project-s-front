@@ -3,13 +3,11 @@ import { compose, withHandlers, withState } from 'recompose';
 import { connect } from "react-redux";
 import { Dispatch } from 'redux';
 
-import { Socket } from "../../services/socket.service";
 import { State, UserData } from "../../store";
 import { actions } from "../../actions";
 
 import { RoomCreateForm } from "./form";
 import { ImageSelector } from "./imageselector";
-import { setCurrentDrawing } from '../../actions/canvas';
 
 interface NewDrawingData {
     name: string;
@@ -26,9 +24,9 @@ interface Props {
     setName: () => void;
     setPassword: () => void;
     goToNextStage: () => void;
-    setIsLoading: (v: boolean) => Dispatch;
     initCreateNewDrawing: (v: NewDrawingData) => Dispatch;
     initDrawingSelect: (v: number) => Dispatch;
+    initRoomCreate: (data: any) => Dispatch;
 }
 
 export interface IState {
@@ -62,14 +60,12 @@ const handlers = {
     handleSubmit: (props: Props) => (e: any) => {
         const { user, state } = props;
 
-        Socket.emit('room/create', {
+        props.initRoomCreate({
             name: state.name,
             adminId: user.id,
             isPrivate: state.isPrivate,
             password: state.password
         });
-
-        props.setIsLoading(true);
     }
 };
 
@@ -85,12 +81,10 @@ export const RoomCreateComponent: ComponentType<Props> = (props) => {
     }
 };
 
-const mapStateToProps = ({ user }: State) => ({
-    user: user.userData
-});
+const mapStateToProps = ({ user }: State) => ({ user: user.userData });
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({
-    setIsLoading: (bool: boolean) => dispatch(actions.global.setIsLoading(bool)),
+    initRoomCreate: (data: any) => dispatch(actions.rooms.initRoomCreate(data)),
     initCreateNewDrawing: (v: NewDrawingData) => dispatch(actions.user.initCreateNewDrawing(v)),
     initDrawingSelect: (v: number) => dispatch(actions.user.initDrawingSelect(v))
 });

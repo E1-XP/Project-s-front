@@ -1,12 +1,11 @@
-import React from 'react';
-import { compose, lifecycle, withHandlers } from "recompose";
+import React, { ComponentType } from 'react';
+import { compose, lifecycle, withHandlers, withState } from "recompose";
 import { connect } from "react-redux";
 import { RouteComponentProps, Prompt } from 'react-router-dom';
 import { Dispatch } from 'redux';
 
-import { State, Rooms } from "../../store";
+import { State, Rooms, UserData, Chats, Users } from "../../store";
 import { actions } from "../../actions";
-import { Socket } from '../../services/socket.service';
 
 import { Canvas } from "./canvas";
 
@@ -15,10 +14,20 @@ interface Params {
 }
 
 interface Props extends RouteComponentProps<Params> {
+    state: string;
     rooms: Rooms;
+    chats: Chats;
+    user: UserData;
+    users: Users;
     isSocketConnected: boolean;
-    isUserAdmin: (itm: string) => boolean;
+    isUserAdmin: (itm: string | number, prevProps?: Props) => boolean;
     handleBeforeUnload: (e: BeforeUnloadEvent) => void;
+    changeRoomOwner: () => void;
+    initSendRoomMessage: (data: any) => Dispatch;
+    handleSubmit: () => void;
+    setState: (v: any) => void;
+    initRoomAdminChange: (data: any) => Dispatch;
+    setMessage: (e: any) => void;
 }
 
 const hooks = {
@@ -34,58 +43,91 @@ const hooks = {
 
         this.props.isUserAdmin(this.props.user.id) &&
             window.removeEventListener('beforeunload', this.props.handleBeforeUnload);
+    },
+    componentDidUpdate(prevP: Props) {
+        const { isUserAdmin, user, handleBeforeUnload } = this.props;
+        const isRoomListAvailable = Object.keys(prevP.rooms.list).length;
+
+        if (isRoomListAvailable && !isUserAdmin(prevP.user.id, prevP) && isUserAdmin(user.id)) {
+            window.addEventListener('beforeunload', handleBeforeUnload);
+        }
+        else if (isRoomListAvailable && isUserAdmin(prevP.user.id, prevP) && !isUserAdmin(user.id)) {
+            window.removeEventListener('beforeunload', handleBeforeUnload);
+        }
     }
 };
 
 export const handlers = {
-    isUserAdmin: (props: Props) => (itm: string) => {
-        return itm === props.rooms.list[props.match.params.id].adminId;
+    isUserAdmin: (props: Props) => (itm: string | number, prevP?: Props) => {
+        if (!Object.keys(props.rooms.list).length) return false;
+
+        const adminId = prevP ? prevP.rooms.list[props.match.params.id].adminId :
+            props.rooms.list[props.match.params.id].adminId;
+
+        if (typeof itm === 'string') itm = Number(itm);
+
+        return itm === Number(adminId);
     },
     handleBeforeUnload: (props: Props) => (e: BeforeUnloadEvent) => {
         const message = 'Are you sure?';
         e.returnValue = message;
         return message;
+    },
+    setMessage: (props: Props) => (e: any) => {
+        props.setState(e.target.value);
+    },
+    handleSubmit: (props: Props) => (e: any) => {
+        e.preventDefault();
+
+        props.initSendRoomMessage({
+            message: props.state,
+            author: props.user.username,
+            roomId: props.match.params.id
+        })
+    },
+    changeRoomOwner: (props: Props) => (e: any) => {
+        const roomId = props.match.params.id;
+        const userId = e.target.dataset.id;
+
+        props.initRoomAdminChange({ roomId, userId });
     }
 };
 
-export const RoomComponent = (props: any) => {
+export const RoomComponent: ComponentType<Props> = (props) => {
+    const { changeRoomOwner, isUserAdmin, handleSubmit, setMessage, user, users, state } = props;
     const { selectedRoom } = props.chats;
 
-    let inputVal: HTMLInputElement;
-    let board: HTMLCanvasElement;
+    const isLoaded = props.isSocketConnected && Object.keys(props.rooms.list).length &&
+        props.match.params.id;
 
-    const handleSubmit = (e: any) => {
-        e.preventDefault();
-
-        Socket.emit(`${props.match.params.id}/messages`, {
-            message: inputVal.value,
-            author: props.user.username
-        });
-    }
-
-    if (!props.isSocketConnected || !Object.keys(props.rooms.list).length) return <p>loading...</p>;
+    if (!isLoaded) return <p>loading...</p>;
 
     return (<div>
         <section style={{ float: 'left' }}>
             <h1>room {props.rooms.list[props.match.params.id].name}</h1>
             <h2>currently online</h2>
             <ul>
-                {Object.keys(props.users.selectedRoom).length ?
-                    Object.keys(props.users.selectedRoom).map((itm, i) =>
+                {Object.keys(users.selectedRoom).length ?
+                    Object.keys(users.selectedRoom).map((id, i) =>
                         <li
-                            style={{ color: props.isUserAdmin(Number(itm)) ? '#f32' : '#fff' }} key={i}>
-                            {props.users.selectedRoom[itm]}
+                            style={{ color: isUserAdmin(Number(id)) ? '#f32' : '#fff' }} key={id}>
+                            {users.selectedRoom[id]}
+                            {isUserAdmin(user.id) && !isUserAdmin(Number(id)) &&
+                                <span data-id={id}
+                                    onClick={changeRoomOwner}>*Set as admin</span>}
                         </li>) :
                     'no users'}
             </ul>
             <ul>
-                {Object.keys(selectedRoom).length ?
-                    Object.keys(selectedRoom).map((itm, i) =>
-                        <li key={i}>{selectedRoom[itm].message}-{selectedRoom[itm].author}</li>) :
+                {selectedRoom.length ?
+                    selectedRoom.map((itm, i) =>
+                        <li key={i}>
+                            {selectedRoom[i].message}-{selectedRoom[i].author}
+                        </li>) :
                     'no messages'}
             </ul>
             <form onSubmit={handleSubmit}>
-                <input ref={node => inputVal = node} placeholder="type here..." />
+                <input value={state} onChange={setMessage} placeholder="type here..." />
                 <button>Submit</button>
             </form>
         </section>
@@ -109,11 +151,14 @@ const mapDispatchToProps = (dispatch: Dispatch) => ({
     initRoomLeave: () => dispatch(actions.rooms.initRoomLeave()),
     setCurrentRoom: (id: string) => dispatch(actions.rooms.setCurrentRoom(id)),
     setRoomUsers: (data: object) => dispatch(actions.users.setRoomUsers(data)),
-    setMessages: (data: object) => dispatch(actions.chats.setMessages(data))
+    setMessages: (data: object) => dispatch(actions.chats.setMessages(data)),
+    initSendRoomMessage: (data: any) => dispatch(actions.chats.initSendRoomMesssage(data)),
+    initRoomAdminChange: (data: any) => dispatch(actions.rooms.initRoomAdminChange(data))
 });
 
 export const Room = compose(
     connect(mapStateToProps, mapDispatchToProps),
+    withState('state', 'setState', ''),
     withHandlers(handlers),
     lifecycle<Props, {}>(hooks)
 )(RoomComponent);
