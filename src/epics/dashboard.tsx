@@ -1,8 +1,5 @@
 import { Epic } from "redux-observable";
-import {
-    map, mergeMap, tap, ignoreElements, debounceTime, take, takeWhile,
-    mapTo, pluck
-} from "rxjs/operators";
+import { map, mergeMap, tap, ignoreElements, mapTo, pluck } from "rxjs/operators";
 import { of, from, iif } from "rxjs";
 import { push } from "connected-react-router";
 
@@ -13,6 +10,8 @@ import { store } from "../store";
 
 import { types } from "../actions/types";
 import { actions } from "../actions";
+
+import { InvitationData } from '../components/room/navbar'
 
 const URL = 'http://localhost:3001';
 
@@ -26,51 +25,28 @@ export const handleSendGeneralMessageEpic: Epic = (action$, state$) => action$
         ignoreElements()
     );
 
-export const handleRoomClickEpic: Epic = (action$, state$) => action$
-    .ofType(types.INIT_ROOM_LIST_CLICK)
+export const checkInboxEpic: Epic = (action$, state$) => action$
+    .ofType(types.INIT_CHECK_INBOX)
     .pipe(
-        tap(v => {
-            console.log(v);
-        }),
-        pluck('payload'),
-        mergeMap((data: any) => iif(
-            () => data.password === null,
-            of(actions.rooms.initRoomListClickSuccess(data.id)),
-            of(actions.rooms.initCheckRoomPassword(data))
-        ))
+        mergeMap(action => from(fetchStreamService(
+            `${URL}/users/${state$.value.user.userData.id}/inbox`, 'GET'
+        ))),
+        map(resp => actions.user.setInboxMessages(resp.data.messages))
     );
 
-export const checkRoomPasswordEpic: Epic = (action$, state$) => action$
-    .ofType(types.INIT_CHECK_ROOM_PASSWORD)
+export const sendRoomInvitationEpic: Epic = (action$, state$) => action$
+    .ofType(types.INIT_SEND_INBOX_MESSAGE)
     .pipe(
         pluck('payload'),
-        mergeMap(({ id, password }) => from(fetchStreamService(
-            `${URL}/rooms/${id}/checkpassword`,
-            'POST',
-            { password }
-        )).pipe(
-            map(response => ({ response, id }))
-        )),
-        mergeMap(data => iif(
-            () => data.response.status === 200,
-            of(actions.rooms.initRoomListClickSuccess(data.id)),
-            of(actions.rooms.initCheckRoomPasswordFailure())
-        ))
-    );
-
-export const checkRoomPasswordFailureEpic: Epic = (action$, state$) => action$
-    .ofType(types.INIT_CHECK_ROOM_PASSWORD_FAILURE)
-    .pipe(
-        tap(v => {
-            alert('Incorrect password. Please try again.');
+        tap((data: InvitationData) => {
+            Socket.emit(`${data.senderId}/inbox`, data);
         }),
         ignoreElements()
     );
 
-export const handleRoomClickSuccessEpic: Epic = (action$, state$) => action$
-    .ofType(types.INIT_ROOM_LIST_CLICK_SUCCESS)
+export const receiveRoomInvitationEpic: Epic = (action$, state$) => action$
+    .ofType(types.INIT_RECEIVE_INBOX_MESSAGE)
     .pipe(
-        tap(v => { console.log(v, 'CHECK THIS') }),
-        pluck('payload'),
-        map(id => push(`/room/${id}`))
+        tap(v => { console.log('RECEIVED NEW MESSAGE') }),
+        mapTo(actions.global.setInboxCount())
     );

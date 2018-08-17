@@ -20,3 +20,21 @@ export const initDrawingSelect: ActionType = (id: number) => ({
     type: types.INIT_DRAWING_SELECT,
     payload: id
 });
+
+export const initCheckInbox: ActionType = () => ({
+    type: types.INIT_CHECK_INBOX
+});
+
+export const setInboxMessages: ActionType = (data: any) => ({
+    type: types.SET_INBOX_MESSAGES,
+    payload: data
+});
+
+export const initSendRoomInvitation: ActionType = (data: any) => ({
+    type: types.INIT_SEND_INBOX_MESSAGE,
+    payload: data
+});
+
+export const initReceiveInboxMessage: ActionType = (data: any) => ({
+    type: types.INIT_RECEIVE_INBOX_MESSAGE
+});

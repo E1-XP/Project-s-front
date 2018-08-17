@@ -1,6 +1,7 @@
 import React from 'react';
 import { Provider } from 'react-redux'
 import { ConnectedRouter } from "connected-react-router"
+import { Fabric } from "office-ui-fabric-react/lib/Fabric";
 
 import { store } from './store';
 import { routes } from './routes';
@@ -10,7 +11,9 @@ export const App = (props: any) => {
     return (
         <Provider store={store}>
             <ConnectedRouter history={history}>
-                {routes}
+                <Fabric>
+                    {routes}
+                </Fabric>
             </ConnectedRouter>
         </Provider>
     );

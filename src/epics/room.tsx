@@ -3,7 +3,7 @@ import {
     map, mergeMap, tap, ignoreElements, debounceTime, take, takeWhile,
     mapTo, pluck
 } from "rxjs/operators";
-import { of, from } from "rxjs";
+import { of, from, iif } from "rxjs";
 import { push } from "connected-react-router";
 
 import { fetchStreamService } from '../services/fetch.service';
@@ -14,10 +14,59 @@ import { store } from "../store";
 import { types } from "../actions/types";
 import { actions } from "../actions";
 
-const URL = 'http://localhost:3001/';
+const URL = 'http://localhost:3001';
 
 export const roomJoinEpic: Epic = (action$, state$) => action$
     .ofType(types.INIT_ROOM_ENTER)
+    .pipe(
+        map(v => {
+            const roomId = state$.value.router.location.pathname.split('/')[2];
+            const userId = state$.value.user.userData.id;
+            let password = null;
+
+            const isRoomPrivate = state$.value.rooms.list[roomId].isPrivate;
+            const isUserAdmin = state$.value.rooms.list[roomId].adminId === userId;
+
+            if (isRoomPrivate && !isUserAdmin) password = prompt('enter password:') || '';
+
+            return { password, roomId };
+        }),
+        mergeMap((data: any) => iif(
+            () => data.password === null,
+            of(actions.rooms.initRoomEnterSuccess()),
+            of(actions.rooms.initCheckRoomPassword(data))
+        ))
+    );
+
+export const checkRoomPasswordEpic: Epic = (action$, state$) => action$
+    .ofType(types.INIT_CHECK_ROOM_PASSWORD)
+    .pipe(
+        pluck('payload'),
+        mergeMap(({ roomId, password }) => from(fetchStreamService(
+            `${URL}/rooms/${roomId}/checkpassword`,
+            'POST',
+            { password }
+        )).pipe(
+            map(response => ({ response, roomId }))
+        )),
+        mergeMap(data => iif(
+            () => data.response.status === 200,
+            of(actions.rooms.initRoomEnterSuccess()),
+            of(actions.rooms.initCheckRoomPasswordFailure())
+        ))
+    );
+
+export const checkRoomPasswordFailureEpic: Epic = (action$, state$) => action$
+    .ofType(types.INIT_CHECK_ROOM_PASSWORD_FAILURE)
+    .pipe(
+        tap(v => {
+            alert('Incorrect password. Please try again.');
+        }),
+        mapTo(push('/dashboard'))
+    );
+
+export const handleRoomEnterSuccessEpic: Epic = (action$, state$) => action$
+    .ofType(types.INIT_ROOM_ENTER_SUCCESS)
     .pipe(
         tap(action => {
             const roomId = state$.value.router.location.pathname.split('/')[2] ||
@@ -63,6 +112,10 @@ export const roomJoinEpic: Epic = (action$, state$) => action$
                 // store.dispatch(actions.global.setIsLoading(false));
                 store.dispatch(actions.users.setRoomUsers(data));
             });
+
+            Socket.on(`${roomId}/adminleaving`, () => {
+                store.dispatch(actions.rooms.initRoomAdminLeave());
+            });
         }),
         mapTo(actions.canvas.initGetImagesFromServer())
     );
@@ -79,6 +132,7 @@ export const roomLeaveEpic: Epic = (action$, state$) => action$
             Socket.off(`${roomId}/draw/getexisting`);
             Socket.off(`${roomId}/draw/newgroup`);
             Socket.off(`${roomId}/draw/reset`);
+            Socket.off(`${roomId}/adminleaving`);
         }),
         mergeMap(v => of(
             actions.rooms.setCurrentRoom(null),
@@ -90,6 +144,15 @@ export const roomLeaveEpic: Epic = (action$, state$) => action$
                 data: {}
             })
         ))
+    );
+
+export const roomAdminLeaveEpic: Epic = (action$, state$) => action$
+    .ofType(types.INIT_ROOM_ADMIN_LEAVE)
+    .pipe(
+        tap(v => {
+            alert('Admin closed this room. You will be redirected back to dashboard.');
+        }),
+        mapTo(push('/dashboard'))
     );
 
 export const handleSendRoomMessageEpic: Epic = (action$, state$) => action$
@@ -141,7 +204,7 @@ export const getUserImagesEpic: Epic = (action$, state$) => action$
     .pipe(
         tap(v => { console.log('GOT YOUR DRAWINGS') }),
         mergeMap(action => from(fetchStreamService(
-            `${URL}users/${state$.value.user.userData.id}/drawings/`,
+            `${URL}/users/${state$.value.user.userData.id}/drawings/`,
             'GET'
         ))),
         map(resp => actions.user.setUserDrawings(resp.data.drawings))

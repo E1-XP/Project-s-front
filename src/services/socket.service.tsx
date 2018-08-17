@@ -27,8 +27,21 @@ export const startSocketService = async (v: any): Promise<any> => {
             }));
         });
 
-        Socket.on('rooms/get', (data: any) =>
-            store.dispatch(actions.rooms.setRooms(data)));
+        Socket.on('inbox/get', (data: any) => {
+            console.log('fetched inbox');
+            store.dispatch(actions.user.setInboxMessages(data));
+        });
+
+        Socket.on('inbox/new', (data: any) => {
+            store.dispatch(actions.user.setInboxMessages(data));
+            console.log('received data inbox ', data);
+
+            store.dispatch(actions.user.initReceiveInboxMessage());
+        });
+
+        Socket.on('rooms/get', (data: any) => {
+            store.dispatch(actions.rooms.setRooms(data))
+        });
 
         Socket.on('room/create', (id: string) => {
             console.log('ROOM CREATE GET')

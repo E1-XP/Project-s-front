@@ -16,6 +16,13 @@ export interface UserData {
 export interface User {
     userData: UserData
     drawings: DrawingObject[] | null;
+    inboxMessages: InboxMessage[];
+}
+
+export interface InboxMessage {
+    roomId: number;
+    senderId: number;
+    receiverId: number;
 }
 
 export interface DrawingObject {
@@ -28,8 +35,12 @@ export interface SelectedRoom {
     [key: string]: string;
 }
 
+export interface AllUsers {
+    [key: string]: string;
+}
+
 export interface Users {
-    general: object,
+    general: AllUsers,
     selectedRoom: SelectedRoom;
 }
 
@@ -79,6 +90,7 @@ export interface Global {
     isLoading: boolean;
     isUserLoggedIn: boolean;
     isSocketConnected: boolean;
+    inboxCount: number;
 }
 
 export interface State {
@@ -95,7 +107,8 @@ export const initialState: DeepPartial<{}> = {
     global: {
         isLoading: true,
         isUserLoggedIn: false,
-        isSocketConnected: false
+        isSocketConnected: false,
+        inboxCount: 0
     },
     users: {
         general: {},
@@ -121,7 +134,8 @@ export const initialState: DeepPartial<{}> = {
             email: "",
             id: null
         },
-        drawings: null
+        drawings: null,
+        inboxMessages: null
     },
 };
 

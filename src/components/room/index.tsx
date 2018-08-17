@@ -59,14 +59,14 @@ const hooks = {
 
 export const handlers = {
     isUserAdmin: (props: Props) => (itm: string | number, prevP?: Props) => {
+        const roomId = props.match.params.id;
+
         if (!Object.keys(props.rooms.list).length) return false;
 
-        const adminId = prevP ? prevP.rooms.list[props.match.params.id].adminId :
-            props.rooms.list[props.match.params.id].adminId;
+        const adminId = prevP ? prevP.rooms.list[roomId].adminId :
+            props.rooms.list[roomId].adminId;
 
-        if (typeof itm === 'string') itm = Number(itm);
-
-        return itm === Number(adminId);
+        return Number(itm) === Number(adminId);
     },
     handleBeforeUnload: (props: Props) => (e: BeforeUnloadEvent) => {
         const message = 'Are you sure?';
@@ -83,7 +83,7 @@ export const handlers = {
             message: props.state,
             author: props.user.username,
             roomId: props.match.params.id
-        })
+        });
     },
     changeRoomOwner: (props: Props) => (e: any) => {
         const roomId = props.match.params.id;

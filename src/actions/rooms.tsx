@@ -9,6 +9,10 @@ export const initRoomLeave: ActionType = () => ({
     type: types.INIT_ROOM_LEAVE
 });
 
+export const initRoomAdminLeave: ActionType = () => ({
+    type: types.INIT_ROOM_ADMIN_LEAVE
+});
+
 export const setRooms: ActionType = (data: object) => ({
     type: types.SET_ROOMS,
     payload: data
@@ -39,11 +43,6 @@ export const initInRoomDrawingSelect: ActionType = (id: string) => ({
     payload: id
 });
 
-export const initRoomListClick: ActionType = (data: any) => ({
-    type: types.INIT_ROOM_LIST_CLICK,
-    payload: data
-});
-
 export const initCheckRoomPassword: ActionType = (data: any) => ({
     type: types.INIT_CHECK_ROOM_PASSWORD,
     payload: data
@@ -53,7 +52,7 @@ export const initCheckRoomPasswordFailure: ActionType = () => ({
     type: types.INIT_CHECK_ROOM_PASSWORD_FAILURE
 });
 
-export const initRoomListClickSuccess: ActionType = (id: string) => ({
-    type: types.INIT_ROOM_LIST_CLICK_SUCCESS,
+export const initRoomEnterSuccess: ActionType = (id: string) => ({
+    type: types.INIT_ROOM_ENTER_SUCCESS,
     payload: id
 });

@@ -15,7 +15,6 @@ interface Props {
     setIsLoading: (v: boolean) => Dispatch;
     pushRouter: (v: string) => Dispatch;
     initSendGeneralMessage: (data: any) => Dispatch;
-    initRoomListClick: (data: any) => Dispatch;
     goToCreateRoom: () => void;
     handleRoomClick: (e: any) => void;
     handleMessageSubmit: (e: any) => void;
@@ -33,12 +32,8 @@ const handlers = {
     },
     handleRoomClick: (props: Props) => (e: any) => {
         const id = e.target.dataset.id;
-        const isRoomPrivate = props.rooms.list[id].isPrivate;
-        let password = null;
 
-        if (isRoomPrivate) password = prompt('enter password:') || '';
-
-        props.initRoomListClick({ id, password });
+        props.pushRouter(`/room/${id}`);
     },
     handleMessageSubmit: (props: Props) => (e: any) => {
         e.preventDefault();
@@ -97,7 +92,6 @@ const mapDispatchToProps = (dispatch: Dispatch) => ({
     pushRouter: (str: string) => dispatch(push(str)),
     setMessages: (payload: any) => dispatch(actions.chats.setMessages(payload)),
     setIsLoading: (bool: boolean) => dispatch(actions.global.setIsLoading(bool)),
-    initRoomListClick: (data: any) => dispatch(actions.rooms.initRoomListClick(data)),
     initSendGeneralMessage: (data: any) => dispatch(actions.chats.initSendGeneralMesssage(data))
 });
 

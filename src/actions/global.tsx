@@ -37,6 +37,11 @@ export const setIsUserLoggedIn: ActionType = (bool: boolean) => ({
     payload: bool
 });
 
+export const setInboxCount: ActionType = (v?: number) => ({
+    type: types.SET_INBOX_COUNT,
+    payload: v
+});
+
 export const setSocketConnectionStatus: ActionType = (bool: boolean) => ({
     type: types.SET_SOCKET_CONNECTION_STATUS,
     payload: bool
