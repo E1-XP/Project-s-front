@@ -1,7 +1,9 @@
 import React from 'react';
 import { Provider } from 'react-redux'
 import { ConnectedRouter } from "connected-react-router"
-import { Fabric } from "office-ui-fabric-react/lib/Fabric";
+
+import CssBaseline from '@material-ui/core/CssBaseline';
+import './style.scss';
 
 import { store } from './store';
 import { routes } from './routes';
@@ -9,15 +11,13 @@ import { history } from './history';
 
 export const App = (props: any) => {
     return (
-        <Provider store={store}>
-            <ConnectedRouter history={history}>
-                <Fabric>
+        <React.Fragment>
+            <CssBaseline />
+            <Provider store={store}>
+                <ConnectedRouter history={history}>
                     {routes}
-                </Fabric>
-            </ConnectedRouter>
-        </Provider>
+                </ConnectedRouter>
+            </Provider>
+        </React.Fragment>
     );
 };
-
-document.body.style.backgroundColor = '#555';
-document.body.style.color = '#eee';

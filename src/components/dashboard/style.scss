@@ -1,0 +1,15 @@
+#dashboard {
+    .paper {
+        padding: 1rem;
+        height: 100%; // & :first-of-type {
+        //     margin-bottom: 1rem;
+        // } // min-height: 250px;
+        // max-height: 250px;
+    }
+    .paper--double {
+        @extend .paper; // max-height: 600px !important;
+    }
+    .grid__item--m-bottom {
+        margin-bottom: 1rem !important;
+    }
+}

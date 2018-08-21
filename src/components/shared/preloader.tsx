@@ -3,8 +3,8 @@ import { connect, Dispatch } from 'react-redux';
 import { withRouter } from "react-router-dom";
 import { lifecycle, compose } from 'recompose';
 
-import { State } from '../store';
-import { actions } from '../actions'
+import { State } from '../../store';
+import { actions } from '../../actions'
 
 type Props = {
     isLoading: boolean;

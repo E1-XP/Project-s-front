@@ -4,11 +4,12 @@ import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
 
 import { actions } from '../../actions'
-import { State, User, Users } from '../../store';
+import { State, User, Users, RoomsList } from '../../store';
 
 interface Props {
     user: User;
     users: Users;
+    rooms: RoomsList;
     initCheckInbox: () => Dispatch;
     setInboxCount: (v?: number) => Dispatch;
 }
@@ -20,14 +21,15 @@ const hooks = {
     }
 };
 
-const InboxComponent: ComponentType<Props> = ({ user, users }) => {
+const InboxComponent: ComponentType<Props> = ({ user, users, rooms }) => {
     return (<div>
         <h2>inbox</h2>
         <ul>
             {user.inboxMessages ?
                 (user.inboxMessages.length ?
                     user.inboxMessages.map((itm, i) => <li key={i}>
-                        {`${users.general[itm.senderId]} send you invitation to enter ${itm.roomId} room`}
+                        {`${users.general[itm.senderId]} send you invitation link to enter
+                         room ${rooms[itm.roomId] ? rooms[itm.roomId].name : '[closed]'}`}
                     </li>) :
                     `you don't received any messages yet`) :
                 'loading...'}
@@ -35,9 +37,10 @@ const InboxComponent: ComponentType<Props> = ({ user, users }) => {
     </div>)
 };
 
-const mapStateToProps = ({ user, users }: State) => ({
+const mapStateToProps = ({ user, users, rooms }: State) => ({
     user,
-    users
+    users,
+    rooms: rooms.list
 });
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({

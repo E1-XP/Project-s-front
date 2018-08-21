@@ -1,4 +1,4 @@
-import React, { Fragment, ComponentType, FormEvent } from 'react';
+import { FormEvent } from 'react';
 import { compose, withHandlers, withState } from 'recompose';
 import { connect } from "react-redux";
 import { Dispatch } from 'redux';
@@ -6,14 +6,13 @@ import { Dispatch } from 'redux';
 import { State, UserData } from "../../store";
 import { actions } from "../../actions";
 
-import { RoomCreateForm } from "./form";
-import { ImageSelector } from "./imageselector";
+import { RoomCreateComponent } from './template';
 
 interface NewDrawingData {
     name: string;
 }
 
-interface Props {
+export interface Props {
     state: IState
     user: UserData;
     setState: (v: IState) => void;
@@ -66,18 +65,6 @@ const handlers = {
             isPrivate: state.isPrivate,
             password: state.password
         });
-    }
-};
-
-export const RoomCreateComponent: ComponentType<Props> = (props) => {
-    const { handleSubmit, state, setName, setPassword, setIsPrivate, goToNextStage,
-        handleDrawingCreate, handleDrawingSelect } = props;
-
-    switch (state.formStage) {
-        case 1: return (<RoomCreateForm state={state} goToNextStage={goToNextStage} setName={setName}
-            setPassword={setPassword} setIsPrivate={setIsPrivate} />);
-        case 2: return (<ImageSelector handleDrawingCreate={handleDrawingCreate}
-            handleSubmit={handleSubmit} handleDrawingSelect={handleDrawingSelect} />);
     }
 };
 

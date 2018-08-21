@@ -3,7 +3,7 @@ import { Route, Switch, Redirect } from 'react-router-dom';
 
 import { withAuthentication } from "./HOCs/withAuthentication";
 
-import { Preloader } from "./components/preloader";
+import { Preloader } from "./components/shared/preloader";
 import { Navbar } from "./components/navbar";
 import { Form } from "./components/form";
 import { Dashboard } from "./components/dashboard";
@@ -13,9 +13,9 @@ import { Room } from "./components/room";
 import { NotFound } from "./components/404";
 
 export const routes = (<Preloader>
+    <Navbar />
     <Route path="/signup" component={Form} />
     <Route path="/login" component={Form} />
-    <Navbar />
     <Switch>
         <Route exact path="/" render={() => (<Redirect to="/dashboard" />)} />
         <Route path="/dashboard" component={withAuthentication(Dashboard)} />

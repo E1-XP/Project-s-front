@@ -44,19 +44,15 @@ export interface Users {
     selectedRoom: SelectedRoom;
 }
 
-export interface ChatsGeneral {
-    username: string;
-    message: string;
-}
-
-export interface RoomMessages {
+export interface ChatMessage {
     author: string;
     message: string;
 }
 
+
 export interface Chats {
-    general: ChatsGeneral[];
-    selectedRoom: RoomMessages[];
+    general: ChatMessage[];
+    selectedRoom: ChatMessage[];
 }
 
 export interface Room {

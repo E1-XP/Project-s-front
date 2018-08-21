@@ -1,0 +1,34 @@
+body {
+    background-color: rgb(32, 33, 36) !important; // color: #fafafa;
+    font-family: 'Roboto';
+    font-weight: 400;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+.container {
+    margin: 0 auto;
+    max-width: 1200px;
+    padding: 1rem;
+    padding-top: 30px;
+}
+
+.icon--mleft {
+    margin-left: 8px;
+}
+
+.griditem--center {
+    margin: auto !important;
+}
+
+@for $i from 1 through 10 {
+    .mtop--#{$i} {
+        margin-top: 0rem+$i !important;
+    }
+    .mbottom--#{$i} {
+        margin-bottom: 0rem+$i !important;
+    }
+}
