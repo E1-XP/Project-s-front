@@ -16,6 +16,7 @@ export interface PassedProps {
     handleSubmit: () => void;
     handleDrawingCreate: () => void;
     handleDrawingSelect: (e: any) => void;
+    currentDrawing: string | null;
 }
 
 const hooks = {

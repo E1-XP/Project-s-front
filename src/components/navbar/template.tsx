@@ -15,7 +15,7 @@ import { Props } from "./index";
 export const NavbarComponent: ComponentType<Props> = ({
     isUserLoggedIn, userData, inboxCount, handleLogout }) => {
 
-    if (!userData) return (<p>Loading..</p>);
+    // if (!userData) return (<p>Loading..</p>);
 
     return (<AppBar id="navbar" position="static" color="default">
         <Toolbar className="toolbar">
@@ -34,9 +34,11 @@ export const NavbarComponent: ComponentType<Props> = ({
                         </Typography>
                         <NavLink to="/inbox">
                             <IconButton color="inherit" >
-                                <Badge badgeContent={4} color="secondary">
-                                    <Icon color="primary">notifications</Icon>
-                                </Badge>
+                                {inboxCount ?
+                                    <Badge badgeContent={inboxCount} color="secondary" >
+                                        <Icon color="primary">notifications</Icon>
+                                    </Badge> :
+                                    <Icon color="primary">notifications</Icon>}
                             </IconButton>
                         </NavLink>
                         <IconButton color="inherit" >
@@ -45,8 +47,12 @@ export const NavbarComponent: ComponentType<Props> = ({
                         <Button color="inherit" onClick={handleLogout}>Logout</Button>
                     </Fragment> :
                     <Fragment>
-                        <Button color="inherit" >Login</Button>
-                        <Button color="inherit" >Sign Up</Button>
+                        <NavLink to="/login">
+                            <Button color="inherit" >Login</Button>
+                        </NavLink>
+                        <NavLink to="/signup">
+                            <Button color="inherit" >Sign Up</Button>
+                        </NavLink>
                     </Fragment>}
             </div>
         </Toolbar>

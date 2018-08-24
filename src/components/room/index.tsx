@@ -1,19 +1,18 @@
-import React, { ComponentType } from 'react';
 import { compose, lifecycle, withHandlers, withState } from "recompose";
 import { connect } from "react-redux";
-import { RouteComponentProps, Prompt } from 'react-router-dom';
+import { RouteComponentProps } from 'react-router-dom';
 import { Dispatch } from 'redux';
 
 import { State, Rooms, UserData, Chats, Users } from "../../store";
 import { actions } from "../../actions";
 
-import { Canvas } from "./canvas";
+import { RoomComponent } from "./template";
 
 interface Params {
     id: string;
 }
 
-interface Props extends RouteComponentProps<Params> {
+export interface Props extends RouteComponentProps<Params> {
     state: string;
     rooms: Rooms;
     chats: Chats;
@@ -76,12 +75,12 @@ export const handlers = {
     setMessage: (props: Props) => (e: any) => {
         props.setState(e.target.value);
     },
-    handleSubmit: (props: Props) => (e: any) => {
-        e.preventDefault();
+    handleSubmit: (props: Props) => (value: string) => {
 
         props.initSendRoomMessage({
-            message: props.state,
+            message: value,
             author: props.user.username,
+            authorId: props.user.id,
             roomId: props.match.params.id
         });
     },
@@ -91,51 +90,6 @@ export const handlers = {
 
         props.initRoomAdminChange({ roomId, userId });
     }
-};
-
-export const RoomComponent: ComponentType<Props> = (props) => {
-    const { changeRoomOwner, isUserAdmin, handleSubmit, setMessage, user, users, state } = props;
-    const { selectedRoom } = props.chats;
-
-    const isLoaded = props.isSocketConnected && Object.keys(props.rooms.list).length &&
-        props.match.params.id;
-
-    if (!isLoaded) return <p>loading...</p>;
-
-    return (<div>
-        <section style={{ float: 'left' }}>
-            <h1>room {props.rooms.list[props.match.params.id].name}</h1>
-            <h2>currently online</h2>
-            <ul>
-                {Object.keys(users.selectedRoom).length ?
-                    Object.keys(users.selectedRoom).map((id, i) =>
-                        <li
-                            style={{ color: isUserAdmin(Number(id)) ? '#f32' : '#fff' }} key={id}>
-                            {users.selectedRoom[id]}
-                            {isUserAdmin(user.id) && !isUserAdmin(Number(id)) &&
-                                <span data-id={id}
-                                    onClick={changeRoomOwner}>*Set as admin</span>}
-                        </li>) :
-                    'no users'}
-            </ul>
-            <ul>
-                {selectedRoom.length ?
-                    selectedRoom.map((itm, i) =>
-                        <li key={i}>
-                            {selectedRoom[i].message}-{selectedRoom[i].author}
-                        </li>) :
-                    'no messages'}
-            </ul>
-            <form onSubmit={handleSubmit}>
-                <input value={state} onChange={setMessage} placeholder="type here..." />
-                <button>Submit</button>
-            </form>
-        </section>
-        <Canvas />
-
-        <Prompt when={props.isUserAdmin(props.user.id)}
-            message={'Are you want to leave? This will close your room.'} />
-    </div>);
 };
 
 const mapStateToProps = ({ global, rooms, chats, user, users }: State) => ({

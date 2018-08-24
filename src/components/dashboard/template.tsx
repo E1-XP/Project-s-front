@@ -20,7 +20,7 @@ export const DashboardComponent: ComponentType<Props> = ({ handleMessageSubmit,
     return (<main id="dashboard" className="container">
         <Grid container spacing={16}>
             <Grid item md={6} container sm={12} >
-                <Grid item xs={12} className="grid__item--m-bottom" >
+                <Grid item xs={12} className="mbottom-1" >
                     <Paper className="paper">
                         <Typography variant="headline">
                             Currently online: {Object.keys(users.general).length}

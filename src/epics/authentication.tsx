@@ -95,8 +95,8 @@ export const logoutEpic: Epic = (action$, state$) => action$
                 'POST'
             )).pipe(
                 mergeMap(resp => of(
-                    actions.user.setUserData(null),
                     actions.global.setIsUserLoggedIn(false),
+                    actions.user.setUserData(null),
                     push("/login")
                 ))
             )

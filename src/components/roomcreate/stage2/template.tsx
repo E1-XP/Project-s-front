@@ -12,7 +12,7 @@ import GridListTile from '@material-ui/core/GridListTile';
 import GridListTileBar from '@material-ui/core/GridListTileBar';
 
 export const ImageSelectorComponent: ComponentType<Props & PassedProps> = ({ handleSubmit,
-    handleDrawingCreate, handleDrawingSelect, drawings }) => {
+    handleDrawingCreate, handleDrawingSelect, drawings, currentDrawing }) => {
 
     return (<main id="roomcreate" className="container">
         <Grid container spacing={16} >
@@ -24,24 +24,30 @@ export const ImageSelectorComponent: ComponentType<Props & PassedProps> = ({ han
                     <Typography variant="subheading" align="center" >
                         Select existing image or create new one
                 </Typography>
-                    <Grid item xs={6} className="griditem--center mtop--2" >
+                    <Grid item xs={12} className="griditem--center container--drawings mtop--2" >
                         {drawings ?
-                            (drawings.length ?
-                                (<GridList cellHeight={180}>
-                                    {drawings.map((itm: any) =>
-                                        <GridListTile data-id={itm.id} key={itm.id}
-                                            onClick={handleDrawingSelect}>
-                                            {/* <img src={tile.img} alt={tile.title} /> */}
-                                            {itm.id}
-                                            <GridListTileBar title={itm.id} />
-                                        </GridListTile>)}
-                                </GridList>) :
-                                'no images found')
+                            (<GridList cellHeight={160} cols={4} className="mbottom--2">
+                                {[<GridListTile key={'new-drawing'}
+                                    onClick={handleDrawingCreate}>
+                                    {/* <img src={tile.img} alt={tile.title} /> */}
+                                    {'new'}
+                                    <GridListTileBar title={'new'} />
+                                </GridListTile>
+                                ].concat(drawings.map((itm: any) =>
+                                    <GridListTile data-id={itm.id} key={itm.id}
+                                        onClick={handleDrawingSelect}>
+                                        {/* <img src={tile.img} alt={tile.title} /> */}
+                                        {itm.id}
+                                        <GridListTileBar title={itm.id} />
+                                    </GridListTile>))}
+                            </GridList>)
                             : 'loading...'}
-                        <Button variant="contained" color="primary"
-                            onClick={handleDrawingCreate} >Create New Drawing</Button>
-                        <Button variant="contained" color="primary"
-                            onClick={handleSubmit} >Create Room</Button>
+                    </Grid>
+                    <Grid container justify="flex-end" className="mtop--2">
+                        <Button variant="contained" color="primary" disabled={!currentDrawing}
+                            onClick={handleSubmit} >Create Room
+                            <Icon className="icon--mleft">done</Icon>
+                        </Button>
                     </Grid>
                 </Paper>
             </Grid>

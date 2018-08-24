@@ -1,1 +1,18 @@
-#canvas {}
+#canvas {
+    #board {
+        width: 100%;
+        border: 1px solid black;
+    }
+    .image-container--horizontal {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-around;
+        overflow: hidden;
+        width: 100%;
+    }
+    .image_container__list--horizontal {
+        flex-wrap: nowrap !important;
+        width: 100%;
+        transform: translateZ(0);
+    }
+}

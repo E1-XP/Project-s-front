@@ -6,7 +6,9 @@ import { lifecycle, compose } from 'recompose';
 import { State } from '../../store';
 import { actions } from '../../actions'
 
-type Props = {
+import CircularProgress from '@material-ui/core/CircularProgress';
+
+interface Props {
     isLoading: boolean;
     children?: React.ReactChildren;
 }
@@ -26,7 +28,11 @@ const mapDispatchToProps = (dispatch: Dispatch) => ({
 });
 
 export const PreloaderComponent: any = ({ isLoading, children }: Props) => {
-    return isLoading ? <p>Loading...</p> : (children);
+    return isLoading ?
+        <div className="container--fullwidthcenter windowheight">
+            <CircularProgress />
+        </div>
+        : (children);
 };
 
 export const Preloader = compose(

@@ -11,7 +11,7 @@ import { store } from "../store";
 import { types } from "../actions/types";
 import { actions } from "../actions";
 
-import { InvitationData } from '../components/room/navbar'
+import { InvitationData } from '../components/canvas/navbar'
 
 const URL = 'http://localhost:3001';
 

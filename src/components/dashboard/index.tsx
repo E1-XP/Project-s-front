@@ -27,7 +27,7 @@ const handlers = {
         props.pushRouter('/room/create');
     },
     handleRoomClick: (props: Props) => (e: any) => {
-        const id = e.target.dataset.id;
+        const id = e.target.closest('li').dataset.id;
 
         props.pushRouter(`/room/${id}`);
     },

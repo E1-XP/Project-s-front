@@ -58,11 +58,13 @@ export const RoomCreateFormComponent: ComponentType<Props & PassedProps> = ({ st
                                 <Input id="password" placeholder="Password" value={state.password}
                                     onChange={setPassword} disabled={!state.isPrivate} />
                             </FormControl>
-                            <Button onClick={goToNextStage} variant="contained" color="primary"
-                                className="mtop--1" >
-                                Next
-                        <Icon className="icon--mleft">arrow_right_alt</Icon>
-                            </Button>
+                            <Grid container justify="flex-end">
+                                <Button onClick={goToNextStage} variant="contained" color="primary"
+                                    className="mtop--1" >
+                                    Next
+                            <Icon className="icon--mleft">arrow_right_alt</Icon>
+                                </Button>
+                            </Grid>
                         </FormControl>
                     </Grid>
                 </Paper>

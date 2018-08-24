@@ -1,1 +1,7 @@
-#inbox {}
+#inbox {
+    .inbox__content {
+        text-align: center;
+        min-height: 500px;
+        max-height: 500px;
+    }
+}

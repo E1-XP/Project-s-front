@@ -15,6 +15,7 @@ interface NewDrawingData {
 export interface Props {
     state: IState
     user: UserData;
+    currentDrawing: string;
     setState: (v: IState) => void;
     handleSubmit: () => void;
     handleDrawingCreate: () => void;
@@ -54,7 +55,7 @@ const handlers = {
         props.initCreateNewDrawing({ name: props.state.name });
     },
     handleDrawingSelect: (props: Props) => (e: any) => {
-        props.initDrawingSelect(e.target.dataset.id);
+        props.initDrawingSelect(e.target.closest('li').dataset.id);
     },
     handleSubmit: (props: Props) => (e: any) => {
         const { user, state } = props;
@@ -68,7 +69,10 @@ const handlers = {
     }
 };
 
-const mapStateToProps = ({ user }: State) => ({ user: user.userData });
+const mapStateToProps = ({ user, canvas }: State) => ({
+    user: user.userData,
+    currentDrawing: canvas.currentDrawing
+});
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({
     initRoomCreate: (data: any) => dispatch(actions.rooms.initRoomCreate(data)),

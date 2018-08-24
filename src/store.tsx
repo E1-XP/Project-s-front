@@ -7,6 +7,12 @@ import { history } from "./history";
 import { rootReducer } from './reducers';
 import { rootEpic } from "./epics";
 
+interface DBItem {
+    id: number;
+    createdAt: string;
+    updatedAt: string;
+}
+
 export interface UserData {
     username: string;
     email: string;
@@ -19,9 +25,10 @@ export interface User {
     inboxMessages: InboxMessage[];
 }
 
-export interface InboxMessage {
+export interface InboxMessage extends DBItem {
     roomId: number;
     senderId: number;
+    senderName: string;
     receiverId: number;
 }
 
@@ -48,7 +55,6 @@ export interface ChatMessage {
     author: string;
     message: string;
 }
-
 
 export interface Chats {
     general: ChatMessage[];

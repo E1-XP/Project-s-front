@@ -160,8 +160,8 @@ export const handleSendRoomMessageEpic: Epic = (action$, state$) => action$
     .pipe(
         pluck('payload'),
         tap((data: any) => {
-            const { message, author, roomId } = data;
-            Socket.emit(`${roomId}/messages`, { message, author });
+            const { message, author, authorId, roomId } = data;
+            Socket.emit(`${roomId}/messages`, { message, author, authorId });
         }),
         ignoreElements()
     );
@@ -185,7 +185,8 @@ export const RoomCreateEpic: Epic = (action$, state$) => action$
             const drawingId = state$.value.canvas.currentDrawing;
             Socket.emit('room/create', { ...data, drawingId });
         }),
-        mapTo(actions.global.setIsLoading(true))
+        // mapTo(actions.global.setIsLoading(true))
+        ignoreElements()
     );
 
 export const handleRoomCreateEpic: Epic = (action$, state$) => action$
@@ -195,7 +196,7 @@ export const handleRoomCreateEpic: Epic = (action$, state$) => action$
         mergeMap(roomId => of(
             actions.rooms.setCurrentRoom(roomId),
             push(`/room/${roomId}`),
-            actions.global.setIsLoading(false)
+            // actions.global.setIsLoading(false)
         ))
     );
 

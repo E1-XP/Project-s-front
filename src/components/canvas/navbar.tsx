@@ -1,4 +1,4 @@
-import React, { ComponentType } from "react";
+import React, { ComponentType, Fragment } from "react";
 import { connect } from "react-redux";
 import { Dispatch } from "redux";
 import { compose, withHandlers } from "recompose";
@@ -7,9 +7,15 @@ import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { actions } from '../../actions';
 import { State, Rooms, UserData } from "../../store";
 
+import Button from '@material-ui/core/Button';
+import ExpansionPanel from '@material-ui/core/ExpansionPanel';
+import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
+import { CirclePicker } from 'react-color';
+
 export interface InvitationData {
     roomId: number;
     senderId: number;
+    senderName: string;
     receiverId: number;
 }
 
@@ -18,15 +24,18 @@ interface Params {
 }
 
 interface Props extends RouteComponentProps<Params> {
+    setState: (v: boolean) => void;
     rooms: Rooms;
     user: UserData
     isUserAdmin: (itm: number) => boolean;
     handleLoadImage: () => void;
     sendInvitationLink: () => void;
     initSendRoomInvitation: (data: InvitationData) => Dispatch;
+    toggleColorPicker: () => void;
 }
 
 interface PassedProps {
+    isColorPickerOpen: boolean;
     setSelectedColor: (e: any) => void;
     handleResetBtn: () => void;
     setIsImageSelectorOpen: (v?: boolean) => void;
@@ -42,30 +51,40 @@ const handlers = {
     sendInvitationLink: (props: Props) => () => {
         const roomId = Number(props.match.params.id);
         const senderId = props.user.id;
+        const senderName = props.user.username;
         const receiverId = Number(prompt('receiverId?'));
 
-        props.initSendRoomInvitation({ roomId, senderId, receiverId });
+        props.initSendRoomInvitation({ roomId, senderId, senderName, receiverId });
+    },
+    toggleColorPicker: (props: Props & PassedProps) => () => {
+        const value = !props.isColorPickerOpen;
+        props.setState(value);
     }
 };
 
-export const CanvasNavbarComponent: ComponentType<Props & PassedProps> = (props) => {
-    const { setSelectedColor, handleResetBtn, isUserAdmin, user,
-        handleLoadImage, sendInvitationLink } = props;
+export const CanvasNavbarComponent: ComponentType<Props & PassedProps> = ({
+    setSelectedColor, handleResetBtn, isUserAdmin, user, rooms, handleLoadImage,
+    sendInvitationLink, isColorPickerOpen, toggleColorPicker }) => {
 
-    if (!props.rooms.active) return (<p>...loading</p>);
+    if (!rooms.active) return (<p>...loading</p>);
 
-    return (
+    return (<Fragment>
         <nav>
-            {isUserAdmin(user.id) && <React.Fragment>
-                <button onClick={handleLoadImage}>Load Image</button>
-                <button onClick={handleResetBtn}>Reset</button>
-                <button>TODO</button>
-                <button>next</button>
-            </React.Fragment>}
-            <input type="color" onChange={setSelectedColor} />
-            <button onClick={sendInvitationLink}>Invite friend</button>
+            {isUserAdmin(user.id) && <Fragment>
+                <Button onClick={handleLoadImage}>Load Image</Button>
+                <Button onClick={handleResetBtn}>Reset</Button>
+                <Button>TODO</Button>
+                <Button>next</Button>
+            </Fragment>}
+            <Button onClick={toggleColorPicker}>Color Picker</Button>
+            <Button onClick={sendInvitationLink}> Invite friend</Button>
         </nav>
-    );
+        <ExpansionPanel expanded={isColorPickerOpen}>
+            <ExpansionPanelDetails >
+                <CirclePicker onChangeComplete={setSelectedColor} />
+            </ExpansionPanelDetails>
+        </ExpansionPanel>
+    </Fragment>);
 };
 
 const mapStateToProps = ({ user, rooms }: State) => ({

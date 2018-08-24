@@ -1,5 +1,3 @@
-import React, { ComponentType } from 'react';
-import { NavLink } from "react-router-dom";
 import { push } from "connected-react-router";
 import { connect, Dispatch } from "react-redux";
 import { compose, withState, withHandlers, lifecycle } from "recompose";
@@ -7,27 +5,36 @@ import { compose, withState, withHandlers, lifecycle } from "recompose";
 import { State } from "../../store";
 import { actions } from "../../actions";
 
+import { FormComponent } from './template';
+
 interface FormState {
     username: string;
     email: string;
     password: string;
 }
 
-interface Props {
+export interface Props {
     formState: FormState;
     setFormState: (obj: any) => void;
     setUsername: (props: any) => void;
     setEmail: (props: any) => void;
     setPassword: (props: any) => void;
-    handleSubmit: (e: any) => void;
+    handleSubmit: () => void;
     initAuthentication: (data: FormState) => void;
+    handleKeyNav: (e: KeyboardEvent) => void;
     location: any;
 }
 
 const lifecycleMethods = {
     componentDidMount() {
-        const { isUserLoggedIn, pushRouter } = this.props;
+        const { isUserLoggedIn, pushRouter, handleKeyNav } = this.props;
+
+        window.addEventListener('keypress', handleKeyNav);
+
         isUserLoggedIn && pushRouter("/dashboard");
+    },
+    componentWillUnmount() {
+        window.removeEventListener('keypress', this.props.handleKeyNav);
     }
 };
 
@@ -44,29 +51,15 @@ const handlers = {
         const { setFormState, formState } = props;
         setFormState({ ...formState, password: e.target.value });
     },
-    handleSubmit: (props: Props) => (e: any) => {
-        e.preventDefault();
-
+    handleSubmit: (props: Props) => () => {
         props.initAuthentication(props.formState);
     }
 };
 
-const FormComponent: ComponentType<Props> = ({ formState, setUsername, setEmail, setPassword, location, handleSubmit }: Props) => {
-    const currentRoute = location.pathname.toLowerCase().slice(1);
-    const formHeading = currentRoute === 'login' ? 'welcome to login' : 'welcome to signup';
-
-    return (<div>
-        <p>{formHeading}</p>
-        <NavLink to="/login">Login</NavLink>
-        <NavLink to="/signup">SignUp</NavLink>
-        <br />
-        <form onSubmit={handleSubmit}>
-            {currentRoute === 'signup' && <input placeholder="username" value={formState.username} onChange={setUsername} />}
-            <input placeholder="email" value={formState.email} onChange={setEmail} />
-            <input placeholder="password" type="password" value={formState.password} onChange={setPassword} />
-            <button>SEND</button>
-        </form>
-    </div>);
+const handlers2 = {
+    handleKeyNav: (props: Props) => (e: KeyboardEvent) => {
+        e.keyCode === 13 && props.handleSubmit();
+    }
 };
 
 const mapStateToProps = ({ router, global }: State) => ({
@@ -87,5 +80,6 @@ export const Form = compose(
         password: ""
     }),
     withHandlers(handlers),
+    withHandlers(handlers2),
     lifecycle<Props, {}>(lifecycleMethods)
 )(FormComponent);
