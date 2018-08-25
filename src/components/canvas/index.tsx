@@ -15,6 +15,7 @@ export interface Props {
     drawingPoints: DrawingPoint[][];
     broadcastedDrawingPoints: BroadcastedDrawingPoints;
     setIsMouseDown: (val: boolean) => void;
+    setIsColorPickerOpen: (val: boolean) => void;
     setIsMouseDownFalse: () => void;
     setIsImageSelectorOpen: (val?: boolean) => void;
     handleMouseDown: (e: MouseEvent) => void;
@@ -74,12 +75,25 @@ const stateHandlers = {
     setIsMouseDownFalse: (props: Props) => () => {
         props.setBoardState({ ...props.boardState, isMouseDown: false })
     },
-    setIsImageSelectorOpen: (props: Props) => (v?: boolean) => {
-        const value = v || !props.boardState.isImageSelectorOpen;
-        props.setBoardState({ ...props.boardState, isImageSelectorOpen: value })
+    setIsImageSelectorOpen: (props: Props) => (is?: boolean) => {
+        const value = is || !props.boardState.isImageSelectorOpen;
+        const bothOpened = value && props.boardState.isColorPickerOpen;
+
+        const newState = { ...props.boardState, isImageSelectorOpen: value };
+        if (bothOpened) newState.isColorPickerOpen = false;
+
+        props.setBoardState(newState);
     },
     setSelectedColor: (props: Props) => (color: any) => {
         props.setBoardState({ ...props.boardState, selectedColor: color.hex })
+    },
+    setIsColorPickerOpen: (props: Props) => (is: boolean) => {
+        const bothOpened = is && props.boardState.isImageSelectorOpen;
+
+        const newState = { ...props.boardState, isColorPickerOpen: is };
+        if (bothOpened) newState.isImageSelectorOpen = false;
+
+        props.setBoardState(newState);
     }
 };
 

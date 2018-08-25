@@ -9,11 +9,11 @@ import { ImageSelector } from "./imageselector";
 
 export const CanvasComponent: ComponentType<Props> = ({ onRef, boardState, setSelectedColor,
     handleMouseDown, handleMouseUp, handleResetBtn, handleMouseMove, setIsImageSelectorOpen,
-    handleImageChange }) => {
+    handleImageChange, setIsColorPickerOpen }) => {
 
     return (<div id="canvas">
         <CanvasNavbar setSelectedColor={setSelectedColor} handleResetBtn={handleResetBtn}
-            setIsImageSelectorOpen={setIsImageSelectorOpen}
+            setIsImageSelectorOpen={setIsImageSelectorOpen} setIsColorPickerOpen={setIsColorPickerOpen}
             isColorPickerOpen={boardState.isColorPickerOpen}
         />
         <ImageSelector isOpen={boardState.isImageSelectorOpen} handleImageChange={handleImageChange} />

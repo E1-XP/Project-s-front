@@ -39,6 +39,7 @@ interface PassedProps {
     setSelectedColor: (e: any) => void;
     handleResetBtn: () => void;
     setIsImageSelectorOpen: (v?: boolean) => void;
+    setIsColorPickerOpen: (v?: boolean) => void;
 }
 
 const handlers = {
@@ -58,7 +59,7 @@ const handlers = {
     },
     toggleColorPicker: (props: Props & PassedProps) => () => {
         const value = !props.isColorPickerOpen;
-        props.setState(value);
+        props.setIsColorPickerOpen(value);
     }
 };
 
