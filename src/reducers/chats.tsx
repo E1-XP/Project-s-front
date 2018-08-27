@@ -6,13 +6,11 @@ import { plainAction } from './index';
 export const chatsReducer: Reducer = (state: any = {}, action: plainAction) => {
     switch (action.type) {
         case types.SET_MESSAGES: {
-            const newState = {
-                ...state,
-                general: state.general.concat(),
-                selectedRoom: state.selectedRoom.concat()
-            };
+            const { channel } = action.payload;
 
-            newState[action.payload.channel] = action.payload.data;
+            const newState = { ...state };
+            newState[channel] = action.payload.data;
+
             return newState;
         };
         default: return state;

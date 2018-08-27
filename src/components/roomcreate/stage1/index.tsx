@@ -60,7 +60,7 @@ export const RoomCreateFormComponent: ComponentType<Props & PassedProps> = ({ st
                             </FormControl>
                             <Grid container justify="flex-end">
                                 <Button onClick={goToNextStage} variant="contained" color="primary"
-                                    className="mtop--1" >
+                                    className="mtop--1" disabled={!state.name.length} >
                                     Next
                             <Icon className="icon--mleft">arrow_right_alt</Icon>
                                 </Button>

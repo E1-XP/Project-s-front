@@ -7,6 +7,7 @@ import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import Icon from '@material-ui/core/Icon';
+import IconButton from '@material-ui/core/IconButton';
 import GridList from '@material-ui/core/GridList';
 import GridListTile from '@material-ui/core/GridListTile';
 import GridListTileBar from '@material-ui/core/GridListTileBar';
@@ -29,14 +30,14 @@ export const ImageSelectorComponent: ComponentType<Props & PassedProps> = ({ han
                             (<GridList cellHeight={160} cols={4} className="mbottom--2">
                                 {[<GridListTile key={'new-drawing'}
                                     onClick={handleDrawingCreate}>
-                                    {/* <img src={tile.img} alt={tile.title} /> */}
+                                    <IconButton>add</IconButton>
                                     {'new'}
                                     <GridListTileBar title={'new'} />
                                 </GridListTile>
                                 ].concat(drawings.map((itm: any) =>
                                     <GridListTile data-id={itm.id} key={itm.id}
                                         onClick={handleDrawingSelect}>
-                                        {/* <img src={tile.img} alt={tile.title} /> */}
+                                        <img src={`http://localhost:3001/static/images/${itm.id}.jpg`} alt="user drawing" />
                                         {itm.id}
                                         <GridListTileBar title={itm.id} />
                                     </GridListTile>))}

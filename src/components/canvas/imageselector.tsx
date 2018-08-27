@@ -30,7 +30,7 @@ const ImageSelectorComponent: ComponentType<Props & PassedProps> = ({ isOpen,
                 <GridList className="image_container__list--horizontal" cols={2.5}>
                     {drawings.length ? drawings.map((itm: any) =>
                         <GridListTile key={itm.id} data-id={itm.id} onClick={handleImageChange}>
-                            {/* <img src="" alt=""/> */}
+                            <img src={`http://localhost:3001/static/images/${itm.id}.jpg`} alt="user drawing" />
                             <GridListTileBar title={itm.id} />
                         </GridListTile>)
                         : 'no images found'}

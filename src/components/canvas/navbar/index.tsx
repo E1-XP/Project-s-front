@@ -1,16 +1,12 @@
-import React, { ComponentType, Fragment } from "react";
 import { connect } from "react-redux";
 import { Dispatch } from "redux";
-import { compose, withHandlers } from "recompose";
+import { compose, withHandlers, withState } from "recompose";
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 
-import { actions } from '../../actions';
-import { State, Rooms, UserData } from "../../store";
+import { actions } from '../../../actions';
+import { State, Rooms, UserData, Users } from "../../../store";
 
-import Button from '@material-ui/core/Button';
-import ExpansionPanel from '@material-ui/core/ExpansionPanel';
-import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
-import { CirclePicker } from 'react-color';
+import { CanvasNavbarComponent } from './template';
 
 export interface InvitationData {
     roomId: number;
@@ -23,10 +19,14 @@ interface Params {
     id: string;
 }
 
-interface Props extends RouteComponentProps<Params> {
+export interface Props extends RouteComponentProps<Params> {
+    isModalOpen: boolean;
     setState: (v: boolean) => void;
+    closeModal: () => void;
+    openModal: () => void;
     rooms: Rooms;
     user: UserData
+    users: Users;
     isUserAdmin: (itm: number) => boolean;
     handleLoadImage: () => void;
     sendInvitationLink: () => void;
@@ -34,12 +34,14 @@ interface Props extends RouteComponentProps<Params> {
     toggleColorPicker: () => void;
 }
 
-interface PassedProps {
+export interface PassedProps {
     isColorPickerOpen: boolean;
+    weight: number;
     setSelectedColor: (e: any) => void;
     handleResetBtn: () => void;
     setIsImageSelectorOpen: (v?: boolean) => void;
     setIsColorPickerOpen: (v?: boolean) => void;
+    setWeight: (e: any, v: number) => void;
 }
 
 const handlers = {
@@ -49,47 +51,29 @@ const handlers = {
     handleLoadImage: (props: Props & PassedProps) => () => {
         props.setIsImageSelectorOpen();
     },
-    sendInvitationLink: (props: Props) => () => {
+    sendInvitationLink: (props: Props) => (e: any) => {
         const roomId = Number(props.match.params.id);
         const senderId = props.user.id;
         const senderName = props.user.username;
-        const receiverId = Number(prompt('receiverId?'));
+        const receiverId = e.target.closest('li').dataset.id;
 
         props.initSendRoomInvitation({ roomId, senderId, senderName, receiverId });
     },
     toggleColorPicker: (props: Props & PassedProps) => () => {
         const value = !props.isColorPickerOpen;
         props.setIsColorPickerOpen(value);
+    },
+    openModal: (props: Props) => () => {
+        props.setState(true);
+    },
+    closeModal: (props: Props) => () => {
+        props.setState(false);
     }
 };
 
-export const CanvasNavbarComponent: ComponentType<Props & PassedProps> = ({
-    setSelectedColor, handleResetBtn, isUserAdmin, user, rooms, handleLoadImage,
-    sendInvitationLink, isColorPickerOpen, toggleColorPicker }) => {
-
-    if (!rooms.active) return (<p>...loading</p>);
-
-    return (<Fragment>
-        <nav>
-            {isUserAdmin(user.id) && <Fragment>
-                <Button onClick={handleLoadImage}>Load Image</Button>
-                <Button onClick={handleResetBtn}>Reset</Button>
-                <Button>TODO</Button>
-                <Button>next</Button>
-            </Fragment>}
-            <Button onClick={toggleColorPicker}>Color Picker</Button>
-            <Button onClick={sendInvitationLink}> Invite friend</Button>
-        </nav>
-        <ExpansionPanel expanded={isColorPickerOpen}>
-            <ExpansionPanelDetails >
-                <CirclePicker onChangeComplete={setSelectedColor} />
-            </ExpansionPanelDetails>
-        </ExpansionPanel>
-    </Fragment>);
-};
-
-const mapStateToProps = ({ user, rooms }: State) => ({
+const mapStateToProps = ({ user, users, rooms }: State) => ({
     user: user.userData,
+    users,
     rooms
 });
 
@@ -100,5 +84,6 @@ const mapDispatchToProps = (dispatch: Dispatch) => ({
 export const CanvasNavbar = compose<Props, PassedProps>(
     withRouter,
     connect(mapStateToProps, mapDispatchToProps),
+    withState('isModalOpen', 'setState', false),
     withHandlers(handlers)
 )(CanvasNavbarComponent);

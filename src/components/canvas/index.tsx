@@ -15,6 +15,7 @@ export interface Props {
     drawingPoints: DrawingPoint[][];
     broadcastedDrawingPoints: BroadcastedDrawingPoints;
     setIsMouseDown: (val: boolean) => void;
+    setWeight: (e: any, val: number) => void;
     setIsColorPickerOpen: (val: boolean) => void;
     setIsMouseDownFalse: () => void;
     setIsImageSelectorOpen: (val?: boolean) => void;
@@ -43,6 +44,7 @@ interface BoardState {
     isImageSelectorOpen: boolean;
     isColorPickerOpen: boolean;
     selectedColor: string;
+    weight: number;
 }
 
 interface DrawingPoint {
@@ -86,6 +88,9 @@ const stateHandlers = {
     },
     setSelectedColor: (props: Props) => (color: any) => {
         props.setBoardState({ ...props.boardState, selectedColor: color.hex })
+    },
+    setWeight: (props: Props) => (e: any, value: number) => {
+        props.setBoardState({ ...props.boardState, weight: value })
     },
     setIsColorPickerOpen: (props: Props) => (is: boolean) => {
         const bothOpened = is && props.boardState.isImageSelectorOpen;
@@ -165,7 +170,7 @@ const handlers1 = () => {
 const handlers2 = {
     handleMouseDown: (props: Props) => (e: MouseEvent) => {
         const { clientX, clientY } = e;
-        const { selectedColor } = props.boardState;
+        const { selectedColor, weight } = props.boardState;
         const { top, left } = props.getBoardRef().getBoundingClientRect();
 
         props.setNewDrawingPointsGroup();
@@ -174,13 +179,13 @@ const handlers2 = {
             x: clientX - left,
             y: clientY - top,
             fill: selectedColor,
-            weight: 2
+            weight
         });
         props.setDrawingPoint({
             x: clientX - left + 2,
             y: clientY - top + 2,
             fill: selectedColor,
-            weight: 2
+            weight
         });
 
         props.renderImage();
@@ -197,14 +202,14 @@ const handlers2 = {
     },
     handleMouseMove: (props: Props) => (e: MouseEvent) => {
         const { clientX, clientY } = e;
-        const { selectedColor } = props.boardState;
+        const { selectedColor, weight } = props.boardState;
         const { top, left } = props.getBoardRef().getBoundingClientRect();
 
         props.setDrawingPoint({
             x: clientX - left,
             y: clientY - top,
             fill: selectedColor,
-            weight: 2
+            weight
         });
 
         props.renderImage();
@@ -232,7 +237,8 @@ export const Canvas = compose(
         isMouseDown: false,
         isImageSelectorOpen: false,
         isColorPickerOpen: false,
-        selectedColor: '#000000'
+        selectedColor: '#000000',
+        weight: 2
     }),
     withHandlers(stateHandlers),
     withHandlers(handlers1),
