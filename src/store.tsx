@@ -118,7 +118,7 @@ export const initialState: DeepPartial<{}> = {
     },
     rooms: {
         active: null,
-        list: {}
+        list: undefined
     },
     chats: {
         general: [],

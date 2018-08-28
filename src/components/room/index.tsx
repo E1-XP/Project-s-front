@@ -19,6 +19,7 @@ export interface Props extends RouteComponentProps<Params> {
     user: UserData;
     users: Users;
     isSocketConnected: boolean;
+    isRoomUndefined: () => boolean;
     isUserAdmin: (itm: string | number, prevProps?: Props) => boolean;
     handleBeforeUnload: (e: BeforeUnloadEvent) => void;
     changeRoomOwner: () => void;
@@ -34,10 +35,16 @@ const hooks = {
         console.log('SOCKET CONNECTED?' + this.props.isSocketConnected);
         setTimeout(this.props.initRoomEnter, 500);
 
-        this.props.isUserAdmin(this.props.user.id) &&
-            window.addEventListener('beforeunload', this.props.handleBeforeUnload);
+        setTimeout(() => {
+            if (this.props.isRoomUndefined()) return;
+
+            this.props.isUserAdmin(this.props.user.id) &&
+                window.addEventListener('beforeunload', this.props.handleBeforeUnload);
+        }, 500);
     },
     componentWillUnmount() {
+        if (this.props.isRoomUndefined()) return;
+
         this.props.initRoomLeave();
 
         this.props.isUserAdmin(this.props.user.id) &&
@@ -45,7 +52,11 @@ const hooks = {
     },
     componentDidUpdate(prevP: Props) {
         const { isUserAdmin, user, handleBeforeUnload } = this.props;
-        const isRoomListAvailable = Object.keys(prevP.rooms.list).length;
+
+        if (this.props.isRoomUndefined()) return;
+
+        const roomListLoaded = prevP.rooms.list !== undefined;
+        const isRoomListAvailable = roomListLoaded ? Object.keys(prevP.rooms.list).length : false;
 
         if (isRoomListAvailable && !isUserAdmin(prevP.user.id, prevP) && isUserAdmin(user.id)) {
             window.addEventListener('beforeunload', handleBeforeUnload);
@@ -57,6 +68,11 @@ const hooks = {
 };
 
 export const handlers = {
+    isRoomUndefined: (props: Props) => () => {
+        const roomId = props.match.params.id;
+        if (props.rooms.list === undefined) return true;
+        return props.rooms.list[roomId] === undefined;
+    },
     isUserAdmin: (props: Props) => (itm: string | number, prevP?: Props) => {
         const roomId = props.match.params.id;
 
@@ -76,7 +92,6 @@ export const handlers = {
         props.setState(e.target.value);
     },
     handleSubmit: (props: Props) => (value: string) => {
-
         props.initSendRoomMessage({
             message: value,
             author: props.user.username,
@@ -86,7 +101,7 @@ export const handlers = {
     },
     changeRoomOwner: (props: Props) => (e: any) => {
         const roomId = props.match.params.id;
-        const userId = e.target.dataset.id;
+        const userId = e.target.closest('li').dataset.id;
 
         props.initRoomAdminChange({ roomId, userId });
     }

@@ -41,7 +41,7 @@ export const DashboardComponent: ComponentType<Props> = ({ handleMessageSubmit,
                             Available Rooms
                     </Typography>
                         <List>
-                            {Object.keys(rooms.list).length ?
+                            {rooms.list && Object.keys(rooms.list).length ?
                                 Object.keys(rooms.list).map((itm) =>
                                     <ListItem key={itm} data-id={itm} onClick={handleRoomClick}>
                                         <ListItemText primary={rooms.list[itm].name} />

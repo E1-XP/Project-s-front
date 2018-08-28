@@ -1,5 +1,5 @@
 import React, { ComponentType } from 'react';
-import { Prompt } from 'react-router-dom';
+import { Prompt, Link } from 'react-router-dom';
 import './style.scss';
 
 import { Props } from './index';
@@ -16,12 +16,36 @@ import Icon from '@material-ui/core/Icon';
 import { Canvas } from "../canvas";
 import { Chat } from '../chat';
 
-export const RoomComponent: ComponentType<Props> = ({ changeRoomOwner, isUserAdmin,
-    handleSubmit, isSocketConnected, setMessage, user, users, rooms, chats, state, match }) => {
+export const RoomComponent: ComponentType<Props> = ({ changeRoomOwner, isUserAdmin, handleSubmit,
+    isSocketConnected, setMessage, user, users, rooms, chats, state, match, isRoomUndefined }) => {
 
-    const isLoaded = isSocketConnected && Object.keys(rooms.list).length && match.params.id;
+    const isLoaded = isSocketConnected && rooms.list !== undefined &&
+        Object.keys(users.selectedRoom).length && match.params.id;
 
     if (!isLoaded) return <p>loading...</p>;
+
+    if (isLoaded && isRoomUndefined()) {
+        return (<main id="room" className="container">
+            <Grid container spacing={16}>
+                <Grid item xs={12} >
+                    <Paper className="paper">
+                        <Typography variant="headline" align="center" className="mbottom-2">
+                            Room not exist
+                        </Typography>
+                        <Typography variant="subheading" align="center" className="mbottom-2">
+                            Probably admin closed it or you entered incorrect url.
+                        </Typography>
+                        <Grid container item md={12} justify="center" >
+                            <Link to="/dashboard">
+                                <Button variant="contained" color="primary">
+                                    Return to the main page</Button>
+                            </Link>
+                        </Grid>
+                    </Paper>
+                </Grid>
+            </Grid>
+        </main>);
+    };
 
     return (<main id="room" className="container">
         <Grid container spacing={16}>
@@ -37,15 +61,16 @@ export const RoomComponent: ComponentType<Props> = ({ changeRoomOwner, isUserAdm
                         <List>
                             {Object.keys(users.selectedRoom)
                                 .map(id => (
-                                    <ListItem key={id}>
+                                    <ListItem key={id} data-id={id}>
                                         <ListItemText primary={users.general[id]}
                                             secondary={isUserAdmin(Number(id)) && 'admin'} />
-                                        {/* {users.selectedRoom[id]}
-                            {isUserAdmin(user.id) && !isUserAdmin(Number(id)) &&
-                                <span data-id={id}
-                                    onClick={changeRoomOwner}>*Set as admin</span>} */}
-                                    </ListItem>)
-                                )}
+                                        {isUserAdmin(user.id) && !isUserAdmin(Number(id)) &&
+                                            <Button size="small" variant="contained" color="primary"
+                                                onClick={changeRoomOwner}>
+                                                Set admin
+                                        </Button>}
+                                    </ListItem>))
+                            }
                         </List>
                     </Paper>
                 </Grid>

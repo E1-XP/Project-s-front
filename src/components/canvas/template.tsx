@@ -1,5 +1,4 @@
 import React, { ComponentType } from "react";
-import _throttle from "lodash.throttle";
 import './style.scss';
 
 import { Props } from './index';
@@ -19,8 +18,8 @@ export const CanvasComponent: ComponentType<Props> = ({ onRef, boardState, setSe
         <ImageSelector isOpen={boardState.isImageSelectorOpen} handleImageChange={handleImageChange} />
         <canvas id="board"
             ref={onRef} onMouseDown={handleMouseDown} onMouseUp={handleMouseUp}
-            onMouseMove={boardState.isMouseDown ? _throttle(handleMouseMove, 50) : null}
-            width={window.innerWidth * 0.6} height={window.innerHeight * 0.9}
+            onMouseMove={boardState.isMouseDown ? handleMouseMove : null}
+            width={1280} height={720}
         />
     </div>);
 };

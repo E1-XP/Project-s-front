@@ -64,8 +64,9 @@ export const CanvasNavbarComponent: ComponentType<Props & PassedProps> = ({
                                 .map(id => (
                                     <ListItem key={id} data-id={id}>
                                         <ListItemText primary={users.general[id]} />
-                                        <Button variant="contained" color="primary"
-                                            onClick={sendInvitationLink}>Send Invitation</Button>
+                                        {!users.selectedRoom[id] ? <Button variant="contained" color="primary"
+                                            onClick={sendInvitationLink}>Send Invitation</Button> :
+                                            <p>this user is in room already</p>}
                                     </ListItem>))}
                         </List> :
                         <Typography variant="title" align="center" className="mbottom-2">

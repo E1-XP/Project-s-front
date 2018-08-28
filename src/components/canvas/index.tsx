@@ -1,6 +1,7 @@
 import { MouseEvent } from "react";
 import { compose, lifecycle, withHandlers, withState } from "recompose";
 import { connect, Dispatch } from "react-redux";
+import _throttle from "lodash.throttle";
 
 import { actions } from "../../actions";
 import { State } from "../../store";
@@ -22,6 +23,8 @@ export interface Props {
     handleMouseDown: (e: MouseEvent) => void;
     handleMouseUp: (e: MouseEvent) => void;
     handleMouseMove: (e: MouseEvent) => void;
+    drawPoint: (e: MouseEvent, x?: number, y?: number, fill?: string,
+        weightArg?: number) => void;
     setDrawingPoint: (v: DrawingPoint) => Dispatch;
     setNewDrawingPointsGroup: () => Dispatch;
     initClearDrawingPoints: () => Dispatch;
@@ -33,6 +36,8 @@ export interface Props {
     handleImageChange: (e: any) => void;
     initInRoomDrawingSelect: (id: number) => Dispatch;
     handleResetBtn: () => void;
+    initializeBoard: () => void;
+    handleResize: (e?: any) => void;
 }
 
 interface BroadcastedDrawingPoints {
@@ -51,12 +56,13 @@ interface DrawingPoint {
     x: number;
     y: number;
     fill: string;
-    weight: number
+    weight: number;
 }
 
 const lifecycleMethods = {
     componentDidMount() {
         this.props.initializeBoard();
+        this.props.handleResize();
         this.props.drawingPoints.length && this.props.renderImage();
     },
     componentWillUnmount() {
@@ -110,11 +116,28 @@ const handlers1 = () => {
         onRef: (props: Props) => (ref: any) => boardRef = ref,
         getBoardRef: (props: Props) => () => boardRef,
         initializeBoard: (props: Props) => () => {
-            document.addEventListener('mouseup', props.setIsMouseDownFalse);
             ctx = boardRef.getContext('2d');
+            document.addEventListener('mouseup', props.setIsMouseDownFalse);
         },
         prepareForUnmount: (props: Props) => () => {
             document.removeEventListener('mouseup', props.setIsMouseDownFalse);
+        },
+        drawPoint: (props: Props) => (e: MouseEvent, x?: number, y?: number, fill?: string,
+            weightArg?: number) => {
+            const { pageX, pageY } = e;
+            const { selectedColor, weight } = props.boardState;
+            const board = boardRef;
+            const { top, left, width, height } = boardRef.getBoundingClientRect();
+
+            const xPos = ((pageX - left - scrollX) / width) * board.width;
+            const yPos = ((pageY - top - scrollY) / height) * board.height;
+
+            props.setDrawingPoint({
+                x: x !== undefined ? x : xPos,
+                y: y !== undefined ? y : yPos,
+                fill: fill !== undefined ? fill : selectedColor,
+                weight: weightArg !== undefined ? weightArg : weight
+            });
         },
         renderImage: (props: Props) => () => {
             console.log('rendering');
@@ -168,25 +191,21 @@ const handlers1 = () => {
 };
 
 const handlers2 = {
+    handleResize: (props: Props) => () => {
+        window.addEventListener('resize', props.renderImage);
+    },
     handleMouseDown: (props: Props) => (e: MouseEvent) => {
-        const { clientX, clientY } = e;
-        const { selectedColor, weight } = props.boardState;
-        const { top, left } = props.getBoardRef().getBoundingClientRect();
+        const { pageX, pageY } = e;
+        const board = props.getBoardRef();
+        const { top, left, width, height } = board.getBoundingClientRect();
 
         props.setNewDrawingPointsGroup();
 
-        props.setDrawingPoint({
-            x: clientX - left,
-            y: clientY - top,
-            fill: selectedColor,
-            weight
-        });
-        props.setDrawingPoint({
-            x: clientX - left + 2,
-            y: clientY - top + 2,
-            fill: selectedColor,
-            weight
-        });
+        const xPos = ((pageX - left - scrollX) / width) * board.width;
+        const yPos = ((pageY - top - scrollY) / height) * board.height;
+
+        props.drawPoint(e);
+        props.drawPoint(e, xPos + 2, yPos + 2)
 
         props.renderImage();
         props.setIsMouseDown(true);
@@ -200,20 +219,10 @@ const handlers2 = {
             props.initCanvasToImage(imgB64);
         }, 500);
     },
-    handleMouseMove: (props: Props) => (e: MouseEvent) => {
-        const { clientX, clientY } = e;
-        const { selectedColor, weight } = props.boardState;
-        const { top, left } = props.getBoardRef().getBoundingClientRect();
-
-        props.setDrawingPoint({
-            x: clientX - left,
-            y: clientY - top,
-            fill: selectedColor,
-            weight
-        });
-
+    handleMouseMove: (props: Props) => _throttle((e: MouseEvent) => {
+        props.drawPoint(e);
         props.renderImage();
-    }
+    }, 150)
 };
 
 const mapStateToProps = ({ canvas, user }: State) => ({
