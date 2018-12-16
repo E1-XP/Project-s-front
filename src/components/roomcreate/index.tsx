@@ -16,7 +16,7 @@ export interface Props {
   state: IState;
   user: UserData;
   currentDrawing: string;
-  setState: (v: IState) => void;
+  setState: (v: Partial<IState>) => void;
   handleSubmit: () => void;
   handleDrawingCreate: () => void;
   handleDrawingSelect: () => void;
@@ -81,7 +81,7 @@ const mapDispatchToProps = (dispatch: Dispatch) => ({
   initDrawingSelect: (v: number) => dispatch(actions.user.initDrawingSelect(v))
 });
 
-export const RoomCreate = compose(
+export const RoomCreate = compose<Props, {}>(
   connect(
     mapStateToProps,
     mapDispatchToProps

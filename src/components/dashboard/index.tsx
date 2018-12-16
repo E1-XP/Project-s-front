@@ -1,5 +1,5 @@
 import { connect } from "react-redux";
-import { compose, withHandlers, withState } from "recompose";
+import { compose, withHandlers, ReactLifeCycleFunctions } from "recompose";
 import { push } from "connected-react-router";
 import { Dispatch } from "redux";
 
@@ -55,7 +55,7 @@ const mapDispatchToProps = (dispatch: Dispatch) => ({
     dispatch(actions.chats.initSendGeneralMesssage(data))
 });
 
-export const Dashboard = compose(
+export const Dashboard = compose<Props, {}>(
   connect(
     mapStateToProps,
     mapDispatchToProps

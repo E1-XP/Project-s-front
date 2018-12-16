@@ -6,7 +6,7 @@ import { Props } from "./index";
 import { CanvasNavbar } from "./navbar";
 import { ImageSelector } from "./imageselector";
 
-export const CanvasComponent: ComponentType<Props> = ({
+export const CanvasComponent = ({
   onRef,
   boardState,
   setSelectedColor,
@@ -18,7 +18,7 @@ export const CanvasComponent: ComponentType<Props> = ({
   handleImageChange,
   setIsColorPickerOpen,
   setWeight
-}) => {
+}: Props) => {
   return (
     <div id="canvas">
       <CanvasNavbar
@@ -39,7 +39,7 @@ export const CanvasComponent: ComponentType<Props> = ({
         ref={onRef}
         onMouseDown={handleMouseDown}
         onMouseUp={handleMouseUp}
-        onMouseMove={boardState.isMouseDown ? handleMouseMove : null}
+        onMouseMove={boardState.isMouseDown ? handleMouseMove : undefined}
         width={1280}
         height={720}
       />

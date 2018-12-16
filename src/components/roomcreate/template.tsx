@@ -1,4 +1,4 @@
-import React, { ComponentType } from "react";
+import React from "react";
 import "./style.scss";
 
 import { Props } from "./index";
@@ -6,7 +6,7 @@ import { Props } from "./index";
 import { RoomCreateForm } from "./stage1";
 import { ImageSelector } from "./stage2";
 
-export const RoomCreateComponent: ComponentType<Props> = ({
+export const RoomCreateComponent = ({
   handleSubmit,
   state,
   setName,
@@ -16,7 +16,7 @@ export const RoomCreateComponent: ComponentType<Props> = ({
   goToNextStage,
   handleDrawingCreate,
   handleDrawingSelect
-}) => {
+}: Props) => {
   switch (state.formStage) {
     case 1:
       return (
@@ -37,5 +37,7 @@ export const RoomCreateComponent: ComponentType<Props> = ({
           handleDrawingSelect={handleDrawingSelect}
         />
       );
+    default:
+      return <p>loading...</p>;
   }
 };

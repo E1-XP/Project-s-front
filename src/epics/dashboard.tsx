@@ -26,7 +26,7 @@ export const handleSendGeneralMessageEpic: Epic = (action$, state$) =>
   action$.ofType(types.INIT_SEND_GENERAL_MESSAGE).pipe(
     pluck("payload"),
     tap(data => {
-      Socket.emit("general/messages", data);
+      Socket!.emit("general/messages", data);
     }),
     ignoreElements()
   );
@@ -46,9 +46,9 @@ export const checkInboxEpic: Epic = (action$, state$) =>
 
 export const sendRoomInvitationEpic: Epic = (action$, state$) =>
   action$.ofType(types.INIT_SEND_INBOX_MESSAGE).pipe(
-    pluck("payload"),
+    pluck<{}, any>("payload"),
     tap((data: InvitationData) => {
-      Socket.emit(`${data.senderId}/inbox`, data);
+      Socket!.emit(`${data.senderId}/inbox`, data);
     }),
     ignoreElements()
   );

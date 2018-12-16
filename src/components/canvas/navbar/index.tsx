@@ -40,9 +40,11 @@ export interface PassedProps {
   setSelectedColor: (e: any) => void;
   handleResetBtn: () => void;
   setIsImageSelectorOpen: (v?: boolean) => void;
-  setIsColorPickerOpen: (v?: boolean) => void;
+  setIsColorPickerOpen: (v: boolean) => void;
   setWeight: (e: any, v: number) => void;
 }
+
+export type CombinedProps = Props & PassedProps;
 
 const handlers = {
   isUserAdmin: (props: Props) => (id: string) => {
@@ -82,7 +84,7 @@ const mapDispatchToProps = (dispatch: Dispatch) => ({
     dispatch(actions.user.initSendRoomInvitation(data))
 });
 
-export const CanvasNavbar = compose<Props, PassedProps>(
+export const CanvasNavbar = compose<CombinedProps, PassedProps>(
   withRouter,
   connect(
     mapStateToProps,

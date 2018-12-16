@@ -28,7 +28,7 @@ export const drawingBroadcastEpic: Epic = (action$, state$) =>
       const roomId = state$.value.rooms.active;
       const drawingId = state$.value.canvas.currentDrawing;
 
-      Socket.emit(`${roomId}/draw`, { ...v.payload, drawingId });
+      Socket!.emit(`${roomId}/draw`, { ...v.payload, drawingId });
     }),
     mapTo(actions.canvas.setDrawCount())
   );
@@ -76,7 +76,7 @@ export const selectDrawingInRoom: Epic = (action$, state$) =>
       store.dispatch(actions.canvas.clearDrawingPoints());
       store.dispatch(actions.canvas.setCurrentDrawing(drawingId));
 
-      Socket.emit(`${roomId}/draw/change`, { drawingId, roomId });
+      Socket!.emit(`${roomId}/draw/change`, { drawingId, roomId });
     }),
     ignoreElements()
   );
@@ -103,7 +103,7 @@ export const drawingBroadcastNewPointsGroupEpic: Epic = (action$, state$) =>
       const roomId = state$.value.rooms.active;
       const userId = state$.value.user.userData.id;
 
-      Socket.emit(`${roomId}/draw/newgroup`, userId);
+      Socket!.emit(`${roomId}/draw/newgroup`, userId);
     }),
     ignoreElements()
   );
@@ -114,7 +114,7 @@ export const drawingBroadcastMouseUpEpic: Epic = (action$, state$) =>
       const roomId = state$.value.rooms.active;
       const drawCount = state$.value.canvas.drawCount;
 
-      Socket.emit(`${roomId}/draw/mouseup`, drawCount);
+      Socket!.emit(`${roomId}/draw/mouseup`, drawCount);
       store.dispatch(actions.canvas.setDrawCount(0));
     }),
     ignoreElements()
@@ -148,7 +148,7 @@ export const drawingResetEpic: Epic = (action$, state$) =>
       const userId = state$.value.user.userData.id;
       const drawingId = state$.value.canvas.currentDrawing;
 
-      Socket.emit(`${roomId}/draw/reset`, { userId, drawingId });
+      Socket!.emit(`${roomId}/draw/reset`, { userId, drawingId });
     }),
     ignoreElements()
   );

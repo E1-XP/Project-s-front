@@ -14,9 +14,9 @@ import Typography from "@material-ui/core/Typography";
 import Icon from "@material-ui/core/Icon";
 import { CirclePicker } from "react-color";
 
-import { Props, PassedProps } from "./index";
+import { CombinedProps } from "./index";
 
-export const CanvasNavbarComponent: ComponentType<Props & PassedProps> = ({
+export const CanvasNavbarComponent = ({
   setSelectedColor,
   handleResetBtn,
   isUserAdmin,
@@ -32,7 +32,7 @@ export const CanvasNavbarComponent: ComponentType<Props & PassedProps> = ({
   toggleColorPicker,
   setWeight,
   weight
-}) => {
+}: CombinedProps) => {
   if (!rooms.active) return <p>...loading</p>;
 
   const userList = Object.keys(users.general);

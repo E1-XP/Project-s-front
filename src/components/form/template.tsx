@@ -10,14 +10,14 @@ import InputLabel from "@material-ui/core/InputLabel";
 import Input from "@material-ui/core/Input";
 import Button from "@material-ui/core/Button";
 
-export const FormComponent: ComponentType<Props> = ({
+export const FormComponent = ({
   formState,
   setUsername,
   setEmail,
   setPassword,
   location,
   handleSubmit
-}) => {
+}: Props) => {
   const currentRoute = location.pathname.toLowerCase().slice(1);
   const formHeading =
     currentRoute === "login"
@@ -34,7 +34,7 @@ export const FormComponent: ComponentType<Props> = ({
             </Typography>
             <Grid container justify="center">
               <Grid item md={6} sm={7} xs={10}>
-                <FormControl component="form" margin="normal" fullWidth>
+                <FormControl margin="normal" fullWidth>
                   {currentRoute === "signup" && (
                     <FormControl margin="dense">
                       <InputLabel htmlFor="username">Username</InputLabel>

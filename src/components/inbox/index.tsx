@@ -1,4 +1,4 @@
-import { compose, lifecycle } from "recompose";
+import { compose, lifecycle, ReactLifeCycleFunctions } from "recompose";
 import { connect } from "react-redux";
 import { Dispatch } from "redux";
 import { push } from "connected-react-router";
@@ -17,7 +17,7 @@ export interface Props {
   setInboxCount: (v?: number) => Dispatch;
 }
 
-const hooks = {
+const hooks: ReactLifeCycleFunctions<Props, {}> = {
   componentDidMount() {
     this.props.initCheckInbox();
     this.props.setInboxCount(0);
@@ -36,7 +36,7 @@ const mapDispatchToProps = (dispatch: Dispatch) => ({
   pushRouter: (s: string) => dispatch(push(s))
 });
 
-export const Inbox = compose(
+export const Inbox = compose<Props, {}>(
   connect(
     mapStateToProps,
     mapDispatchToProps

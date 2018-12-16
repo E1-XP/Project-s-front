@@ -1,6 +1,13 @@
 import { push } from "connected-react-router";
-import { connect, Dispatch } from "react-redux";
-import { compose, withState, withHandlers, lifecycle } from "recompose";
+import { connect } from "react-redux";
+import { Dispatch } from "redux";
+import {
+  compose,
+  withState,
+  withHandlers,
+  lifecycle,
+  ReactLifeCycleFunctions
+} from "recompose";
 
 import { State } from "../../store";
 import { actions } from "../../actions";
@@ -15,6 +22,7 @@ interface FormState {
 
 export interface Props {
   formState: FormState;
+  location: any;
   setFormState: (obj: any) => void;
   setUsername: (props: any) => void;
   setEmail: (props: any) => void;
@@ -22,10 +30,11 @@ export interface Props {
   handleSubmit: () => void;
   initAuthentication: (data: FormState) => void;
   handleKeyNav: (e: KeyboardEvent) => void;
-  location: any;
+  pushRouter: (str: string) => Dispatch;
+  isUserLoggedIn: () => Dispatch;
 }
 
-const lifecycleMethods = {
+const lifecycleMethods: ReactLifeCycleFunctions<Props, {}> = {
   componentDidMount() {
     const { isUserLoggedIn, pushRouter, handleKeyNav } = this.props;
 
@@ -73,7 +82,7 @@ const mapDispatchToProps = (dispatch: Dispatch) => ({
   pushRouter: (str: string) => dispatch(push(str))
 });
 
-export const Form = compose(
+export const Form = compose<Props, {}>(
   connect(
     mapStateToProps,
     mapDispatchToProps
