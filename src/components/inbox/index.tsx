@@ -1,42 +1,45 @@
-import { compose, lifecycle } from 'recompose';
-import { connect } from 'react-redux';
-import { Dispatch } from 'redux';
-import { push } from 'connected-react-router';
+import { compose, lifecycle } from "recompose";
+import { connect } from "react-redux";
+import { Dispatch } from "redux";
+import { push } from "connected-react-router";
 
-import { actions } from '../../actions'
-import { State, User, Users, RoomsList } from '../../store';
+import { actions } from "../../actions";
+import { State, User, Users, RoomsList } from "../../store";
 
-import { InboxComponent } from './template';
+import { InboxComponent } from "./template";
 
 export interface Props {
-    user: User;
-    users: Users;
-    rooms: RoomsList;
-    pushRouter: (s: string) => Dispatch;
-    initCheckInbox: () => Dispatch;
-    setInboxCount: (v?: number) => Dispatch;
+  user: User;
+  users: Users;
+  rooms: RoomsList;
+  pushRouter: (s: string) => Dispatch;
+  initCheckInbox: () => Dispatch;
+  setInboxCount: (v?: number) => Dispatch;
 }
 
 const hooks = {
-    componentDidMount() {
-        this.props.initCheckInbox();
-        this.props.setInboxCount(0);
-    }
+  componentDidMount() {
+    this.props.initCheckInbox();
+    this.props.setInboxCount(0);
+  }
 };
 
 const mapStateToProps = ({ user, users, rooms }: State) => ({
-    user,
-    users,
-    rooms: rooms.list
+  user,
+  users,
+  rooms: rooms.list
 });
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({
-    initCheckInbox: () => dispatch(actions.user.initCheckInbox()),
-    setInboxCount: (v?: number) => dispatch(actions.global.setInboxCount(v)),
-    pushRouter: (s: string) => dispatch(push(s))
+  initCheckInbox: () => dispatch(actions.user.initCheckInbox()),
+  setInboxCount: (v?: number) => dispatch(actions.global.setInboxCount(v)),
+  pushRouter: (s: string) => dispatch(push(s))
 });
 
 export const Inbox = compose(
-    connect(mapStateToProps, mapDispatchToProps),
-    lifecycle<Props, {}>(hooks)
+  connect(
+    mapStateToProps,
+    mapDispatchToProps
+  ),
+  lifecycle<Props, {}>(hooks)
 )(InboxComponent);
