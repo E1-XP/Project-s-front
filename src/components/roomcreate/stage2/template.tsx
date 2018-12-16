@@ -1,6 +1,6 @@
 import React, { ComponentType } from "react";
 
-import { Props, PassedProps } from "./index";
+import { CombinedProps } from "./index";
 
 import Grid from "@material-ui/core/Grid";
 import Paper from "@material-ui/core/Paper";
@@ -12,13 +12,13 @@ import GridList from "@material-ui/core/GridList";
 import GridListTile from "@material-ui/core/GridListTile";
 import GridListTileBar from "@material-ui/core/GridListTileBar";
 
-export const ImageSelectorComponent: ComponentType<Props & PassedProps> = ({
+export const ImageSelectorComponent = ({
   handleSubmit,
   handleDrawingCreate,
   handleDrawingSelect,
   drawings,
   currentDrawing
-}) => {
+}: CombinedProps) => {
   return (
     <main id="roomcreate" className="container">
       <Grid container spacing={16}>

@@ -24,13 +24,15 @@ interface PassedProps {
   goToNextStage: () => void;
 }
 
-export const RoomCreateFormComponent: ComponentType<Props & PassedProps> = ({
+type CombinedProps = Props & PassedProps;
+
+export const RoomCreateFormComponent = ({
   state,
   setName,
   setPassword,
   setIsPrivate,
   goToNextStage
-}) => {
+}: CombinedProps) => {
   return (
     <main id="roomcreate" className="container">
       <Grid container spacing={16}>
@@ -40,7 +42,7 @@ export const RoomCreateFormComponent: ComponentType<Props & PassedProps> = ({
               Create new Room
             </Typography>
             <Grid item xs={6} className="griditem--center mtop--2 mbottom--2">
-              <FormControl component="form" fullWidth margin="normal">
+              <FormControl fullWidth margin="normal">
                 <FormControl margin="dense">
                   <InputLabel htmlFor="name">Name</InputLabel>
                   <Input
@@ -65,7 +67,7 @@ export const RoomCreateFormComponent: ComponentType<Props & PassedProps> = ({
                   <Input
                     id="password"
                     placeholder="Password"
-                    value={state.password}
+                    value={state.password!}
                     onChange={setPassword}
                     disabled={!state.isPrivate}
                   />
@@ -91,6 +93,4 @@ export const RoomCreateFormComponent: ComponentType<Props & PassedProps> = ({
   );
 };
 
-export const RoomCreateForm = compose<Props, PassedProps>()(
-  RoomCreateFormComponent
-);
+export const RoomCreateForm = RoomCreateFormComponent;

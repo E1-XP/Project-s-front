@@ -1,7 +1,8 @@
 import React from "react";
-import { connect, Dispatch } from "react-redux";
+import { connect } from "react-redux";
+import { Dispatch } from "redux";
 import { withRouter } from "react-router-dom";
-import { lifecycle, compose } from "recompose";
+import { lifecycle, compose, ReactLifeCycleFunctions } from "recompose";
 
 import { State } from "../../store";
 import { actions } from "../../actions";
@@ -11,9 +12,10 @@ import CircularProgress from "@material-ui/core/CircularProgress";
 interface Props {
   isLoading: boolean;
   children?: React.ReactChildren;
+  initializeApp: () => Dispatch;
 }
 
-const lifecycleMethods = {
+const hooks: ReactLifeCycleFunctions<Props, {}> = {
   componentDidMount() {
     this.props.initializeApp();
   }
@@ -43,5 +45,5 @@ export const Preloader = compose(
     mapStateToprops,
     mapDispatchToProps
   ),
-  lifecycle<Props, {}>(lifecycleMethods)
+  lifecycle(hooks)
 )(PreloaderComponent);

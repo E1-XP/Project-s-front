@@ -14,14 +14,14 @@ import { Chat } from "../chat";
 
 import { Props } from "./index";
 
-export const DashboardComponent: ComponentType<Props> = ({
+export const DashboardComponent = ({
   handleMessageSubmit,
   handleRoomClick,
   goToCreateRoom,
   users,
   rooms,
   messages
-}) => {
+}: Props) => {
   return (
     <main id="dashboard" className="container">
       <Grid container spacing={16}>

@@ -19,11 +19,13 @@ interface PassedProps {
   handleImageChange: (e: any) => void;
 }
 
-const ImageSelectorComponent: ComponentType<Props & PassedProps> = ({
+type CombinedProps = Props & PassedProps;
+
+const ImageSelectorComponent = ({
   isOpen,
   drawings,
   handleImageChange
-}) => {
+}: CombinedProps) => {
   if (!drawings) return null;
 
   return (
@@ -55,6 +57,6 @@ const ImageSelectorComponent: ComponentType<Props & PassedProps> = ({
 
 const mapStateToProps = ({ user }: State) => ({ drawings: user.drawings });
 
-export const ImageSelector = compose<Props, PassedProps>(
+export const ImageSelector = compose<CombinedProps, PassedProps>(
   connect(mapStateToProps)
 )(ImageSelectorComponent);

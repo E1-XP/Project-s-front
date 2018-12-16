@@ -1,6 +1,13 @@
 import { MouseEvent } from "react";
-import { compose, lifecycle, withHandlers, withState } from "recompose";
-import { connect, Dispatch } from "react-redux";
+import {
+  compose,
+  lifecycle,
+  withHandlers,
+  withState,
+  ReactLifeCycleFunctions
+} from "recompose";
+import { connect } from "react-redux";
+import { Dispatch } from "redux";
 import _throttle from "lodash.throttle";
 
 import { actions } from "../../actions";
@@ -43,6 +50,7 @@ export interface Props {
   handleResetBtn: () => void;
   initializeBoard: () => void;
   handleResize: (e?: any) => void;
+  prepareForUnmount: () => void;
 }
 
 interface BroadcastedDrawingPoints {
@@ -64,7 +72,7 @@ interface DrawingPoint {
   weight: number;
 }
 
-const lifecycleMethods = {
+const lifecycleMethods: ReactLifeCycleFunctions<Props, {}> = {
   componentDidMount() {
     this.props.initializeBoard();
     this.props.handleResize();
@@ -255,7 +263,7 @@ const mapDispatchToProps = (dispatch: Dispatch) => ({
     dispatch(actions.rooms.initInRoomDrawingSelect(v))
 });
 
-export const Canvas = compose(
+export const Canvas = compose<Props, {}>(
   connect(
     mapStateToProps,
     mapDispatchToProps

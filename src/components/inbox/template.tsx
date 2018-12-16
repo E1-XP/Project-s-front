@@ -11,12 +11,7 @@ import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
 import Button from "@material-ui/core/Button";
 
-export const InboxComponent: ComponentType<Props> = ({
-  user,
-  users,
-  rooms,
-  pushRouter
-}) => {
+export const InboxComponent = ({ user, users, rooms, pushRouter }: Props) => {
   const addZero = (num: number) => (num < 10 ? `0${num}` : num);
   const dateFormat = (d: Date) =>
     `${d.getFullYear()}.${addZero(d.getMonth() + 1)}.${addZero(d.getDate())}`;

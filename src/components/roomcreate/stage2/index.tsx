@@ -1,4 +1,4 @@
-import { compose, withHandlers, withState, lifecycle } from "recompose";
+import { compose, lifecycle, ReactLifeCycleFunctions } from "recompose";
 import { connect } from "react-redux";
 import { Dispatch } from "redux";
 
@@ -19,7 +19,9 @@ export interface PassedProps {
   currentDrawing: string | null;
 }
 
-const hooks = {
+export type CombinedProps = Props & PassedProps;
+
+const hooks: ReactLifeCycleFunctions<CombinedProps, {}> = {
   componentDidMount() {
     this.props.initGetImagesFromTheServer();
   }
@@ -34,10 +36,10 @@ const mapDispatchToProps = (dispatch: Dispatch) => ({
     dispatch(actions.canvas.initGetImagesFromServer())
 });
 
-export const ImageSelector = compose<Props, PassedProps>(
+export const ImageSelector = compose<CombinedProps, PassedProps>(
   connect(
     mapStateToProps,
     mapDispatchToProps
   ),
-  lifecycle<Props, {}>(hooks)
+  lifecycle(hooks)
 )(ImageSelectorComponent);

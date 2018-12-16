@@ -1,5 +1,6 @@
 import { compose, withHandlers } from "recompose";
-import { connect, Dispatch } from "react-redux";
+import { connect } from "react-redux";
+import { Dispatch } from "redux";
 
 import { actions } from "../../actions";
 import { State, UserData } from "../../store";
@@ -29,7 +30,7 @@ const mapDispatchToProps = (dispatch: Dispatch) => ({
   initLogout: () => dispatch(actions.global.initLogout())
 });
 
-export const Navbar = compose(
+export const Navbar = compose<Props, {}>(
   connect(
     mapStateToProps,
     mapDispatchToProps

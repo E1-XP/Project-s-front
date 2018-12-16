@@ -1,19 +1,19 @@
 import React from "react";
 import { connect } from "react-redux";
 import { Dispatch } from "redux";
-import { lifecycle, compose } from "recompose";
+import { lifecycle, compose, ReactLifeCycleFunctions } from "recompose";
 import { withRouter } from "react-router-dom";
 import { push } from "connected-react-router";
 
 import { State } from "../store";
 
-type Props = {
+interface Props {
   isUserLoggedIn: boolean;
   children?: React.ReactChildren;
   pushRouter: (s: string) => Dispatch;
-};
+}
 
-const lifecycleMethods = {
+const hooks: ReactLifeCycleFunctions<Props, {}> = {
   componentDidMount() {
     const { isUserLoggedIn, pushRouter } = this.props;
 
@@ -35,5 +35,5 @@ export const withAuthentication = compose(
     mapStateToProps,
     mapDispatchToProps
   ),
-  lifecycle<Props, {}>(lifecycleMethods)
+  lifecycle(hooks)
 );

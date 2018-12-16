@@ -1,4 +1,10 @@
-import { compose, lifecycle, withHandlers, withState } from "recompose";
+import {
+  compose,
+  lifecycle,
+  withHandlers,
+  withState,
+  ReactLifeCycleFunctions
+} from "recompose";
 import { connect } from "react-redux";
 import { RouteComponentProps } from "react-router-dom";
 import { Dispatch } from "redux";
@@ -27,10 +33,12 @@ export interface Props extends RouteComponentProps<Params> {
   handleSubmit: () => void;
   setState: (v: any) => void;
   initRoomAdminChange: (data: any) => Dispatch;
+  initRoomEnter: () => Dispatch;
+  initRoomLeave: () => Dispatch;
   setMessage: (e: any) => void;
 }
 
-const hooks = {
+const hooks: ReactLifeCycleFunctions<Props, {}> = {
   componentDidMount() {
     console.log("SOCKET CONNECTED?" + this.props.isSocketConnected);
     setTimeout(this.props.initRoomEnter, 500);
@@ -137,7 +145,7 @@ const mapDispatchToProps = (dispatch: Dispatch) => ({
     dispatch(actions.rooms.initRoomAdminChange(data))
 });
 
-export const Room = compose(
+export const Room = compose<Props, {}>(
   connect(
     mapStateToProps,
     mapDispatchToProps

@@ -49,7 +49,7 @@ export const roomJoinEpic: Epic = (action$, state$) =>
 
 export const checkRoomPasswordEpic: Epic = (action$, state$) =>
   action$.ofType(types.INIT_CHECK_ROOM_PASSWORD).pipe(
-    pluck("payload"),
+    pluck<{}, any>("payload"),
     mergeMap(({ roomId, password }) =>
       from(
         fetchStreamService(`${URL}/rooms/${roomId}/checkpassword`, "POST", {
@@ -84,13 +84,13 @@ export const handleRoomEnterSuccessEpic: Epic = (action$, state$) =>
 
       store.dispatch(actions.rooms.setCurrentRoom(roomId));
 
-      Socket.emit("room/join", { roomId, drawingId });
+      Socket!.emit("room/join", { roomId, drawingId });
 
-      Socket.on(`${roomId}/setdrawing`, (drawingId: number) => {
+      Socket!.on(`${roomId}/setdrawing`, (drawingId: number) => {
         store.dispatch(actions.canvas.setCurrentDrawing(drawingId));
       });
 
-      Socket.on(`${roomId}/messages`, (data: any) =>
+      Socket!.on(`${roomId}/messages`, (data: any) =>
         store.dispatch(
           actions.chats.setMessages({
             channel: "selectedRoom",
@@ -99,34 +99,34 @@ export const handleRoomEnterSuccessEpic: Epic = (action$, state$) =>
         )
       );
 
-      Socket.on(`${roomId}/draw`, (data: any) => {
+      Socket!.on(`${roomId}/draw`, (data: any) => {
         store.dispatch(actions.canvas.setBroadcastedDrawingPoint(data));
       });
 
-      Socket.on(`${roomId}/draw/getexisting`, (data: any[]) => {
+      Socket!.on(`${roomId}/draw/getexisting`, (data: any[]) => {
         store.dispatch(actions.canvas.setBroadcastedDrawingPointsBulk(data));
       });
 
-      Socket.on(`${roomId}/draw/newgroup`, (userId: string) => {
+      Socket!.on(`${roomId}/draw/newgroup`, (userId: string) => {
         store.dispatch(
           actions.canvas.setNewBroadcastedDrawingPointsGroup(userId)
         );
       });
 
-      Socket.on(`${roomId}/draw/change`, (drawingId: string) => {
+      Socket!.on(`${roomId}/draw/change`, (drawingId: string) => {
         store.dispatch(actions.canvas.setCurrentDrawing(drawingId));
       });
 
-      Socket.on(`${roomId}/draw/reset`, (userId: string) => {
+      Socket!.on(`${roomId}/draw/reset`, (userId: string) => {
         store.dispatch(actions.canvas.clearDrawingPoints());
       });
 
-      Socket.on(`${roomId}/users`, (data: any) => {
+      Socket!.on(`${roomId}/users`, (data: any) => {
         // store.dispatch(actions.global.setIsLoading(false));
         store.dispatch(actions.users.setRoomUsers(data));
       });
 
-      Socket.on(`${roomId}/adminleaving`, () => {
+      Socket!.on(`${roomId}/adminleaving`, () => {
         store.dispatch(actions.rooms.initRoomAdminLeave());
       });
     }),
@@ -138,13 +138,13 @@ export const roomLeaveEpic: Epic = (action$, state$) =>
     tap(v => {
       const roomId = state$.value.rooms.active;
 
-      Socket.emit("room/leave", roomId);
-      Socket.off(`${roomId}/messages`);
-      Socket.off(`${roomId}/draw`);
-      Socket.off(`${roomId}/draw/getexisting`);
-      Socket.off(`${roomId}/draw/newgroup`);
-      Socket.off(`${roomId}/draw/reset`);
-      Socket.off(`${roomId}/adminleaving`);
+      Socket!.emit("room/leave", roomId);
+      Socket!.off(`${roomId}/messages`);
+      Socket!.off(`${roomId}/draw`);
+      Socket!.off(`${roomId}/draw/getexisting`);
+      Socket!.off(`${roomId}/draw/newgroup`);
+      Socket!.off(`${roomId}/draw/reset`);
+      Socket!.off(`${roomId}/adminleaving`);
     }),
     mergeMap(v =>
       of(
@@ -175,7 +175,7 @@ export const handleSendRoomMessageEpic: Epic = (action$, state$) =>
     pluck("payload"),
     tap((data: any) => {
       const { message, author, authorId, roomId } = data;
-      Socket.emit(`${roomId}/messages`, { message, author, authorId });
+      Socket!.emit(`${roomId}/messages`, { message, author, authorId });
     }),
     ignoreElements()
   );
@@ -185,7 +185,7 @@ export const setRoomAdminEpic: Epic = (action$, state$) =>
     pluck("payload"),
     tap((data: any) => {
       const { roomId } = data;
-      Socket.emit(`${roomId}/setadmin`, data);
+      Socket!.emit(`${roomId}/setadmin`, data);
     }),
     ignoreElements()
   );
@@ -195,7 +195,7 @@ export const RoomCreateEpic: Epic = (action$, state$) =>
     pluck("payload"),
     tap(data => {
       const drawingId = state$.value.canvas.currentDrawing;
-      Socket.emit("room/create", { ...data, drawingId });
+      Socket!.emit("room/create", { ...data, drawingId });
     }),
     // mapTo(actions.global.setIsLoading(true))
     ignoreElements()

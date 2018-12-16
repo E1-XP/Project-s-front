@@ -40,9 +40,9 @@ const handlers = () => {
   let listRef: any = createRef();
 
   return {
-    onListRef: (props: Props) => (ref: any) => (listRef = ref),
-    getListRef: (props: Props) => () => listRef,
-    setMessage: (props: Props) => (e: any) => {
+    onListRef: (props: CombinedProps) => (ref: any) => (listRef = ref),
+    getListRef: (props: CombinedProps) => () => listRef,
+    setMessage: (props: CombinedProps) => (e: any) => {
       props.setState(e.target.value);
     },
     handleMessageSubmit: (props: CombinedProps) => (e: any) => {
