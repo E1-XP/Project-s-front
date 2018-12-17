@@ -16,6 +16,10 @@
       "stage-2"
     ]
   },
+  "prettier": {
+    "singleQuote": true,
+    "trailingComma": "all"
+  },
   "devDependencies": {
     "@types/lodash.throttle": "^4.1.4",
     "@types/react": "^16.7.17",
@@ -51,7 +55,7 @@
     "tslint-config-prettier": "^1.17.0",
     "tslint-plugin-prettier": "^2.0.1",
     "tslint-react": "^3.6.0",
-    "typescript": "^3.2.2",
+    "typescript": "^3.3.0-dev.20181214",
     "webpack": "^4.27.1",
     "webpack-cli": "^3.1.2",
     "webpack-dev-server": "^3.1.10"

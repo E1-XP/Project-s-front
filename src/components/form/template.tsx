@@ -1,14 +1,14 @@
-import * as React from "react";
+import * as React from 'react';
 
-import { Props } from "./index";
+import { Props } from './index';
 
-import Grid from "@material-ui/core/Grid";
-import Paper from "@material-ui/core/Paper";
-import Typography from "@material-ui/core/Typography";
-import FormControl from "@material-ui/core/FormControl";
-import InputLabel from "@material-ui/core/InputLabel";
-import Input from "@material-ui/core/Input";
-import Button from "@material-ui/core/Button";
+import Grid from '@material-ui/core/Grid';
+import Paper from '@material-ui/core/Paper';
+import Typography from '@material-ui/core/Typography';
+import FormControl from '@material-ui/core/FormControl';
+import InputLabel from '@material-ui/core/InputLabel';
+import TextField from '@material-ui/core/TextField';
+import Button from '@material-ui/core/Button';
 
 export const FormComponent = ({
   formState,
@@ -16,13 +16,13 @@ export const FormComponent = ({
   setEmail,
   setPassword,
   location,
-  handleSubmit
+  handleSubmit,
 }: Props) => {
   const currentRoute = location.pathname.toLowerCase().slice(1);
   const formHeading =
-    currentRoute === "login"
-      ? "Login to enter Project-S"
-      : "Sign Up to enter Project-S";
+    currentRoute === 'login'
+      ? 'Login to enter Project-S'
+      : 'Sign Up to enter Project-S';
 
   return (
     <main className="container">
@@ -35,34 +35,40 @@ export const FormComponent = ({
             <Grid container={true} justify="center">
               <Grid item={true} md={6} sm={7} xs={10}>
                 <FormControl margin="normal" fullWidth={true}>
-                  {currentRoute === "signup" && (
+                  {currentRoute === 'signup' && (
                     <FormControl margin="dense">
                       <InputLabel htmlFor="username">Username</InputLabel>
-                      <Input
+                      {/* <Input
                         id="username"
                         placeholder="Username"
                         value={formState.username}
                         onChange={setUsername}
-                      />
+                      /> */}
                     </FormControl>
                   )}
-                  <FormControl margin="dense">
-                    <InputLabel htmlFor="username">email</InputLabel>
-                    <Input
+
+                  <TextField
+                    required={true}
+                    id="email"
+                    placeholder="email"
+                    value={formState.email}
+                    onChange={setEmail}
+                  />
+                  {/* <Input
                       id="email"
                       placeholder="email"
                       value={formState.email}
                       onChange={setEmail}
-                    />
-                  </FormControl>
+                    /> */}
+
                   <FormControl margin="dense">
                     <InputLabel htmlFor="password">password</InputLabel>
-                    <Input
+                    {/* <Input
                       id="password"
                       placeholder="password"
                       value={formState.password}
                       onChange={setPassword}
-                    />
+                    /> */}
                   </FormControl>
                   <Button
                     variant="contained"

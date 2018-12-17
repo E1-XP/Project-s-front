@@ -1,28 +1,28 @@
-import React, { ComponentType } from "react";
+import * as React from 'react';
 
-import { CombinedProps } from "./index";
+import { CombinedProps } from './index';
 
-import Grid from "@material-ui/core/Grid";
-import Paper from "@material-ui/core/Paper";
-import Typography from "@material-ui/core/Typography";
-import Button from "@material-ui/core/Button";
-import Icon from "@material-ui/core/Icon";
-import IconButton from "@material-ui/core/IconButton";
-import GridList from "@material-ui/core/GridList";
-import GridListTile from "@material-ui/core/GridListTile";
-import GridListTileBar from "@material-ui/core/GridListTileBar";
+import Grid from '@material-ui/core/Grid';
+import Paper from '@material-ui/core/Paper';
+import Typography from '@material-ui/core/Typography';
+import Button from '@material-ui/core/Button';
+import Icon from '@material-ui/core/Icon';
+import IconButton from '@material-ui/core/IconButton';
+import GridList from '@material-ui/core/GridList';
+import GridListTile from '@material-ui/core/GridListTile';
+import GridListTileBar from '@material-ui/core/GridListTileBar';
 
 export const ImageSelectorComponent = ({
   handleSubmit,
   handleDrawingCreate,
   handleDrawingSelect,
   drawings,
-  currentDrawing
+  currentDrawing,
 }: CombinedProps) => {
   return (
     <main id="roomcreate" className="container">
-      <Grid container spacing={16}>
-        <Grid item xs={12}>
+      <Grid container={true} spacing={16}>
+        <Grid item={true} xs={12}>
           <Paper className="paper">
             <Typography variant="display1" align="center">
               Select drawing
@@ -31,7 +31,7 @@ export const ImageSelectorComponent = ({
               Select existing image or create new one
             </Typography>
             <Grid
-              item
+              item={true}
               xs={12}
               className="griditem--center container--drawings mtop--2"
             >
@@ -39,13 +39,13 @@ export const ImageSelectorComponent = ({
                 <GridList cellHeight={160} cols={4} className="mbottom--2">
                   {[
                     <GridListTile
-                      key={"new-drawing"}
+                      key={'new-drawing'}
                       onClick={handleDrawingCreate}
                     >
                       <IconButton>add</IconButton>
-                      {"new"}
-                      <GridListTileBar title={"new"} />
-                    </GridListTile>
+                      {'new'}
+                      <GridListTileBar title={'new'} />
+                    </GridListTile>,
                   ].concat(
                     drawings.map((itm: any) => (
                       <GridListTile
@@ -62,14 +62,14 @@ export const ImageSelectorComponent = ({
                         {itm.id}
                         <GridListTileBar title={itm.id} />
                       </GridListTile>
-                    ))
+                    )),
                   )}
                 </GridList>
               ) : (
-                "loading..."
+                'loading...'
               )}
             </Grid>
-            <Grid container justify="flex-end" className="mtop--2">
+            <Grid container={true} justify="flex-end" className="mtop--2">
               <Button
                 variant="contained"
                 color="primary"

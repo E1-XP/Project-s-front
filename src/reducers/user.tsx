@@ -1,11 +1,11 @@
-import { Reducer } from "redux";
-import { types } from "../actions/types";
+import { Reducer } from 'redux';
+import { types } from '../actions/types';
 
-import { PlainAction } from "./index";
+import { PlainAction } from './index';
 
 export const userReducer: Reducer = (
   state: object = {},
-  action: PlainAction
+  action: PlainAction,
 ) => {
   switch (action.type) {
     case types.SET_USER_DATA: {

@@ -1,20 +1,20 @@
-import * as React from "react";
-import { Prompt, Link } from "react-router-dom";
-import "./style.scss";
+import * as React from 'react';
+import { Prompt, Link } from 'react-router-dom';
+import './style.scss';
 
-import { Props } from "./index";
+import { Props } from './index';
 
-import Grid from "@material-ui/core/Grid";
-import Paper from "@material-ui/core/Paper";
-import Typography from "@material-ui/core/Typography";
-import List from "@material-ui/core/List";
-import ListItem from "@material-ui/core/ListItem";
-import ListItemText from "@material-ui/core/ListItemText";
-import Button from "@material-ui/core/Button";
-import Icon from "@material-ui/core/Icon";
+import Grid from '@material-ui/core/Grid';
+import Paper from '@material-ui/core/Paper';
+import Typography from '@material-ui/core/Typography';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemText from '@material-ui/core/ListItemText';
+import Button from '@material-ui/core/Button';
+import Icon from '@material-ui/core/Icon';
 
-import { Canvas } from "../canvas";
-import { Chat } from "../chat";
+import { Canvas } from '../canvas';
+import { Chat } from '../chat';
 
 export const RoomComponent = ({
   changeRoomOwner,
@@ -28,7 +28,7 @@ export const RoomComponent = ({
   chats,
   state,
   match,
-  isRoomUndefined
+  isRoomUndefined,
 }: Props) => {
   const isLoaded =
     isSocketConnected &&
@@ -89,7 +89,7 @@ export const RoomComponent = ({
                   <ListItem key={id} data-id={id}>
                     <ListItemText
                       primary={users.general[id]}
-                      secondary={isUserAdmin(Number(id)) && "admin"}
+                      secondary={isUserAdmin(Number(id)) && 'admin'}
                     />
                     {isUserAdmin(user.id) && !isUserAdmin(Number(id)) && (
                       <Button
@@ -122,7 +122,7 @@ export const RoomComponent = ({
 
       <Prompt
         when={isUserAdmin(user.id)}
-        message={"Are you want to leave? This will close your room."}
+        message={'Are you want to leave? This will close your room.'}
       />
     </main>
   );

@@ -1,18 +1,18 @@
-import * as React from "react";
-import "./style.scss";
+import * as React from 'react';
+import './style.scss';
 
-import Grid from "@material-ui/core/Grid";
-import Paper from "@material-ui/core/Paper";
-import Typography from "@material-ui/core/Typography";
-import List from "@material-ui/core/List";
-import ListItem from "@material-ui/core/ListItem";
-import ListItemText from "@material-ui/core/ListItemText";
-import Button from "@material-ui/core/Button";
-import Icon from "@material-ui/core/Icon";
+import Grid from '@material-ui/core/Grid';
+import Paper from '@material-ui/core/Paper';
+import Typography from '@material-ui/core/Typography';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemText from '@material-ui/core/ListItemText';
+import Button from '@material-ui/core/Button';
+import Icon from '@material-ui/core/Icon';
 
-import { Chat } from "../chat";
+import { Chat } from '../chat';
 
-import { Props } from "./index";
+import { Props } from './index';
 
 export const DashboardComponent = ({
   handleMessageSubmit,
@@ -20,7 +20,7 @@ export const DashboardComponent = ({
   goToCreateRoom,
   users,
   rooms,
-  messages
+  messages,
 }: Props) => {
   return (
     <main id="dashboard" className="container">
@@ -49,7 +49,7 @@ export const DashboardComponent = ({
                     <ListItem key={itm} data-id={itm} onClick={handleRoomClick}>
                       <ListItemText primary={rooms.list[itm].name} />
                       {rooms.list[itm].isPrivate && (
-                        <ListItemText secondary={"private"} />
+                        <ListItemText secondary={'private'} />
                       )}
                     </ListItem>
                   ))

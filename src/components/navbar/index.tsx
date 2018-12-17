@@ -1,11 +1,11 @@
-import { compose, withHandlers } from "recompose";
-import { connect } from "react-redux";
-import { Dispatch } from "redux";
+import { compose, withHandlers } from 'recompose';
+import { connect } from 'react-redux';
+import { Dispatch } from 'redux';
 
-import { actions } from "../../actions";
-import { State, UserData } from "../../store";
+import { actions } from '../../actions';
+import { State, UserData } from '../../store';
 
-import { NavbarComponent } from "./template";
+import { NavbarComponent } from './template';
 
 export interface Props {
   isUserLoggedIn: boolean;
@@ -17,23 +17,23 @@ export interface Props {
 const handlers = {
   handleLogout: (props: any) => (e: any) => {
     props.initLogout();
-  }
+  },
 };
 
 const mapStateToProps = ({ user, global }: State) => ({
   isUserLoggedIn: global.isUserLoggedIn,
   userData: user.userData,
-  inboxCount: global.inboxCount
+  inboxCount: global.inboxCount,
 });
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({
-  initLogout: () => dispatch(actions.global.initLogout())
+  initLogout: () => dispatch(actions.global.initLogout()),
 });
 
 export const Navbar = compose<Props, {}>(
   connect(
     mapStateToProps,
-    mapDispatchToProps
+    mapDispatchToProps,
   ),
-  withHandlers(handlers)
+  withHandlers(handlers),
 )(NavbarComponent);

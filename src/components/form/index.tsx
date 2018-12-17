@@ -1,18 +1,18 @@
-import { push } from "connected-react-router";
-import { connect } from "react-redux";
-import { Dispatch } from "redux";
+import { push } from 'connected-react-router';
+import { connect } from 'react-redux';
+import { Dispatch } from 'redux';
 import {
   compose,
   withState,
   withHandlers,
   lifecycle,
-  ReactLifeCycleFunctions
-} from "recompose";
+  ReactLifeCycleFunctions,
+} from 'recompose';
 
-import { State } from "../../store";
-import { actions } from "../../actions";
+import { State } from '../../store';
+import { actions } from '../../actions';
 
-import { FormComponent } from "./template";
+import { FormComponent } from './template';
 
 interface FormState {
   username: string;
@@ -38,13 +38,13 @@ const lifecycleMethods: ReactLifeCycleFunctions<Props, {}> = {
   componentDidMount() {
     const { isUserLoggedIn, pushRouter, handleKeyNav } = this.props;
 
-    window.addEventListener("keypress", handleKeyNav);
+    window.addEventListener('keypress', handleKeyNav);
 
-    isUserLoggedIn && pushRouter("/dashboard");
+    isUserLoggedIn && pushRouter('/dashboard');
   },
   componentWillUnmount() {
-    window.removeEventListener("keypress", this.props.handleKeyNav);
-  }
+    window.removeEventListener('keypress', this.props.handleKeyNav);
+  },
 };
 
 const handlers = {
@@ -62,37 +62,37 @@ const handlers = {
   },
   handleSubmit: (props: Props) => () => {
     props.initAuthentication(props.formState);
-  }
+  },
 };
 
 const handlers2 = {
   handleKeyNav: (props: Props) => (e: KeyboardEvent) => {
     e.keyCode === 13 && props.handleSubmit();
-  }
+  },
 };
 
 const mapStateToProps = ({ router, global }: State) => ({
   location: router.location,
-  isUserLoggedIn: global.isUserLoggedIn
+  isUserLoggedIn: global.isUserLoggedIn,
 });
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({
   initAuthentication: (data: FormState) =>
     dispatch(actions.global.initAuthentication(data)),
-  pushRouter: (str: string) => dispatch(push(str))
+  pushRouter: (str: string) => dispatch(push(str)),
 });
 
 export const Form = compose<Props, {}>(
   connect(
     mapStateToProps,
-    mapDispatchToProps
+    mapDispatchToProps,
   ),
-  withState("formState", "setFormState", {
-    username: "",
-    email: "",
-    password: ""
+  withState('formState', 'setFormState', {
+    username: '',
+    email: '',
+    password: '',
   }),
   withHandlers(handlers),
   withHandlers(handlers2),
-  lifecycle<Props, {}>(lifecycleMethods)
+  lifecycle<Props, {}>(lifecycleMethods),
 )(FormComponent);

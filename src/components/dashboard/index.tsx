@@ -1,12 +1,12 @@
-import { connect } from "react-redux";
-import { compose, withHandlers, ReactLifeCycleFunctions } from "recompose";
-import { push } from "connected-react-router";
-import { Dispatch } from "redux";
+import { connect } from 'react-redux';
+import { compose, withHandlers } from 'recompose';
+import { push } from 'connected-react-router';
+import { Dispatch } from 'redux';
 
-import { State, Users, Rooms, UserData, ChatMessage } from "../../store";
-import { actions } from "../../actions";
+import { State, Users, Rooms, UserData, ChatMessage } from '../../store';
+import { actions } from '../../actions';
 
-import { DashboardComponent } from "./template";
+import { DashboardComponent } from './template';
 
 export interface Props {
   user: UserData;
@@ -24,10 +24,10 @@ export interface Props {
 
 const handlers = {
   goToCreateRoom: (props: Props) => () => {
-    props.pushRouter("/room/create");
+    props.pushRouter('/room/create');
   },
   handleRoomClick: (props: Props) => (e: any) => {
-    const id = e.target.closest("li").dataset.id;
+    const id = e.target.closest('li').dataset.id;
 
     props.pushRouter(`/room/${id}`);
   },
@@ -35,16 +35,16 @@ const handlers = {
     props.initSendGeneralMessage({
       message: value,
       authorId: props.user.id,
-      author: props.user.username
+      author: props.user.username,
     });
-  }
+  },
 };
 
 const mapStateToProps = ({ user, users, chats, rooms }: State) => ({
-  user: user.userData,
   users,
   rooms,
-  messages: chats.general
+  user: user.userData,
+  messages: chats.general,
 });
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({
@@ -52,13 +52,13 @@ const mapDispatchToProps = (dispatch: Dispatch) => ({
   setMessages: (payload: any) => dispatch(actions.chats.setMessages(payload)),
   setIsLoading: (bool: boolean) => dispatch(actions.global.setIsLoading(bool)),
   initSendGeneralMessage: (data: any) =>
-    dispatch(actions.chats.initSendGeneralMesssage(data))
+    dispatch(actions.chats.initSendGeneralMesssage(data)),
 });
 
 export const Dashboard = compose<Props, {}>(
   connect(
     mapStateToProps,
-    mapDispatchToProps
+    mapDispatchToProps,
   ),
-  withHandlers(handlers)
+  withHandlers(handlers),
 )(DashboardComponent);
