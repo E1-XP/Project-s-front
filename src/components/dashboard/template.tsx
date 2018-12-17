@@ -1,4 +1,4 @@
-import React, { ComponentType } from "react";
+import * as React from "react";
 import "./style.scss";
 
 import Grid from "@material-ui/core/Grid";
@@ -24,9 +24,9 @@ export const DashboardComponent = ({
 }: Props) => {
   return (
     <main id="dashboard" className="container">
-      <Grid container spacing={16}>
-        <Grid item md={6} container sm={12}>
-          <Grid item xs={12} className="mbottom-1">
+      <Grid container={true} spacing={16}>
+        <Grid item={true} md={6} container={true} sm={12}>
+          <Grid item={true} xs={12} className="mbottom-1">
             <Paper className="paper">
               <Typography variant="headline">
                 Currently online: {Object.keys(users.general).length}
@@ -40,7 +40,7 @@ export const DashboardComponent = ({
               </List>
             </Paper>
           </Grid>
-          <Grid item xs={12}>
+          <Grid item={true} xs={12}>
             <Paper className="paper">
               <Typography variant="headline">Available Rooms</Typography>
               <List>
@@ -68,7 +68,7 @@ export const DashboardComponent = ({
             </Paper>
           </Grid>
         </Grid>
-        <Grid item md={6} xs={12}>
+        <Grid item={true} md={6} xs={12}>
           <Paper className="paper--double">
             <Typography variant="headline">General chat</Typography>
             <Chat messages={messages} handleSubmit={handleMessageSubmit} />

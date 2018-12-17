@@ -21,7 +21,7 @@ import { store } from "../store";
 import { types } from "../actions/types";
 import { actions } from "../actions";
 
-const URL = "http://localhost:3001";
+import config from "./../../config";
 
 export const roomJoinEpic: Epic = (action$, state$) =>
   action$.ofType(types.INIT_ROOM_ENTER).pipe(
@@ -33,8 +33,9 @@ export const roomJoinEpic: Epic = (action$, state$) =>
       const isRoomPrivate = state$.value.rooms.list[roomId].isPrivate;
       const isUserAdmin = state$.value.rooms.list[roomId].adminId === userId;
 
-      if (isRoomPrivate && !isUserAdmin)
+      if (isRoomPrivate && !isUserAdmin) {
         password = prompt("enter password:") || "";
+      }
 
       return { password, roomId };
     }),
@@ -52,9 +53,13 @@ export const checkRoomPasswordEpic: Epic = (action$, state$) =>
     pluck<{}, any>("payload"),
     mergeMap(({ roomId, password }) =>
       from(
-        fetchStreamService(`${URL}/rooms/${roomId}/checkpassword`, "POST", {
-          password
-        })
+        fetchStreamService(
+          `${config.API_URL}/rooms/${roomId}/checkpassword`,
+          "POST",
+          {
+            password
+          }
+        )
       ).pipe(map(response => ({ response, roomId })))
     ),
     mergeMap(data =>
@@ -93,8 +98,8 @@ export const handleRoomEnterSuccessEpic: Epic = (action$, state$) =>
       Socket!.on(`${roomId}/messages`, (data: any) =>
         store.dispatch(
           actions.chats.setMessages({
-            channel: "selectedRoom",
-            data
+            data,
+            channel: "selectedRoom"
           })
         )
       );
@@ -221,7 +226,7 @@ export const getUserImagesEpic: Epic = (action$, state$) =>
     mergeMap(action =>
       from(
         fetchStreamService(
-          `${URL}/users/${state$.value.user.userData.id}/drawings/`,
+          `${config.API_URL}/users/${state$.value.user.userData.id}/drawings/`,
           "GET"
         )
       )

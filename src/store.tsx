@@ -1,14 +1,10 @@
 import { createStore, applyMiddleware, Store, DeepPartial } from "redux";
-import {
-  connectRouter,
-  routerMiddleware,
-  RouterState
-} from "connected-react-router";
+import { routerMiddleware, RouterState } from "connected-react-router";
 import { createEpicMiddleware } from "redux-observable";
 import { composeWithDevTools } from "redux-devtools-extension";
 
 import { history } from "./history";
-import { rootReducer } from "./reducers";
+import { createRootReducer } from "./reducers";
 import { rootEpic } from "./epics";
 
 interface DBItem {
@@ -147,8 +143,8 @@ export const initialState: DeepPartial<{}> = {
 
 const epicMiddleWare = createEpicMiddleware();
 
-export const store: Store<State> = createStore(
-  connectRouter(history)(rootReducer),
+export const store = createStore(
+  createRootReducer(history),
   initialState,
   composeWithDevTools(
     applyMiddleware(routerMiddleware(history), epicMiddleWare)

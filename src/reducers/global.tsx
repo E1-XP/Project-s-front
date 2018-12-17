@@ -1,13 +1,13 @@
 import { Reducer } from "redux";
 import { types } from "../actions/types";
 
-import { plainAction } from "./index";
+import { PlainAction } from "./index";
 
 import { Global } from "../store";
 
 export const globalReducer: Reducer = (
   state: Global | any = {},
-  action: plainAction
+  action: PlainAction
 ) => {
   switch (action.type) {
     case types.SET_IS_LOADING:

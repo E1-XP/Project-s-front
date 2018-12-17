@@ -1,4 +1,4 @@
-import React, { ComponentType, Fragment } from "react";
+import * as React from "react";
 import "./style.scss";
 
 import Button from "@material-ui/core/Button";
@@ -38,15 +38,15 @@ export const CanvasNavbarComponent = ({
   const userList = Object.keys(users.general);
 
   return (
-    <Fragment>
+    <>
       <nav>
         {isUserAdmin(user.id) && (
-          <Fragment>
+          <>
             <Button onClick={handleLoadImage}>Load Image</Button>
             <Button onClick={handleResetBtn}>Reset</Button>
             <Button>TODO</Button>
             <Button>next</Button>
-          </Fragment>
+          </>
         )}
         <Button onClick={toggleColorPicker}>Tools</Button>
         <Button onClick={openModal}> Invite friend</Button>
@@ -62,7 +62,7 @@ export const CanvasNavbarComponent = ({
               max={8}
               step={1}
               onChange={setWeight}
-              vertical
+              vertical={true}
             />
           </div>
         </ExpansionPanelDetails>
@@ -119,6 +119,6 @@ export const CanvasNavbarComponent = ({
           </Paper>
         </div>
       </Modal>
-    </Fragment>
+    </>
   );
 };

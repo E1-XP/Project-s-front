@@ -20,7 +20,7 @@ import { actions } from "../actions";
 
 import { InvitationData } from "../components/canvas/navbar";
 
-const URL = "http://localhost:3001";
+import config from "./../../config";
 
 export const handleSendGeneralMessageEpic: Epic = (action$, state$) =>
   action$.ofType(types.INIT_SEND_GENERAL_MESSAGE).pipe(
@@ -36,7 +36,7 @@ export const checkInboxEpic: Epic = (action$, state$) =>
     mergeMap(action =>
       from(
         fetchStreamService(
-          `${URL}/users/${state$.value.user.userData.id}/inbox`,
+          `${config.API_URL}/users/${state$.value.user.userData.id}/inbox`,
           "GET"
         )
       )

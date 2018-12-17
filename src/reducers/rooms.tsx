@@ -1,11 +1,11 @@
 import { Reducer } from "redux";
 import { types } from "../actions/types";
 
-import { plainAction } from "./index";
+import { PlainAction } from "./index";
 
 export const roomsReducer: Reducer = (
   state: object = {},
-  action: plainAction
+  action: PlainAction
 ) => {
   switch (action.type) {
     case types.SET_ROOMS:

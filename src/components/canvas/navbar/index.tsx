@@ -74,9 +74,9 @@ const handlers = {
 };
 
 const mapStateToProps = ({ user, users, rooms }: State) => ({
-  user: user.userData,
   users,
-  rooms
+  rooms,
+  user: user.userData
 });
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({

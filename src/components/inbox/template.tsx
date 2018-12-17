@@ -1,4 +1,5 @@
-import React, { ComponentType } from "react";
+import * as React from "react";
+
 import "./style.scss";
 
 import { Props } from "./index";
@@ -21,14 +22,14 @@ export const InboxComponent = ({ user, users, rooms, pushRouter }: Props) => {
 
   return (
     <main id="inbox" className="container">
-      <Grid container spacing={16}>
-        <Grid item xs={12}>
+      <Grid container={true} spacing={16}>
+        <Grid item={true} xs={12}>
           <Paper className="paper">
             <Typography variant="display1" align="center" className="mbottom-2">
               Inbox
             </Typography>
-            <Grid container justify="center">
-              <Grid item md={9}>
+            <Grid container={true} justify="center">
+              <Grid item={true} md={9}>
                 <div className="inbox__content">
                   {user.inboxMessages ? (
                     user.inboxMessages.length ? (

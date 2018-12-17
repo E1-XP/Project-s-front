@@ -20,7 +20,7 @@ import { store } from "../store";
 import { types } from "../actions/types";
 import { actions } from "../actions";
 
-const URL = "http://localhost:3001/";
+import config from "./../../config";
 
 export const drawingBroadcastEpic: Epic = (action$, state$) =>
   action$.ofType(types.SET_DRAWING_POINT).pipe(
@@ -41,7 +41,7 @@ export const createNewDrawingEpic: Epic = (action$, state$) =>
     mergeMap(action =>
       from(
         fetchStreamService(
-          `${URL}users/${state$.value.user.userData.id}/drawings/`,
+          `${config.API_URL}/users/${state$.value.user.userData.id}/drawings/`,
           "POST",
           {
             name: action.payload.name,
@@ -90,7 +90,7 @@ export const selectDrawingInRoom: Epic = (action$, state$) =>
 //             console.log('ADDED TO MY PROFILE');
 //         }),
 //         mergeMap(action => from(fetchStreamService(
-//             `${URL}rooms/${state$.value.rooms.active}/drawing/add`,
+//             `${config.API_URL}/rooms/${state$.value.rooms.active}/drawing/add`,
 //             'POST',
 //             { userId: state$.value.user.userData.id }
 //         ))),
@@ -129,7 +129,7 @@ export const canvasImageSaveEpic: Epic = (action$, state$) =>
     mergeMap(action =>
       from(
         fetchStreamService(
-          `${URL}rooms/${state$.value.rooms.active}/drawing/save/`,
+          `${config.API_URL}/rooms/${state$.value.rooms.active}/drawing/save/`,
           "POST",
           {
             image: action.payload,

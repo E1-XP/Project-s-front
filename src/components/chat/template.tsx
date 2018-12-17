@@ -1,4 +1,4 @@
-import React from "react";
+import * as React from "react";
 import "./style.scss";
 
 import List from "@material-ui/core/List";
@@ -44,7 +44,7 @@ export const ChatComponent = ({
         </RootRef>
       </div>
       <TextField
-        multiline
+        multiline={true}
         rows="1"
         rowsMax="5"
         placeholder="Type here..."
@@ -55,7 +55,7 @@ export const ChatComponent = ({
       />
       <Button
         variant="fab"
-        mini
+        mini={true}
         color="secondary"
         aria-label="Send"
         onClick={handleMessageSubmit}
