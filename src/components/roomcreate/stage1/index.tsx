@@ -1,18 +1,18 @@
-import * as React from "react";
-import { compose } from "recompose";
+import * as React from 'react';
+import { compose } from 'recompose';
 
-import { IState } from "./../index";
+import { IState } from './../index';
 
-import Grid from "@material-ui/core/Grid";
-import Paper from "@material-ui/core/Paper";
-import Typography from "@material-ui/core/Typography";
-import Input from "@material-ui/core/Input";
-import InputLabel from "@material-ui/core/InputLabel";
-import FormControl from "@material-ui/core/FormControl";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
-import Switch from "@material-ui/core/Switch";
-import Button from "@material-ui/core/Button";
-import Icon from "@material-ui/core/Icon";
+import Grid from '@material-ui/core/Grid';
+import Paper from '@material-ui/core/Paper';
+import Typography from '@material-ui/core/Typography';
+import Input from '@material-ui/core/Input';
+import InputLabel from '@material-ui/core/InputLabel';
+import FormControl from '@material-ui/core/FormControl';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import Switch from '@material-ui/core/Switch';
+import Button from '@material-ui/core/Button';
+import Icon from '@material-ui/core/Icon';
 
 interface Props {}
 
@@ -31,7 +31,7 @@ export const RoomCreateFormComponent = ({
   setName,
   setPassword,
   setIsPrivate,
-  goToNextStage
+  goToNextStage,
 }: CombinedProps) => {
   return (
     <main id="roomcreate" className="container">

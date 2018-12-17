@@ -1,19 +1,19 @@
-import { MouseEvent } from "react";
+import { MouseEvent } from 'react';
 import {
   compose,
   lifecycle,
   withHandlers,
   withState,
-  ReactLifeCycleFunctions
-} from "recompose";
-import { connect } from "react-redux";
-import { Dispatch } from "redux";
-import _throttle from "lodash.throttle";
+  ReactLifeCycleFunctions,
+} from 'recompose';
+import { connect } from 'react-redux';
+import { Dispatch } from 'redux';
+import _throttle from 'lodash.throttle';
 
-import { actions } from "../../actions";
-import { State } from "../../store";
+import { actions } from '../../actions';
+import { State } from '../../store';
 
-import { CanvasComponent } from "./template";
+import { CanvasComponent } from './template';
 
 export interface Props {
   onRef: (ref: any) => any;
@@ -35,7 +35,7 @@ export interface Props {
     x?: number,
     y?: number,
     fill?: string,
-    weightArg?: number
+    weightArg?: number,
   ) => void;
   setDrawingPoint: (v: DrawingPoint) => Dispatch;
   setNewDrawingPointsGroup: () => Dispatch;
@@ -86,7 +86,7 @@ const lifecycleMethods: ReactLifeCycleFunctions<Props, {}> = {
 
     nextP.broadcastedDrawingPoints !== broadcastedDrawingPoints &&
       this.props.renderImage();
-  }
+  },
 };
 
 const stateHandlers = {
@@ -118,7 +118,7 @@ const stateHandlers = {
     if (bothOpened) newState.isImageSelectorOpen = false;
 
     props.setBoardState(newState);
-  }
+  },
 };
 
 const handlers1 = () => {
@@ -129,18 +129,18 @@ const handlers1 = () => {
     onRef: (props: Props) => (ref: any) => (boardRef = ref),
     getBoardRef: (props: Props) => () => boardRef,
     initializeBoard: (props: Props) => () => {
-      ctx = boardRef.getContext("2d");
-      document.addEventListener("mouseup", props.setIsMouseDownFalse);
+      ctx = boardRef.getContext('2d');
+      document.addEventListener('mouseup', props.setIsMouseDownFalse);
     },
     prepareForUnmount: (props: Props) => () => {
-      document.removeEventListener("mouseup", props.setIsMouseDownFalse);
+      document.removeEventListener('mouseup', props.setIsMouseDownFalse);
     },
     drawPoint: (props: Props) => (
       e: MouseEvent,
       x?: number,
       y?: number,
       fill?: string,
-      weightArg?: number
+      weightArg?: number,
     ) => {
       const { pageX, pageY } = e;
       const { selectedColor, weight } = props.boardState;
@@ -154,17 +154,17 @@ const handlers1 = () => {
         x: x !== undefined ? x : xPos,
         y: y !== undefined ? y : yPos,
         fill: fill !== undefined ? fill : selectedColor,
-        weight: weightArg !== undefined ? weightArg : weight
+        weight: weightArg !== undefined ? weightArg : weight,
       });
     },
     renderImage: (props: Props) => () => {
-      console.log("rendering");
+      console.log('rendering');
 
       ctx.clearRect(0, 0, boardRef.width, boardRef.height);
       // const renderLoop=()=>{
       // };
 
-      ctx.fillStyle = "#ffffff";
+      ctx.fillStyle = '#ffffff';
       ctx.fillRect(0, 0, boardRef.width, boardRef.height);
 
       const drawFn = (itm: DrawingPoint, i: number, arr: DrawingPoint[]) => {
@@ -172,7 +172,7 @@ const handlers1 = () => {
 
         if (!i) return;
 
-        ctx.lineJoin = "round";
+        ctx.lineJoin = 'round';
 
         requestAnimationFrame(() => {
           ctx.lineWidth = weight;
@@ -191,26 +191,26 @@ const handlers1 = () => {
       });
     },
     handleImageChange: (props: Props) => (e: any) => {
-      props.initInRoomDrawingSelect(e.target.closest("li").dataset.id);
+      props.initInRoomDrawingSelect(e.target.closest('li').dataset.id);
     },
     handleResetBtn: (props: Props) => (e: HTMLButtonElement) => {
       ctx.clearRect(0, 0, boardRef.width, boardRef.height);
-      ctx.fillStyle = "#ffffff";
+      ctx.fillStyle = '#ffffff';
       ctx.fillRect(0, 0, boardRef.width, boardRef.height);
 
       props.initClearDrawingPoints();
 
       setTimeout(() => {
-        const imgB64 = boardRef.toDataURL("image/jpeg", 0.5);
+        const imgB64 = boardRef.toDataURL('image/jpeg', 0.5);
         props.initCanvasToImage(imgB64);
       }, 500);
-    }
+    },
   };
 };
 
 const handlers2 = {
   handleResize: (props: Props) => () => {
-    window.addEventListener("resize", props.renderImage);
+    window.addEventListener('resize', props.renderImage);
   },
   handleMouseDown: (props: Props) => (e: MouseEvent) => {
     const { pageX, pageY } = e;
@@ -233,7 +233,7 @@ const handlers2 = {
     props.initMouseUpBroadcast();
 
     setTimeout(() => {
-      const imgB64 = props.getBoardRef().toDataURL("image/jpeg", 0.5);
+      const imgB64 = props.getBoardRef().toDataURL('image/jpeg', 0.5);
       props.initCanvasToImage(imgB64);
     }, 500);
   },
@@ -241,13 +241,13 @@ const handlers2 = {
     _throttle((e: MouseEvent) => {
       props.drawPoint(e);
       props.renderImage();
-    }, 150)
+    }, 150),
 };
 
 const mapStateToProps = ({ canvas, user }: State) => ({
   drawingPoints: canvas.drawingPoints,
   broadcastedDrawingPoints: canvas.broadcastedDrawingPoints,
-  user: user.userData
+  user: user.userData,
 });
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({
@@ -260,23 +260,23 @@ const mapDispatchToProps = (dispatch: Dispatch) => ({
   initMouseUpBroadcast: () => dispatch(actions.canvas.initMouseUpBroadcast()),
   initCanvasToImage: (v: any) => dispatch(actions.canvas.initCanvasToImage(v)),
   initInRoomDrawingSelect: (v: number) =>
-    dispatch(actions.rooms.initInRoomDrawingSelect(v))
+    dispatch(actions.rooms.initInRoomDrawingSelect(v)),
 });
 
 export const Canvas = compose<Props, {}>(
   connect(
     mapStateToProps,
-    mapDispatchToProps
+    mapDispatchToProps,
   ),
-  withState("boardState", "setBoardState", {
+  withState('boardState', 'setBoardState', {
     isMouseDown: false,
     isImageSelectorOpen: false,
     isColorPickerOpen: false,
-    selectedColor: "#000000",
-    weight: 2
+    selectedColor: '#000000',
+    weight: 2,
   }),
   withHandlers(stateHandlers),
   withHandlers(handlers1),
   withHandlers(handlers2),
-  lifecycle<Props, {}>(lifecycleMethods)
+  lifecycle<Props, {}>(lifecycleMethods),
 )(CanvasComponent);

@@ -1,15 +1,15 @@
-import { createRef, Ref } from "react";
+import { createRef, Ref } from 'react';
 import {
   compose,
   withState,
   withHandlers,
   lifecycle,
-  ReactLifeCycleFunctions
-} from "recompose";
+  ReactLifeCycleFunctions,
+} from 'recompose';
 
-import { ChatMessage } from "../../store";
+import { ChatMessage } from '../../store';
 
-import { ChatComponent } from "./template";
+import { ChatComponent } from './template';
 
 export interface Props {
   state: string;
@@ -33,7 +33,7 @@ const hooks: ReactLifeCycleFunctions<CombinedProps, {}> = {
     if (prevP.messages.length !== this.props.messages.length) {
       requestAnimationFrame(this.props.scrollTo);
     }
-  }
+  },
 };
 
 const handlers = () => {
@@ -49,18 +49,18 @@ const handlers = () => {
       if (!props.state.length) return;
 
       props.handleSubmit(props.state);
-      props.setState("");
+      props.setState('');
     },
     scrollTo: (props: CombinedProps) => (timestamp: number) => {
       const animTime = 2000;
       listRef.parentElement.scrollTop = listRef.getBoundingClientRect().height;
       // requestAnimationFrame()
-    }
+    },
   };
 };
 
 export const Chat = compose<CombinedProps, PassedProps>(
-  withState("state", "setState", ""),
+  withState('state', 'setState', ''),
   withHandlers(handlers),
-  lifecycle(hooks)
+  lifecycle(hooks),
 )(ChatComponent);

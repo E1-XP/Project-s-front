@@ -1,4 +1,4 @@
-import { Epic } from "redux-observable";
+import { Epic } from 'redux-observable';
 import {
   map,
   mergeMap,
@@ -8,19 +8,19 @@ import {
   take,
   takeWhile,
   mapTo,
-  pluck
-} from "rxjs/operators";
-import { of, from } from "rxjs";
+  pluck,
+} from 'rxjs/operators';
+import { of, from } from 'rxjs';
 
-import { fetchStreamService } from "../services/fetch.service";
-import { Socket } from "../services/socket.service";
+import { fetchStreamService } from '../services/fetch.service';
+import { Socket } from '../services/socket.service';
 
-import { store } from "../store";
+import { store } from '../store';
 
-import { types } from "../actions/types";
-import { actions } from "../actions";
+import { types } from '../actions/types';
+import { actions } from '../actions';
 
-import config from "./../../config";
+import config from './../../config';
 
 export const drawingBroadcastEpic: Epic = (action$, state$) =>
   action$.ofType(types.SET_DRAWING_POINT).pipe(
@@ -30,46 +30,46 @@ export const drawingBroadcastEpic: Epic = (action$, state$) =>
 
       Socket!.emit(`${roomId}/draw`, { ...v.payload, drawingId });
     }),
-    mapTo(actions.canvas.setDrawCount())
+    mapTo(actions.canvas.setDrawCount()),
   );
 
 export const createNewDrawingEpic: Epic = (action$, state$) =>
   action$.ofType(types.INIT_CREATE_NEW_DRAWING).pipe(
     tap(v => {
-      console.log("CREATED NEW DRAWING");
+      console.log('CREATED NEW DRAWING');
     }),
     mergeMap(action =>
       from(
         fetchStreamService(
           `${config.API_URL}/users/${state$.value.user.userData.id}/drawings/`,
-          "POST",
+          'POST',
           {
             name: action.payload.name,
-            userId: state$.value.user.userData.id
-          }
-        )
-      )
+            userId: state$.value.user.userData.id,
+          },
+        ),
+      ),
     ),
     mergeMap(resp =>
       of(
         actions.canvas.setCurrentDrawing(resp.data.currentId),
-        actions.user.setUserDrawings(resp.data.drawings)
-      )
-    )
+        actions.user.setUserDrawings(resp.data.drawings),
+      ),
+    ),
   );
 
 export const selectDrawingEpic: Epic = (action$, state$) =>
   action$.ofType(types.INIT_DRAWING_SELECT).pipe(
-    pluck("payload"),
+    pluck('payload'),
     tap(v => {
-      console.log("SELECTED DRAWING");
+      console.log('SELECTED DRAWING');
     }),
-    map(id => actions.canvas.setCurrentDrawing(id))
+    map(id => actions.canvas.setCurrentDrawing(id)),
   );
 
 export const selectDrawingInRoom: Epic = (action$, state$) =>
   action$.ofType(types.INIT_IN_ROOM_DRAWING_SELECT).pipe(
-    pluck("payload"),
+    pluck('payload'),
     tap(drawingId => {
       const roomId = state$.value.rooms.active;
 
@@ -78,7 +78,7 @@ export const selectDrawingInRoom: Epic = (action$, state$) =>
 
       Socket!.emit(`${roomId}/draw/change`, { drawingId, roomId });
     }),
-    ignoreElements()
+    ignoreElements(),
   );
 
 // export const drawingTakeIntoOwnershipOnMouseDownEpic: Epic = (action$, state$) => action$
@@ -105,7 +105,7 @@ export const drawingBroadcastNewPointsGroupEpic: Epic = (action$, state$) =>
 
       Socket!.emit(`${roomId}/draw/newgroup`, userId);
     }),
-    ignoreElements()
+    ignoreElements(),
   );
 
 export const drawingBroadcastMouseUpEpic: Epic = (action$, state$) =>
@@ -117,28 +117,28 @@ export const drawingBroadcastMouseUpEpic: Epic = (action$, state$) =>
       Socket!.emit(`${roomId}/draw/mouseup`, drawCount);
       store.dispatch(actions.canvas.setDrawCount(0));
     }),
-    ignoreElements()
+    ignoreElements(),
   );
 
 export const canvasImageSaveEpic: Epic = (action$, state$) =>
   action$.ofType(types.INIT_CANVAS_TO_IMAGE).pipe(
     debounceTime(2500),
     tap(v => {
-      console.log("RUN");
+      console.log('RUN');
     }),
     mergeMap(action =>
       from(
         fetchStreamService(
           `${config.API_URL}/rooms/${state$.value.rooms.active}/drawing/save/`,
-          "POST",
+          'POST',
           {
             image: action.payload,
-            drawingId: state$.value.canvas.currentDrawing
-          }
-        )
-      )
+            drawingId: state$.value.canvas.currentDrawing,
+          },
+        ),
+      ),
     ),
-    ignoreElements()
+    ignoreElements(),
   );
 
 export const drawingResetEpic: Epic = (action$, state$) =>
@@ -150,5 +150,5 @@ export const drawingResetEpic: Epic = (action$, state$) =>
 
       Socket!.emit(`${roomId}/draw/reset`, { userId, drawingId });
     }),
-    ignoreElements()
+    ignoreElements(),
   );

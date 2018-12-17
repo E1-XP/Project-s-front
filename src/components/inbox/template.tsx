@@ -1,16 +1,16 @@
-import * as React from "react";
+import * as React from 'react';
 
-import "./style.scss";
+import './style.scss';
 
-import { Props } from "./index";
+import { Props } from './index';
 
-import Grid from "@material-ui/core/Grid";
-import Paper from "@material-ui/core/Paper";
-import Typography from "@material-ui/core/Typography";
-import List from "@material-ui/core/List";
-import ListItem from "@material-ui/core/ListItem";
-import ListItemText from "@material-ui/core/ListItemText";
-import Button from "@material-ui/core/Button";
+import Grid from '@material-ui/core/Grid';
+import Paper from '@material-ui/core/Paper';
+import Typography from '@material-ui/core/Typography';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemText from '@material-ui/core/ListItemText';
+import Button from '@material-ui/core/Button';
 
 export const InboxComponent = ({ user, users, rooms, pushRouter }: Props) => {
   const addZero = (num: number) => (num < 10 ? `0${num}` : num);
@@ -18,7 +18,7 @@ export const InboxComponent = ({ user, users, rooms, pushRouter }: Props) => {
     `${d.getFullYear()}.${addZero(d.getMonth() + 1)}.${addZero(d.getDate())}`;
 
   const pushToRoom = (e: any) =>
-    pushRouter(`/room/${e.target.closest("button").dataset.id}`);
+    pushRouter(`/room/${e.target.closest('button').dataset.id}`);
 
   return (
     <main id="inbox" className="container">
@@ -42,7 +42,7 @@ export const InboxComponent = ({ user, users, rooms, pushRouter }: Props) => {
                                                    itm.senderName
                                                  } send you invitation link to enter
                     room ${
-                      rooms[itm.roomId] ? rooms[itm.roomId].name : "[closed]"
+                      rooms[itm.roomId] ? rooms[itm.roomId].name : '[closed]'
                     }`}
                             />
                             <Button
@@ -61,7 +61,7 @@ export const InboxComponent = ({ user, users, rooms, pushRouter }: Props) => {
                       `You don't received any messages yet`
                     )
                   ) : (
-                    "loading..."
+                    'loading...'
                   )}
                 </div>
               </Grid>

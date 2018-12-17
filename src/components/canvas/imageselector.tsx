@@ -1,14 +1,14 @@
-import * as React from "react";
-import { compose } from "recompose";
-import { connect } from "react-redux";
+import * as React from 'react';
+import { compose } from 'recompose';
+import { connect } from 'react-redux';
 
-import { State } from "../../store";
+import { State } from '../../store';
 
-import ExpansionPanel from "@material-ui/core/ExpansionPanel";
-import ExpansionPanelDetails from "@material-ui/core/ExpansionPanelDetails";
-import GridList from "@material-ui/core/GridList";
-import GridListTile from "@material-ui/core/GridListTile";
-import GridListTileBar from "@material-ui/core/GridListTileBar";
+import ExpansionPanel from '@material-ui/core/ExpansionPanel';
+import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
+import GridList from '@material-ui/core/GridList';
+import GridListTile from '@material-ui/core/GridListTile';
+import GridListTileBar from '@material-ui/core/GridListTileBar';
 
 interface Props {
   drawings: object[];
@@ -24,7 +24,7 @@ type CombinedProps = Props & PassedProps;
 const ImageSelectorComponent = ({
   isOpen,
   drawings,
-  handleImageChange
+  handleImageChange,
 }: CombinedProps) => {
   if (!drawings) return null;
 
@@ -47,7 +47,7 @@ const ImageSelectorComponent = ({
                     <GridListTileBar title={itm.id} />
                   </GridListTile>
                 ))
-              : "no images found"}
+              : 'no images found'}
           </GridList>
         </div>
       </ExpansionPanelDetails>
@@ -58,5 +58,5 @@ const ImageSelectorComponent = ({
 const mapStateToProps = ({ user }: State) => ({ drawings: user.drawings });
 
 export const ImageSelector = compose<CombinedProps, PassedProps>(
-  connect(mapStateToProps)
+  connect(mapStateToProps),
 )(ImageSelectorComponent);

@@ -1,7 +1,7 @@
-import { Reducer } from "redux";
-import { types } from "../actions/types";
+import { Reducer } from 'redux';
+import { types } from '../actions/types';
 
-import { PlainAction } from "./index";
+import { PlainAction } from './index';
 
 export const chatsReducer: Reducer = (state: any = {}, action: PlainAction) => {
   switch (action.type) {

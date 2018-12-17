@@ -1,12 +1,12 @@
-import { FormEvent } from "react";
-import { compose, withHandlers, withState } from "recompose";
-import { connect } from "react-redux";
-import { Dispatch } from "redux";
+import { FormEvent } from 'react';
+import { compose, withHandlers, withState } from 'recompose';
+import { connect } from 'react-redux';
+import { Dispatch } from 'redux';
 
-import { State, UserData } from "../../store";
-import { actions } from "../../actions";
+import { State, UserData } from '../../store';
+import { actions } from '../../actions';
 
-import { RoomCreateComponent } from "./template";
+import { RoomCreateComponent } from './template';
 
 interface NewDrawingData {
   name: string;
@@ -45,7 +45,7 @@ const handlers = {
   },
   setIsPrivate: (props: Props) => () => {
     const newState = { ...props.state, isPrivate: !props.state.isPrivate };
-    if (!newState.isPrivate) newState.password = ""; //reset if input is hidden
+    if (!newState.isPrivate) newState.password = ''; // reset if input is hidden
     props.setState(newState);
   },
   goToNextStage: (props: Props) => () => {
@@ -55,7 +55,7 @@ const handlers = {
     props.initCreateNewDrawing({ name: props.state.name });
   },
   handleDrawingSelect: (props: Props) => (e: any) => {
-    props.initDrawingSelect(e.target.closest("li").dataset.id);
+    props.initDrawingSelect(e.target.closest('li').dataset.id);
   },
   handleSubmit: (props: Props) => (e: any) => {
     const { user, state } = props;
@@ -64,33 +64,33 @@ const handlers = {
       name: state.name,
       adminId: user.id,
       isPrivate: state.isPrivate,
-      password: state.password
+      password: state.password,
     });
-  }
+  },
 };
 
 const mapStateToProps = ({ user, canvas }: State) => ({
   user: user.userData,
-  currentDrawing: canvas.currentDrawing
+  currentDrawing: canvas.currentDrawing,
 });
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({
   initRoomCreate: (data: any) => dispatch(actions.rooms.initRoomCreate(data)),
   initCreateNewDrawing: (v: NewDrawingData) =>
     dispatch(actions.user.initCreateNewDrawing(v)),
-  initDrawingSelect: (v: number) => dispatch(actions.user.initDrawingSelect(v))
+  initDrawingSelect: (v: number) => dispatch(actions.user.initDrawingSelect(v)),
 });
 
 export const RoomCreate = compose<Props, {}>(
   connect(
     mapStateToProps,
-    mapDispatchToProps
+    mapDispatchToProps,
   ),
-  withState("state", "setState", {
+  withState('state', 'setState', {
     isPrivate: false,
-    name: "",
-    password: "",
-    formStage: 1
+    name: '',
+    password: '',
+    formStage: 1,
   }),
-  withHandlers(handlers)
+  withHandlers(handlers),
 )(RoomCreateComponent);

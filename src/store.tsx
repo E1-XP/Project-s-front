@@ -1,11 +1,11 @@
-import { createStore, applyMiddleware, Store, DeepPartial } from "redux";
-import { routerMiddleware, RouterState } from "connected-react-router";
-import { createEpicMiddleware } from "redux-observable";
-import { composeWithDevTools } from "redux-devtools-extension";
+import { createStore, applyMiddleware, Store, DeepPartial } from 'redux';
+import { routerMiddleware, RouterState } from 'connected-react-router';
+import { createEpicMiddleware } from 'redux-observable';
+import { composeWithDevTools } from 'redux-devtools-extension';
 
-import { history } from "./history";
-import { createRootReducer } from "./reducers";
-import { rootEpic } from "./epics";
+import { history } from './history';
+import { createRootReducer } from './reducers';
+import { rootEpic } from './epics';
 
 interface DBItem {
   id: number;
@@ -110,35 +110,35 @@ export const initialState: DeepPartial<{}> = {
     isLoading: true,
     isUserLoggedIn: false,
     isSocketConnected: false,
-    inboxCount: 0
+    inboxCount: 0,
   },
   users: {
     general: {},
-    selectedRoom: {}
+    selectedRoom: {},
   },
   rooms: {
     active: null,
-    list: undefined
+    list: undefined,
   },
   chats: {
     general: [],
-    selectedRoom: []
+    selectedRoom: [],
   },
   canvas: {
     drawCount: 0,
     currentDrawing: null,
     drawingPoints: [],
-    broadcastedDrawingPoints: {}
+    broadcastedDrawingPoints: {},
   },
   user: {
     userData: {
-      username: "",
-      email: "",
-      id: null
+      username: '',
+      email: '',
+      id: null,
     },
     drawings: null,
-    inboxMessages: null
-  }
+    inboxMessages: null,
+  },
 };
 
 const epicMiddleWare = createEpicMiddleware();
@@ -147,10 +147,10 @@ export const store = createStore(
   createRootReducer(history),
   initialState,
   composeWithDevTools(
-    applyMiddleware(routerMiddleware(history), epicMiddleWare)
-  )
+    applyMiddleware(routerMiddleware(history), epicMiddleWare),
+  ),
 );
 
 epicMiddleWare.run(rootEpic);
 
-store.subscribe(() => console.log(store.getState()));
+store.subscribe(() => console.log('STATE UDATED:', store.getState()));

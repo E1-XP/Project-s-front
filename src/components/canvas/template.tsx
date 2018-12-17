@@ -1,10 +1,10 @@
-import * as React from "react";
-import "./style.scss";
+import * as React from 'react';
+import './style.scss';
 
-import { Props } from "./index";
+import { Props } from './index';
 
-import { CanvasNavbar } from "./navbar";
-import { ImageSelector } from "./imageselector";
+import { CanvasNavbar } from './navbar';
+import { ImageSelector } from './imageselector';
 
 export const CanvasComponent = ({
   onRef,
@@ -17,7 +17,7 @@ export const CanvasComponent = ({
   setIsImageSelectorOpen,
   handleImageChange,
   setIsColorPickerOpen,
-  setWeight
+  setWeight,
 }: Props) => {
   return (
     <div id="canvas">

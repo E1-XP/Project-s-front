@@ -1,12 +1,12 @@
-import { Reducer } from "redux";
+import { Reducer } from 'redux';
 
-import { types } from "../actions/types";
-import { PlainAction } from "./index";
-import { Canvas } from "../store";
+import { types } from '../actions/types';
+import { PlainAction } from './index';
+import { Canvas } from '../store';
 
 export const canvasReducer: Reducer = (
   state: Canvas | any = {},
-  action: PlainAction
+  action: PlainAction,
 ) => {
   switch (action.type) {
     case types.SET_DRAWING_POINT: {
@@ -59,12 +59,12 @@ export const canvasReducer: Reducer = (
       };
 
       const reducedByUserId = action.payload.reduce(groupByUserId, {});
-      console.log("s1", reducedByUserId);
+      console.log('s1', reducedByUserId);
       const reducedByArrayGroup = Object.keys(reducedByUserId).reduce(
         groupByGroupId,
-        {}
+        {},
       );
-      console.log("s2", reducedByArrayGroup);
+      console.log('s2', reducedByArrayGroup);
 
       const broadcastedDrawingPoints = Object.keys(reducedByArrayGroup).reduce(
         (acc: any, key: string) => {
@@ -73,13 +73,13 @@ export const canvasReducer: Reducer = (
 
           acc[key] = Object.keys(reducedByArrayGroup[key]).reduce(
             intoArray,
-            []
+            [],
           );
           return acc;
         },
-        {}
+        {},
       );
-      console.log("s3", broadcastedDrawingPoints);
+      console.log('s3', broadcastedDrawingPoints);
 
       return { ...state, broadcastedDrawingPoints };
     }
@@ -97,7 +97,7 @@ export const canvasReducer: Reducer = (
 
       const userIdPoints = state.broadcastedDrawingPoints[userId]
         ? state.broadcastedDrawingPoints[userId].map((itm: object[]) =>
-            itm.slice()
+            itm.slice(),
           )
         : [];
 
@@ -105,7 +105,7 @@ export const canvasReducer: Reducer = (
 
       const broadcastedDrawingPoints = {
         ...state.broadcastedDrawingPoints,
-        [userId]: userIdPoints
+        [userId]: userIdPoints,
       };
 
       return { ...state, broadcastedDrawingPoints };
@@ -117,7 +117,7 @@ export const canvasReducer: Reducer = (
       const payloadExist = action.payload !== undefined;
       return {
         ...state,
-        drawCount: payloadExist ? action.payload : state.drawCount + 1
+        drawCount: payloadExist ? action.payload : state.drawCount + 1,
       };
     }
     case types.SET_CURRENT_DRAWING: {

@@ -1,13 +1,13 @@
-import * as React from "react";
-import { connect } from "react-redux";
-import { Dispatch } from "redux";
-import { withRouter } from "react-router-dom";
-import { lifecycle, compose, ReactLifeCycleFunctions } from "recompose";
+import * as React from 'react';
+import { connect } from 'react-redux';
+import { Dispatch } from 'redux';
+import { withRouter } from 'react-router-dom';
+import { lifecycle, compose, ReactLifeCycleFunctions } from 'recompose';
 
-import { State } from "../../store";
-import { actions } from "../../actions";
+import { State } from '../../store';
+import { actions } from '../../actions';
 
-import CircularProgress from "@material-ui/core/CircularProgress";
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 interface Props {
   isLoading: boolean;
@@ -18,15 +18,15 @@ interface Props {
 const hooks: ReactLifeCycleFunctions<Props, {}> = {
   componentDidMount() {
     this.props.initializeApp();
-  }
+  },
 };
 
 const mapStateToprops = ({ global }: State) => ({
-  isLoading: global.isLoading
+  isLoading: global.isLoading,
 });
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({
-  initializeApp: () => dispatch(actions.global.initApp())
+  initializeApp: () => dispatch(actions.global.initApp()),
 });
 
 export const PreloaderComponent: any = ({ isLoading, children }: Props) => {
@@ -43,7 +43,7 @@ export const Preloader = compose(
   withRouter,
   connect(
     mapStateToprops,
-    mapDispatchToProps
+    mapDispatchToProps,
   ),
-  lifecycle(hooks)
+  lifecycle(hooks),
 )(PreloaderComponent);

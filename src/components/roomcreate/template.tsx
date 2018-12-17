@@ -1,10 +1,10 @@
-import * as React from "react";
-import "./style.scss";
+import * as React from 'react';
+import './style.scss';
 
-import { Props } from "./index";
+import { Props } from './index';
 
-import { RoomCreateForm } from "./stage1";
-import { ImageSelector } from "./stage2";
+import { RoomCreateForm } from './stage1';
+import { ImageSelector } from './stage2';
 
 export const RoomCreateComponent = ({
   handleSubmit,
@@ -15,7 +15,7 @@ export const RoomCreateComponent = ({
   setIsPrivate,
   goToNextStage,
   handleDrawingCreate,
-  handleDrawingSelect
+  handleDrawingSelect,
 }: Props) => {
   switch (state.formStage) {
     case 1:

@@ -1,22 +1,22 @@
-import * as React from "react";
-import { NavLink } from "react-router-dom";
-import "./style.scss";
+import * as React from 'react';
+import { NavLink } from 'react-router-dom';
+import './style.scss';
 
-import AppBar from "@material-ui/core/AppBar";
-import Toolbar from "@material-ui/core/Toolbar";
-import Typography from "@material-ui/core/Typography";
-import Button from "@material-ui/core/Button";
-import IconButton from "@material-ui/core/IconButton";
-import Icon from "@material-ui/core/Icon";
-import Badge from "@material-ui/core/Badge";
+import AppBar from '@material-ui/core/AppBar';
+import Toolbar from '@material-ui/core/Toolbar';
+import Typography from '@material-ui/core/Typography';
+import Button from '@material-ui/core/Button';
+import IconButton from '@material-ui/core/IconButton';
+import Icon from '@material-ui/core/Icon';
+import Badge from '@material-ui/core/Badge';
 
-import { Props } from "./index";
+import { Props } from './index';
 
 export const NavbarComponent = ({
   isUserLoggedIn,
   userData,
   inboxCount,
-  handleLogout
+  handleLogout,
 }: Props) => {
   // if (!userData) return (<p>Loading..</p>);
 
@@ -25,7 +25,7 @@ export const NavbarComponent = ({
       <Toolbar className="toolbar">
         <NavLink to="/dashboard">
           <Typography variant="title" color="inherit">
-            Project-S{" "}
+            Project-S{' '}
           </Typography>
         </NavLink>
         <div>
@@ -35,8 +35,8 @@ export const NavbarComponent = ({
                 variant="body2"
                 color="primary"
                 style={{
-                  display: "inline-block",
-                  paddingRight: ".5rem"
+                  display: 'inline-block',
+                  paddingRight: '.5rem',
                 }}
               >
                 WELCOME {userData.username.toUpperCase()}
