@@ -1,12 +1,12 @@
 import { Reducer } from "redux";
 
 import { types } from "../actions/types";
-import { plainAction } from "./index";
+import { PlainAction } from "./index";
 import { Canvas } from "../store";
 
 export const canvasReducer: Reducer = (
   state: Canvas | any = {},
-  action: plainAction
+  action: PlainAction
 ) => {
   switch (action.type) {
     case types.SET_DRAWING_POINT: {

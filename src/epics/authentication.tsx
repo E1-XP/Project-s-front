@@ -18,7 +18,7 @@ import { store } from "../store";
 import { types } from "../actions/types";
 import { actions } from "../actions";
 
-const URL = "http://localhost:3001/auth";
+import config from "./../../config";
 
 export const appStartEpic: Epic = (action$, state$) =>
   action$
@@ -36,7 +36,9 @@ export const authEpic: Epic = (action$, state$) =>
     mergeMap(action =>
       from(
         fetchStreamService(
-          `${URL}/${state$.value.router.location.pathname
+          `${
+            config.API_URL
+          }/auth/${state$.value.router.location.pathname
             .toLowerCase()
             .slice(1)}`,
           "POST",
@@ -45,8 +47,8 @@ export const authEpic: Epic = (action$, state$) =>
       ).pipe(
         map(value =>
           actions.global.authSuccess({
-            session: false,
-            value
+            value,
+            session: false
           })
         ),
         catchError(err => of(actions.global.networkError(err)))
@@ -57,12 +59,14 @@ export const authEpic: Epic = (action$, state$) =>
 export const sessionAuthEpic: Epic = (action$, state$) =>
   action$.ofType(types.INIT_SESSION_AUTH).pipe(
     mergeMap(action =>
-      from(fetchStreamService(`${URL}${"/pagerefresh"}`, "POST")).pipe(
+      from(
+        fetchStreamService(`${config.API_URL}${"/auth/pagerefresh"}`, "POST")
+      ).pipe(
         map(value => {
           return value.status === 200
             ? actions.global.authSuccess({
-                session: true,
-                value
+                value,
+                session: true
               })
             : actions.global.authFailure();
         }),
@@ -103,7 +107,9 @@ export const logoutEpic: Epic = (action$, state$) =>
       localStorage.removeItem("isAuth");
     }),
     mergeMap(action =>
-      from(fetchStreamService(`${URL}${"/logout"}`, "POST")).pipe(
+      from(
+        fetchStreamService(`${config.API_URL}${"/auth/logout"}`, "POST")
+      ).pipe(
         mergeMap(resp =>
           of(
             actions.global.setIsUserLoggedIn(false),

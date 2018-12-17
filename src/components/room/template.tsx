@@ -1,4 +1,4 @@
-import React, { ComponentType } from "react";
+import * as React from "react";
 import { Prompt, Link } from "react-router-dom";
 import "./style.scss";
 
@@ -16,7 +16,7 @@ import Icon from "@material-ui/core/Icon";
 import { Canvas } from "../canvas";
 import { Chat } from "../chat";
 
-export const RoomComponent: ComponentType<Props> = ({
+export const RoomComponent = ({
   changeRoomOwner,
   isUserAdmin,
   handleSubmit,
@@ -29,7 +29,7 @@ export const RoomComponent: ComponentType<Props> = ({
   state,
   match,
   isRoomUndefined
-}) => {
+}: Props) => {
   const isLoaded =
     isSocketConnected &&
     rooms.list !== undefined &&
@@ -41,8 +41,8 @@ export const RoomComponent: ComponentType<Props> = ({
   if (isLoaded && isRoomUndefined()) {
     return (
       <main id="room" className="container">
-        <Grid container spacing={16}>
-          <Grid item xs={12}>
+        <Grid container={true} spacing={16}>
+          <Grid item={true} xs={12}>
             <Paper className="paper">
               <Typography
                 variant="headline"
@@ -58,7 +58,7 @@ export const RoomComponent: ComponentType<Props> = ({
               >
                 Probably admin closed it or you entered incorrect url.
               </Typography>
-              <Grid container item md={12} justify="center">
+              <Grid container={true} item={true} md={12} justify="center">
                 <Link to="/dashboard">
                   <Button variant="contained" color="primary">
                     Return to the main page
@@ -74,9 +74,9 @@ export const RoomComponent: ComponentType<Props> = ({
 
   return (
     <main id="room" className="container">
-      <Grid container spacing={16}>
-        <Grid item md={3} sm={12}>
-          <Grid item xs={12} className="mbottom-1">
+      <Grid container={true} spacing={16}>
+        <Grid item={true} md={3} sm={12}>
+          <Grid item={true} xs={12} className="mbottom-1">
             <Paper className="paper">
               <Typography variant="headline">
                 Room {rooms.list[match.params.id].name}
@@ -106,14 +106,14 @@ export const RoomComponent: ComponentType<Props> = ({
               </List>
             </Paper>
           </Grid>
-          <Grid item xs={12}>
+          <Grid item={true} xs={12}>
             <Paper className="paper">
               <Typography variant="headline">Room chat</Typography>
               <Chat messages={chats.selectedRoom} handleSubmit={handleSubmit} />
             </Paper>
           </Grid>
         </Grid>
-        <Grid item md={9} sm={12}>
+        <Grid item={true} md={9} sm={12}>
           <Paper className="paper">
             <Canvas />
           </Paper>

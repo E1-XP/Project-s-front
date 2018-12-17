@@ -1,4 +1,4 @@
-import React, { ComponentType } from "react";
+import * as React from "react";
 import { compose } from "recompose";
 
 import { IState } from "./../index";
@@ -35,14 +35,18 @@ export const RoomCreateFormComponent = ({
 }: CombinedProps) => {
   return (
     <main id="roomcreate" className="container">
-      <Grid container spacing={16}>
-        <Grid item xs={12}>
+      <Grid container={true} spacing={16}>
+        <Grid item={true} xs={12}>
           <Paper className="paper">
             <Typography variant="display1" align="center">
               Create new Room
             </Typography>
-            <Grid item xs={6} className="griditem--center mtop--2 mbottom--2">
-              <FormControl fullWidth margin="normal">
+            <Grid
+              item={true}
+              xs={6}
+              className="griditem--center mtop--2 mbottom--2"
+            >
+              <FormControl fullWidth={true} margin="normal">
                 <FormControl margin="dense">
                   <InputLabel htmlFor="name">Name</InputLabel>
                   <Input
@@ -72,7 +76,7 @@ export const RoomCreateFormComponent = ({
                     disabled={!state.isPrivate}
                   />
                 </FormControl>
-                <Grid container justify="flex-end">
+                <Grid container={true} justify="flex-end">
                   <Button
                     onClick={goToNextStage}
                     variant="contained"

@@ -22,8 +22,8 @@ export const startSocketService = async (v: any): Promise<any> => {
     Socket.on("general/messages", (data: any) => {
       store.dispatch(
         actions.chats.setMessages({
-          channel: "general",
-          data
+          data,
+          channel: "general"
         })
       );
     });

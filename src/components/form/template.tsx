@@ -1,4 +1,4 @@
-import React, { ComponentType, KeyboardEvent } from "react";
+import * as React from "react";
 
 import { Props } from "./index";
 
@@ -26,15 +26,15 @@ export const FormComponent = ({
 
   return (
     <main className="container">
-      <Grid container spacing={16} justify="center">
-        <Grid item md={7} sm={9} xs={12}>
+      <Grid container={true} spacing={16} justify="center">
+        <Grid item={true} md={7} sm={9} xs={12}>
           <Paper className="paper">
             <Typography align="center" variant="display1" className="mbottom-2">
               {formHeading}
             </Typography>
-            <Grid container justify="center">
-              <Grid item md={6} sm={7} xs={10}>
-                <FormControl margin="normal" fullWidth>
+            <Grid container={true} justify="center">
+              <Grid item={true} md={6} sm={7} xs={10}>
+                <FormControl margin="normal" fullWidth={true}>
                   {currentRoute === "signup" && (
                     <FormControl margin="dense">
                       <InputLabel htmlFor="username">Username</InputLabel>

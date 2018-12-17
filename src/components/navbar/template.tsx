@@ -1,4 +1,4 @@
-import React, { ComponentType, Fragment } from "react";
+import * as React from "react";
 import { NavLink } from "react-router-dom";
 import "./style.scss";
 
@@ -12,12 +12,12 @@ import Badge from "@material-ui/core/Badge";
 
 import { Props } from "./index";
 
-export const NavbarComponent: ComponentType<Props> = ({
+export const NavbarComponent = ({
   isUserLoggedIn,
   userData,
   inboxCount,
   handleLogout
-}) => {
+}: Props) => {
   // if (!userData) return (<p>Loading..</p>);
 
   return (
@@ -30,7 +30,7 @@ export const NavbarComponent: ComponentType<Props> = ({
         </NavLink>
         <div>
           {isUserLoggedIn ? (
-            <Fragment>
+            <>
               <Typography
                 variant="body2"
                 color="primary"
@@ -58,16 +58,16 @@ export const NavbarComponent: ComponentType<Props> = ({
               <Button color="inherit" onClick={handleLogout}>
                 Logout
               </Button>
-            </Fragment>
+            </>
           ) : (
-            <Fragment>
+            <>
               <NavLink to="/login">
                 <Button color="inherit">Login</Button>
               </NavLink>
               <NavLink to="/signup">
                 <Button color="inherit">Sign Up</Button>
               </NavLink>
-            </Fragment>
+            </>
           )}
         </div>
       </Toolbar>
