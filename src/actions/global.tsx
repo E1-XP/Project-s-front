@@ -15,13 +15,33 @@ export const initAuthentication: ActionType = (data: object) => ({
   payload: data,
 });
 
-export const authSuccess: ActionType = data => ({
-  type: types.AUTH_SUCCESS,
+export const initLogin: ActionType = (data: object) => ({
+  type: types.INIT_LOGIN,
+  payload: data,
+});
+
+export const initSignUp: ActionType = (data: object) => ({
+  type: types.INIT_SIGNUP,
+  payload: data,
+});
+
+export const initAuthSuccess: ActionType = data => ({
+  type: types.INIT_AUTH_SUCCESS,
   payload: data,
 });
 
 export const authFailure: ActionType = data => ({
-  type: types.AUTH_FAILURE,
+  type: types.INIT_AUTH_FAILURE,
+});
+
+export const initGetUserData: ActionType = (data: object) => ({
+  type: types.INIT_GET_USER_DATA,
+  payload: data,
+});
+
+export const setFormMessage: ActionType = (data: object) => ({
+  type: types.SET_FORM_MESSAGE,
+  payload: data,
 });
 
 export const initLogout: ActionType = () => ({

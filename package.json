@@ -64,6 +64,7 @@
     "@material-ui/core": "^3.6.2",
     "@material-ui/lab": "^3.0.0-alpha.25",
     "connected-react-router": "^6.0.0",
+    "formik": "^1.4.1",
     "history": "^4.7.2",
     "lodash.throttle": "^4.1.1",
     "react": "^16.6.3",

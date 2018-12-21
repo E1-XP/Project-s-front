@@ -9,11 +9,12 @@ import {
   takeWhile,
   mapTo,
   pluck,
+  catchError,
 } from 'rxjs/operators';
 import { of, from } from 'rxjs';
 
-import { fetchStreamService } from '../services/fetch.service';
-import { Socket } from '../services/socket.service';
+import { fetchStreamService } from '../services/fetchService';
+import { startSocketService, Socket } from '../services/socketService';
 
 import { store } from '../store';
 
@@ -33,21 +34,16 @@ export const drawingBroadcastEpic: Epic = (action$, state$) =>
     mapTo(actions.canvas.setDrawCount()),
   );
 
-export const createNewDrawingEpic: Epic = (action$, state$) =>
+export const createNewDrawingEpic: Epic = (action$, { value: { user } }) =>
   action$.ofType(types.INIT_CREATE_NEW_DRAWING).pipe(
     tap(v => {
       console.log('CREATED NEW DRAWING');
     }),
     mergeMap(action =>
-      from(
-        fetchStreamService(
-          `${config.API_URL}/users/${state$.value.user.userData.id}/drawings/`,
-          'POST',
-          {
-            name: action.payload.name,
-            userId: state$.value.user.userData.id,
-          },
-        ),
+      fetchStreamService(
+        `${config.API_URL}/users/${user.userData.id}/drawings/`,
+        'POST',
+        { name: action.payload.name, userId: user.userData.id },
       ),
     ),
     mergeMap(resp =>
@@ -56,6 +52,7 @@ export const createNewDrawingEpic: Epic = (action$, state$) =>
         actions.user.setUserDrawings(resp.data.drawings),
       ),
     ),
+    catchError(err => of(actions.global.networkError(err))),
   );
 
 export const selectDrawingEpic: Epic = (action$, state$) =>
@@ -138,6 +135,7 @@ export const canvasImageSaveEpic: Epic = (action$, state$) =>
         ),
       ),
     ),
+    catchError(err => of(actions.global.networkError(err))),
     ignoreElements(),
   );
 

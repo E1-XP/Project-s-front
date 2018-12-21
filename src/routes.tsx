@@ -11,23 +11,25 @@ import { Inbox } from './components/inbox';
 import { RoomCreate } from './components/roomcreate';
 import { Room } from './components/room';
 import { NotFound } from './components/404';
+import { ErrorPage } from './components/500';
 
 export const routes = (
   <Preloader>
     <Navbar />
-    <Route path="/signup" component={Form} />
-    <Route path="/login" component={Form} />
     <Switch>
       <Route
         exact={true}
         path="/"
         render={() => <Redirect to="/dashboard" />}
       />
+      <Route path="/signup" component={Form} />
+      <Route path="/login" component={Form} />
       <Route path="/dashboard" component={withAuthentication(Dashboard)} />
       <Route path="/inbox" component={withAuthentication(Inbox)} />
       <Route path="/room/create" component={withAuthentication(RoomCreate)} />
       <Route path="/room/:id" component={withAuthentication(Room)} />
-      {/* <Route component={NotFound} /> */}
+      <Route path="/500" component={ErrorPage} />
+      <Route component={NotFound} />
     </Switch>
   </Preloader>
 );

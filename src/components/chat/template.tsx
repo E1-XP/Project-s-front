@@ -6,7 +6,7 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import Avatar from '@material-ui/core/Avatar';
 import TextField from '@material-ui/core/TextField';
-import Button from '@material-ui/core/Button';
+import Fab from '@material-ui/core/Fab';
 import Icon from '@material-ui/core/Icon';
 import RootRef from '@material-ui/core/RootRef';
 
@@ -54,15 +54,9 @@ export const ChatComponent = ({
         onChange={setMessage}
         className="textfield--fullwidth"
       />
-      <Button
-        variant="fab"
-        mini={true}
-        color="secondary"
-        aria-label="Send"
-        onClick={handleMessageSubmit}
-      >
+      <Fab color="secondary" aria-label="Send" onClick={handleMessageSubmit}>
         <Icon>done</Icon>
-      </Button>
+      </Fab>
     </div>
   );
 };

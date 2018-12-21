@@ -3,18 +3,20 @@ import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
 import {
   compose,
-  withState,
   withHandlers,
   lifecycle,
   ReactLifeCycleFunctions,
 } from 'recompose';
+import { ErrorMessageProps } from 'formik';
 
 import { State } from '../../store';
 import { actions } from '../../actions';
 
 import { FormComponent } from './template';
 
-interface FormState {
+import { withUserValidation } from '../../HOCs/withUserValidation';
+
+export interface FormState {
   username: string;
   email: string;
   password: string;
@@ -22,57 +24,30 @@ interface FormState {
 
 export interface Props {
   formState: FormState;
-  location: any;
-  setFormState: (obj: any) => void;
-  setUsername: (props: any) => void;
-  setEmail: (props: any) => void;
-  setPassword: (props: any) => void;
-  handleSubmit: () => void;
-  initAuthentication: (data: FormState) => void;
-  handleKeyNav: (e: KeyboardEvent) => void;
+  currentRoute: string;
+  handleSubmit: (formState: FormState, actions: any) => void;
+  initAuthentication: (data: FormState) => Dispatch;
   pushRouter: (str: string) => Dispatch;
   isUserLoggedIn: () => Dispatch;
+  validateUser: (v: FormState) => ErrorMessageProps;
 }
 
 const lifecycleMethods: ReactLifeCycleFunctions<Props, {}> = {
   componentDidMount() {
-    const { isUserLoggedIn, pushRouter, handleKeyNav } = this.props;
-
-    window.addEventListener('keypress', handleKeyNav);
+    const { isUserLoggedIn, pushRouter } = this.props;
 
     isUserLoggedIn && pushRouter('/dashboard');
-  },
-  componentWillUnmount() {
-    window.removeEventListener('keypress', this.props.handleKeyNav);
   },
 };
 
 const handlers = {
-  setUsername: (props: Props) => (e: any) => {
-    const { setFormState, formState } = props;
-    setFormState({ ...formState, username: e.target.value });
-  },
-  setEmail: (props: Props) => (e: any) => {
-    const { setFormState, formState } = props;
-    setFormState({ ...formState, email: e.target.value });
-  },
-  setPassword: (props: Props) => (e: any) => {
-    const { setFormState, formState } = props;
-    setFormState({ ...formState, password: e.target.value });
-  },
-  handleSubmit: (props: Props) => () => {
-    props.initAuthentication(props.formState);
+  handleSubmit: (props: Props) => (values: FormState, actions: any) => {
+    console.log('values', values);
+    props.initAuthentication(values);
   },
 };
 
-const handlers2 = {
-  handleKeyNav: (props: Props) => (e: KeyboardEvent) => {
-    e.keyCode === 13 && props.handleSubmit();
-  },
-};
-
-const mapStateToProps = ({ router, global }: State) => ({
-  location: router.location,
+const mapStateToProps = ({ global }: State) => ({
   isUserLoggedIn: global.isUserLoggedIn,
 });
 
@@ -87,12 +62,7 @@ export const Form = compose<Props, {}>(
     mapStateToProps,
     mapDispatchToProps,
   ),
-  withState('formState', 'setFormState', {
-    username: '',
-    email: '',
-    password: '',
-  }),
+  withUserValidation,
   withHandlers(handlers),
-  withHandlers(handlers2),
   lifecycle<Props, {}>(lifecycleMethods),
 )(FormComponent);

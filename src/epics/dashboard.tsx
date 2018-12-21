@@ -6,12 +6,13 @@ import {
   ignoreElements,
   mapTo,
   pluck,
+  catchError,
 } from 'rxjs/operators';
 import { of, from, iif } from 'rxjs';
 import { push } from 'connected-react-router';
 
-import { fetchStreamService } from '../services/fetch.service';
-import { Socket } from '../services/socket.service';
+import { fetchStreamService } from '../services/fetchService';
+import { Socket } from '../services/socketService';
 
 import { store } from '../store';
 
@@ -34,14 +35,12 @@ export const handleSendGeneralMessageEpic: Epic = (action$, state$) =>
 export const checkInboxEpic: Epic = (action$, state$) =>
   action$.ofType(types.INIT_CHECK_INBOX).pipe(
     mergeMap(action =>
-      from(
-        fetchStreamService(
-          `${config.API_URL}/users/${state$.value.user.userData.id}/inbox`,
-          'GET',
-        ),
+      fetchStreamService(
+        `${config.API_URL}/users/${state$.value.user.userData.id}/inbox`,
       ),
     ),
     map(resp => actions.user.setInboxMessages(resp.data.messages)),
+    catchError(err => of(actions.global.networkError(err))),
   );
 
 export const sendRoomInvitationEpic: Epic = (action$, state$) =>
