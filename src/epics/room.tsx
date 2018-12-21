@@ -9,12 +9,13 @@ import {
   takeWhile,
   mapTo,
   pluck,
+  catchError,
 } from 'rxjs/operators';
 import { of, from, iif } from 'rxjs';
 import { push } from 'connected-react-router';
 
-import { fetchStreamService } from '../services/fetch.service';
-import { Socket } from '../services/socket.service';
+import { fetchStreamService } from '../services/fetchService';
+import { Socket } from '../services/socketService';
 
 import { store } from '../store';
 
@@ -22,6 +23,7 @@ import { types } from '../actions/types';
 import { actions } from '../actions';
 
 import config from './../../config';
+import { resolvePtr } from 'dns';
 
 export const roomJoinEpic: Epic = (action$, state$) =>
   action$.ofType(types.INIT_ROOM_ENTER).pipe(
@@ -50,23 +52,21 @@ export const roomJoinEpic: Epic = (action$, state$) =>
 
 export const checkRoomPasswordEpic: Epic = (action$, state$) =>
   action$.ofType(types.INIT_CHECK_ROOM_PASSWORD).pipe(
-    pluck<{}, any>('payload'),
-    mergeMap(({ roomId, password }) =>
-      from(
-        fetchStreamService(
-          `${config.API_URL}/rooms/${roomId}/checkpassword`,
-          'POST',
-          {
-            password,
-          },
+    pluck<any, any>('payload'),
+    mergeMap((roomId, password) =>
+      fetchStreamService(
+        `${config.API_URL}/rooms/${roomId}/checkpassword`,
+        'POST',
+        { password },
+      ).pipe(
+        mergeMap(resp =>
+          iif(
+            () => resp.status === 200,
+            of(actions.rooms.initRoomEnterSuccess()),
+            of(actions.rooms.initCheckRoomPasswordFailure()),
+          ),
         ),
-      ).pipe(map(response => ({ response, roomId }))),
-    ),
-    mergeMap(data =>
-      iif(
-        () => data.response.status === 200,
-        of(actions.rooms.initRoomEnterSuccess()),
-        of(actions.rooms.initCheckRoomPasswordFailure()),
+        catchError(err => of(actions.global.networkError(err))),
       ),
     ),
   );
@@ -224,12 +224,11 @@ export const getUserImagesEpic: Epic = (action$, state$) =>
       console.log('GOT YOUR DRAWINGS');
     }),
     mergeMap(action =>
-      from(
-        fetchStreamService(
-          `${config.API_URL}/users/${state$.value.user.userData.id}/drawings/`,
-          'GET',
-        ),
+      fetchStreamService(
+        `${config.API_URL}/users/${state$.value.user.userData.id}/drawings/`,
+        'GET',
       ),
     ),
     map(resp => actions.user.setUserDrawings(resp.data.drawings)),
+    catchError(err => of(actions.global.networkError(err))),
   );

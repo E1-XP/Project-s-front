@@ -5,4 +5,4 @@ import { App } from './app';
 
 ReactDOM.render(<App />, document.getElementById('root'));
 
-// module.hot.accept();
+module!.hot!.accept();

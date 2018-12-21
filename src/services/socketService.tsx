@@ -10,7 +10,7 @@ export let Socket: SocketIOClient.Socket | undefined;
 
 export const startSocketService = async (v: any): Promise<any> => {
   return new Promise(async (res, rej) => {
-    const { username, id } = v.payload.value.data;
+    const { username, id } = v.payload;
     // if (!data.payload.email || !data.payload.email.length) return null;
 
     Socket = await io(config.API_URL, { query: `user=${username}&id=${id}` });
