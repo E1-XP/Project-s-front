@@ -14,6 +14,8 @@ export const globalReducer: Reducer = (
       return { ...state, isLoading: action.payload };
     case types.SET_IS_USER_LOGGED_IN:
       return { ...state, isUserLoggedIn: action.payload };
+    case types.SET_FORM_MESSAGE:
+      return { ...state, formMessage: action.payload };
     case types.SET_INBOX_COUNT: {
       const { payload } = action;
 

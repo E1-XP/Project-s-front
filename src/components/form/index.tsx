@@ -25,6 +25,8 @@ export interface FormState {
 export interface Props {
   formState: FormState;
   currentRoute: string;
+  formMessage: string;
+  setFormMessage: (v: string) => Dispatch;
   handleSubmit: (formState: FormState, actions: any) => void;
   initAuthentication: (data: FormState) => Dispatch;
   pushRouter: (str: string) => Dispatch;
@@ -32,11 +34,21 @@ export interface Props {
   validateUser: (v: FormState) => ErrorMessageProps;
 }
 
-const lifecycleMethods: ReactLifeCycleFunctions<Props, {}> = {
+const hooks: ReactLifeCycleFunctions<Props, {}> = {
   componentDidMount() {
     const { isUserLoggedIn, pushRouter } = this.props;
 
     isUserLoggedIn && pushRouter('/dashboard');
+  },
+  componentDidUpdate(prevP, prevS) {
+    if (prevP.currentRoute !== this.props.currentRoute) {
+      this.props.setFormMessage('');
+    }
+  },
+  componentWillUnmount() {
+    if (this.props.formMessage) {
+      this.props.setFormMessage('');
+    }
   },
 };
 
@@ -49,11 +61,13 @@ const handlers = {
 
 const mapStateToProps = ({ global }: State) => ({
   isUserLoggedIn: global.isUserLoggedIn,
+  formMessage: global.formMessage,
 });
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({
   initAuthentication: (data: FormState) =>
     dispatch(actions.global.initAuthentication(data)),
+  setFormMessage: (v: string) => dispatch(actions.global.setFormMessage(v)),
   pushRouter: (str: string) => dispatch(push(str)),
 });
 
@@ -64,5 +78,5 @@ export const Form = compose<Props, {}>(
   ),
   withUserValidation,
   withHandlers(handlers),
-  lifecycle<Props, {}>(lifecycleMethods),
+  lifecycle(hooks),
 )(FormComponent);

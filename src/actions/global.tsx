@@ -20,6 +20,11 @@ export const initLogin: ActionType = (data: object) => ({
   payload: data,
 });
 
+export const initEmailCheck: ActionType = (data: string) => ({
+  type: types.INIT_EMAIL_CHECK,
+  payload: data,
+});
+
 export const initSignUp: ActionType = (data: object) => ({
   type: types.INIT_SIGNUP,
   payload: data,

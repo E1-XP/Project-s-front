@@ -11,7 +11,7 @@ import {
   pluck,
   catchError,
 } from 'rxjs/operators';
-import { of, from, iif } from 'rxjs';
+import { of, iif } from 'rxjs';
 import { push } from 'connected-react-router';
 
 import { fetchStreamService } from '../services/fetchService';
@@ -23,7 +23,6 @@ import { types } from '../actions/types';
 import { actions } from '../actions';
 
 import config from './../../config';
-import { resolvePtr } from 'dns';
 
 export const roomJoinEpic: Epic = (action$, state$) =>
   action$.ofType(types.INIT_ROOM_ENTER).pipe(
@@ -41,7 +40,7 @@ export const roomJoinEpic: Epic = (action$, state$) =>
 
       return { password, roomId };
     }),
-    mergeMap((data: any) =>
+    mergeMap(data =>
       iif(
         () => data.password === null,
         of(actions.rooms.initRoomEnterSuccess()),
@@ -226,7 +225,6 @@ export const getUserImagesEpic: Epic = (action$, state$) =>
     mergeMap(action =>
       fetchStreamService(
         `${config.API_URL}/users/${state$.value.user.userData.id}/drawings/`,
-        'GET',
       ),
     ),
     map(resp => actions.user.setUserDrawings(resp.data.drawings)),

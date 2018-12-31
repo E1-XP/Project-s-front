@@ -10,90 +10,110 @@ import FormControl from '@material-ui/core/FormControl';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 
-export const FormComponent = ({
-  currentRoute,
-  validateUser,
+interface InputProps {
+  values: FormikProps<FormState>['values'];
+  handleChange: FormikProps<FormState>['handleChange'];
+  errors: FormikProps<FormState>['errors'];
+}
+
+interface PassedToForm {
+  currentRoute: string;
+  formMessage: string;
+  setFormMessage: Props['setFormMessage'];
+}
+
+const UsernameField = ({ values, handleChange, errors }: InputProps) => (
+  <TextField
+    error={!!errors.username}
+    required={true}
+    id="username"
+    placeholder="username"
+    label="Username"
+    margin="dense"
+    variant="outlined"
+    value={values.username}
+    onChange={handleChange}
+  />
+);
+
+const EmailField = ({ values, handleChange, errors }: InputProps) => (
+  <TextField
+    error={!!errors.email}
+    required={true}
+    id="email"
+    placeholder="email"
+    label="Email"
+    margin="dense"
+    variant="outlined"
+    value={values.email}
+    onChange={handleChange}
+  />
+);
+
+const PasswordField = ({ values, handleChange, errors }: InputProps) => (
+  <TextField
+    error={!!errors.password}
+    required={true}
+    id="password"
+    placeholder="password"
+    label="Password"
+    type="password"
+    margin="dense"
+    variant="outlined"
+    value={values.password}
+    onChange={handleChange}
+  />
+);
+
+const Form = ({
+  values,
+  errors,
+  isValid,
+  handleChange,
   handleSubmit,
-}: Props) => {
+  currentRoute,
+  formMessage,
+  setFormMessage,
+}: FormikProps<FormState> & PassedToForm) => {
+  const handleChangeMod = (e: any) => {
+    if (formMessage) setFormMessage('');
+    handleChange(e);
+  };
+  const inputProps = { values, errors, handleChange: handleChangeMod };
+
+  return (
+    <form onSubmit={handleSubmit}>
+      <FormControl margin="normal" fullWidth={true}>
+        {currentRoute === 'signup' && <UsernameField {...inputProps} />}
+        <EmailField {...inputProps} />
+        <PasswordField {...inputProps} />
+        <Typography align="center" variant="caption" color="error">
+          {formMessage ||
+            [...new Set([errors.username, errors.email, errors.password])].join(
+              ', ',
+            )}
+        </Typography>
+        <Button type="submit" variant="contained" color="primary">
+          Submit
+        </Button>
+      </FormControl>
+    </form>
+  );
+};
+
+export const FormComponent = (props: Props) => {
+  const {
+    currentRoute,
+    validateUser,
+    handleSubmit,
+    formMessage,
+    setFormMessage,
+  } = props;
+
   const formHeading =
     currentRoute === 'login'
       ? 'Login to enter Project-S'
       : 'Sign Up to enter Project-S';
-
-  const UsernameField = ({
-    values,
-    handleChange,
-    errors,
-  }: FormikProps<FormState>) => (
-    <TextField
-      error={!!errors.username}
-      required={true}
-      id="username"
-      placeholder="username"
-      label="Username"
-      margin="dense"
-      variant="outlined"
-      value={values.username}
-      onChange={handleChange}
-    />
-  );
-
-  const EmailField = ({
-    values,
-    handleChange,
-    errors,
-  }: FormikProps<FormState>) => (
-    <TextField
-      error={!!errors.email}
-      required={true}
-      id="email"
-      placeholder="email"
-      label="Email"
-      margin="dense"
-      variant="outlined"
-      value={values.email}
-      onChange={handleChange}
-    />
-  );
-
-  const PasswordField = ({
-    values,
-    handleChange,
-    errors,
-  }: FormikProps<FormState>) => (
-    <TextField
-      error={!!errors.password}
-      required={true}
-      id="password"
-      placeholder="password"
-      label="Password"
-      type="password"
-      margin="dense"
-      variant="outlined"
-      value={values.password}
-      onChange={handleChange}
-    />
-  );
-
-  const Form = (props: FormikProps<FormState>) => {
-    const { errors, isValid, handleSubmit } = props;
-
-    return (
-      <form onSubmit={handleSubmit}>
-        <FormControl margin="normal" fullWidth={true}>
-          {currentRoute === 'signup' && <UsernameField {...props} />}
-          <EmailField {...props} />
-          <PasswordField {...props} />
-          <Typography align="center" variant="subtitle1">
-            {[...new Set(Object.values(errors))].join(' ')}
-          </Typography>
-          <Button type="submit" variant="contained" color="primary">
-            Submit
-          </Button>
-        </FormControl>
-      </form>
-    );
-  };
 
   return (
     <main className="container">
@@ -106,10 +126,17 @@ export const FormComponent = ({
             <Grid container={true} justify="center">
               <Grid item={true} md={6} sm={7} xs={10}>
                 <Formik
-                  component={Form}
                   initialValues={{ email: '', username: '', password: '' }}
                   validate={validateUser}
                   onSubmit={handleSubmit}
+                  render={(props: FormikProps<FormState>) => (
+                    <Form
+                      {...props}
+                      currentRoute={currentRoute}
+                      formMessage={formMessage}
+                      setFormMessage={setFormMessage}
+                    />
+                  )}
                 />
               </Grid>
             </Grid>

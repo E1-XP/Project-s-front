@@ -41,13 +41,14 @@ export interface Props extends RouteComponentProps<Params> {
 const hooks: ReactLifeCycleFunctions<Props, {}> = {
   componentDidMount() {
     console.log(`SOCKET CONNECTED?  ${this.props.isSocketConnected}`);
-    setTimeout(this.props.initRoomEnter, 500);
+    this.props.initRoomEnter();
 
     setTimeout(() => {
       if (this.props.isRoomUndefined()) return;
 
-      this.props.isUserAdmin(this.props.user.id) &&
+      if (this.props.isUserAdmin(this.props.user.id)) {
         window.addEventListener('beforeunload', this.props.handleBeforeUnload);
+      }
     }, 500);
   },
   componentWillUnmount() {
@@ -55,8 +56,9 @@ const hooks: ReactLifeCycleFunctions<Props, {}> = {
 
     this.props.initRoomLeave();
 
-    this.props.isUserAdmin(this.props.user.id) &&
+    if (this.props.isUserAdmin(this.props.user.id)) {
       window.removeEventListener('beforeunload', this.props.handleBeforeUnload);
+    }
   },
   componentDidUpdate(prevP: Props) {
     const { isUserAdmin, user, handleBeforeUnload } = this.props;
@@ -87,6 +89,7 @@ const hooks: ReactLifeCycleFunctions<Props, {}> = {
 export const handlers = {
   isRoomUndefined: (props: Props) => () => {
     const roomId = props.match.params.id;
+
     if (props.rooms.list === undefined) return true;
     return props.rooms.list[roomId] === undefined;
   },
