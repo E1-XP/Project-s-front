@@ -31,10 +31,10 @@ export const appStartEpic: Epic = (action$, state$) =>
       ),
     );
 
-export const authEpic: Epic = (action$, { value: { router } }) =>
+export const authEpic: Epic = (action$, state$) =>
   action$.ofType(types.INIT_AUTHENTICATION).pipe(
     map(({ payload }) =>
-      router.location.pathname.toLowerCase().slice(1) === 'login'
+      state$.value.router.location.pathname.toLowerCase().slice(1) === 'login'
         ? actions.global.initLogin(payload)
         : actions.global.initSignUp(payload),
     ),
@@ -68,6 +68,20 @@ export const getUserDataEpic: Epic = (action$, state$) =>
           catchError(err => of(actions.global.networkError(err))),
         ),
       ),
+    ),
+  );
+
+export const checkEmailEpic: Epic = (action$, state$) =>
+  action$.ofType(types.INIT_EMAIL_CHECK).pipe(
+    mergeMap(action =>
+      fetchStreamService(`${config.API_URL}${'/auth/emailcheck'}`, 'POST', {
+        email: action.payload,
+      }),
+    ),
+    map(({ status }) =>
+      status === 200
+        ? actions.global.setFormMessage('')
+        : actions.global.setFormMessage('this email is already taken'),
     ),
   );
 
@@ -142,10 +156,10 @@ export const logoutEpic: Epic = (action$, state$) =>
         fetchStreamService(`${config.API_URL}${'/auth/logout'}`, 'POST').pipe(
           mergeMap(resp =>
             of(
+              push('/login'),
               actions.global.setIsUserLoggedIn(false),
               actions.user.setUserData(null),
               actions.global.setIsLoading(false),
-              push('/login'),
             ),
           ),
           catchError(err => of(actions.global.networkError(err))),

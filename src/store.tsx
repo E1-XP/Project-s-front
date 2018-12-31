@@ -93,6 +93,7 @@ export interface Global {
   isUserLoggedIn: boolean;
   isSocketConnected: boolean;
   inboxCount: number;
+  formMessage: string;
 }
 
 export interface State {
@@ -111,6 +112,7 @@ export const initialState: DeepPartial<{}> = {
     isUserLoggedIn: false,
     isSocketConnected: false,
     inboxCount: 0,
+    formMessage: '',
   },
   users: {
     general: {},
