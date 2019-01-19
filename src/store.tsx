@@ -145,12 +145,12 @@ export const initialState: DeepPartial<{}> = {
 
 const epicMiddleWare = createEpicMiddleware();
 
+const middlewares = [routerMiddleware(history), epicMiddleWare];
+
 export const store = createStore(
   createRootReducer(history),
   initialState,
-  composeWithDevTools(
-    applyMiddleware(routerMiddleware(history), epicMiddleWare),
-  ),
+  composeWithDevTools(applyMiddleware(...middlewares)),
 );
 
 epicMiddleWare.run(rootEpic);

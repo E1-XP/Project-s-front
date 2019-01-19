@@ -19,7 +19,7 @@ interface Params {
 }
 
 export interface Props extends RouteComponentProps<Params> {
-  state: string;
+  message: string;
   rooms: Rooms;
   chats: Chats;
   user: UserData;
@@ -40,8 +40,7 @@ export interface Props extends RouteComponentProps<Params> {
 
 const hooks: ReactLifeCycleFunctions<Props, {}> = {
   componentDidMount() {
-    console.log(`SOCKET CONNECTED?  ${this.props.isSocketConnected}`);
-    this.props.initRoomEnter();
+    // this.props.initRoomEnter();
 
     setTimeout(() => {
       if (this.props.isRoomUndefined()) return;
@@ -86,7 +85,7 @@ const hooks: ReactLifeCycleFunctions<Props, {}> = {
   },
 };
 
-export const handlers = {
+const handlers = {
   isRoomUndefined: (props: Props) => () => {
     const roomId = props.match.params.id;
 
@@ -133,7 +132,6 @@ const mapStateToProps = ({ global, rooms, chats, user, users }: State) => ({
   chats,
   users,
   isSocketConnected: global.isSocketConnected,
-
   user: user.userData,
 });
 
@@ -154,7 +152,7 @@ export const Room = compose<Props, {}>(
     mapStateToProps,
     mapDispatchToProps,
   ),
-  withState('state', 'setState', ''),
+  withState('message', 'setState', ''),
   withHandlers(handlers),
   lifecycle<Props, {}>(hooks),
 )(RoomComponent);

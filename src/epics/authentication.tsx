@@ -7,8 +7,9 @@ import {
   tap,
   ignoreElements,
 } from 'rxjs/operators';
-import { of, merge, from } from 'rxjs';
+import { of, merge, from, iif, EMPTY } from 'rxjs';
 import { push } from 'connected-react-router';
+import queryString from 'query-string';
 
 import { fetchStreamService } from '../services/fetchService';
 import { startSocketService, Socket } from '../services/socketService';
@@ -24,10 +25,23 @@ export const appStartEpic: Epic = (action$, state$) =>
   action$
     .ofType(types.INIT_APP)
     .pipe(
-      map(v =>
-        localStorage.getItem('isAuth')
-          ? actions.global.initSessionAuth()
-          : actions.global.setIsLoading(false),
+      mergeMap(() =>
+        iif(
+          () => !!localStorage.getItem('isAuth'),
+          of(actions.global.initSessionAuth()),
+          of(
+            actions.global.setIsLoading(false),
+            push(
+              ['', 'login', 'dashboard'].includes(
+                state$.value.router.location.pathname.toLowerCase().slice(1),
+              )
+                ? '/login'
+                : `/login?link=${state$.value.router.location.pathname
+                    .toLowerCase()
+                    .slice(1)}`,
+            ),
+          ),
+        ),
       ),
     );
 
@@ -119,18 +133,29 @@ export const sessionAuthEpic: Epic = (action$, state$) =>
     catchError(err => of(actions.global.networkError(err))),
   );
 
-export const authSuccessEpic: Epic = (action$, { value: { router } }) =>
+export const authSuccessEpic: Epic = (action$, state$) =>
   action$.ofType(types.INIT_AUTH_SUCCESS).pipe(
-    tap(v => console.log(v, 'in success')),
-    mergeMap(resp => from(startSocketService(resp))),
-    tap(() => localStorage.setItem('isAuth', 'true')),
-    mergeMap(resp =>
+    mergeMap(action => from(startSocketService(action.payload))),
+    tap(() => {
+      !localStorage.getItem('isAuth') && localStorage.setItem('isAuth', 'true');
+    }),
+    mergeMap(data =>
       of(
-        actions.user.setUserData(resp.payload),
+        actions.user.setUserData(data),
         actions.global.setIsUserLoggedIn(true),
-        actions.global.setIsLoading(false),
-        router.location.pathname.toLowerCase().slice(1) === 'login' || 'signup'
-          ? push('/dashboard')
+        !/^\/room\/\d+$/.test(state$.value.router.location.pathname)
+          ? actions.global.setIsLoading(false)
+          : { type: 'NULL' },
+        ['login', 'signup'].includes(
+          state$.value.router.location.pathname.toLowerCase().slice(1),
+        )
+          ? push(
+              state$.value.router.location.search.includes('link')
+                ? queryString
+                    .parse(state$.value.router.location.search)
+                    .link!.toString()
+                : '/dashboard',
+            )
           : { type: 'NULL' },
       ),
     ),
@@ -140,7 +165,9 @@ export const authFailureEpic: Epic = (action$, state$) =>
   action$
     .ofType(types.INIT_AUTH_FAILURE)
     .pipe(
-      mergeMap(resp => of(push('/login'), actions.global.setIsLoading(false))),
+      mergeMap(resp =>
+        merge(of(push('/login')), of(actions.global.setIsLoading(false))),
+      ),
     );
 
 export const logoutEpic: Epic = (action$, state$) =>

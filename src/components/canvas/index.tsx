@@ -74,9 +74,13 @@ interface DrawingPoint {
 
 const lifecycleMethods: ReactLifeCycleFunctions<Props, {}> = {
   componentDidMount() {
+    const shouldRender =
+      this.props.drawingPoints.length ||
+      Object.keys(this.props.broadcastedDrawingPoints).length;
+
     this.props.initializeBoard();
     this.props.handleResize();
-    this.props.drawingPoints.length && this.props.renderImage();
+    shouldRender && this.props.renderImage();
   },
   componentWillUnmount() {
     this.props.prepareForUnmount();

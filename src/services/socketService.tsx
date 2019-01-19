@@ -1,31 +1,32 @@
-import io from 'socket.io-client';
-import { push } from 'connected-react-router';
+import { connect } from 'socket.io-client';
 
-import { store } from '../store';
+import { store, UserData } from '../store';
 import { actions } from '../actions';
 
 import config from './../../config';
 
 export let Socket: SocketIOClient.Socket | undefined;
 
-export const startSocketService = async (v: any): Promise<any> => {
+export const startSocketService = async (data: UserData): Promise<UserData> => {
   return new Promise(async (res, rej) => {
-    const { username, id } = v.payload;
-    // if (!data.payload.email || !data.payload.email.length) return null;
+    const { username, id, email } = data;
 
-    Socket = await io(config.API_URL, { query: `user=${username}&id=${id}` });
+    Socket = await connect(
+      config.API_URL,
+      { query: `user=${username}&id=${id}` },
+    );
 
     Socket.on('general/users', (data: string[]) =>
       store.dispatch(actions.users.setUsers(data)),
     );
 
     Socket.on('general/messages', (data: any) => {
-      store.dispatch(
-        actions.chats.setMessages({
-          data,
-          channel: 'general',
-        }),
-      );
+      const payload = {
+        data,
+        channel: 'general',
+      };
+
+      store.dispatch(actions.chats.setMessages(payload));
     });
 
     Socket.on('inbox/get', (data: any) => {
@@ -49,10 +50,22 @@ export const startSocketService = async (v: any): Promise<any> => {
       store.dispatch(actions.rooms.initHandleRoomCreate(id));
     });
 
+    Socket.on(`${id}/connect`, ({ users, messages, rooms }: any) => {
+      const messageData = {
+        data: messages,
+        channel: 'general',
+      };
+
+      store.dispatch(actions.rooms.setRooms(rooms));
+      store.dispatch(actions.users.setUsers(users));
+      store.dispatch(actions.chats.setMessages(messageData));
+
+      res(data);
+    });
+
     Socket.on('connect', () => {
       console.log('CONNECTED!');
       store.dispatch(actions.global.setSocketConnectionStatus(true));
-      res(v);
     });
   });
 };

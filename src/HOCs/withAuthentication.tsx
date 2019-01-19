@@ -21,7 +21,7 @@ const hooks: ReactLifeCycleFunctions<Props, {}> = {
   },
 };
 
-const mapStateToProps = ({ global, router }: State) => ({
+const mapStateToProps = ({ global }: State) => ({
   isUserLoggedIn: global.isUserLoggedIn,
 });
 
