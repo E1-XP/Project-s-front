@@ -69,17 +69,17 @@ const Form = ({
   values,
   errors,
   isValid,
-  handleChange,
+  handleChange: formikOwnHandleChange,
   handleSubmit,
   currentRoute,
   formMessage,
   setFormMessage,
 }: FormikProps<FormState> & PassedToForm) => {
-  const handleChangeMod = (e: any) => {
+  const handleChange = (e: any) => {
     if (formMessage) setFormMessage('');
-    handleChange(e);
+    formikOwnHandleChange(e);
   };
-  const inputProps = { values, errors, handleChange: handleChangeMod };
+  const inputProps = { values, errors, handleChange };
 
   return (
     <form onSubmit={handleSubmit}>

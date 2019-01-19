@@ -26,19 +26,11 @@ export const RoomComponent = ({
   users,
   rooms,
   chats,
-  state,
+  message,
   match,
   isRoomUndefined,
 }: Props) => {
-  const isLoaded =
-    isSocketConnected &&
-    rooms.list !== undefined &&
-    Object.keys(users.selectedRoom).length &&
-    match.params.id;
-
-  if (!isLoaded) return <p>loading...</p>;
-
-  if (isLoaded && isRoomUndefined()) {
+  if (isRoomUndefined()) {
     return (
       <main id="room" className="container">
         <Grid container={true} spacing={16}>
