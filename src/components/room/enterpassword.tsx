@@ -67,7 +67,8 @@ export const RoomPasswordScreen = compose<Props, {}>(
           </Typography>
           <Grid container={true} spacing={16} justify="center">
             <Grid item={true} md={6} sm={7} xs={10}>
-              <FormControl fullWidth={true}>
+            <form onSubmit={handleSubmit}>
+            <FormControl fullWidth={true}>
                 <TextField
                   type="password"
                   label="password"
@@ -82,7 +83,7 @@ export const RoomPasswordScreen = compose<Props, {}>(
                   {formMessage}
                 </Typography>
                 <Button
-                  onClick={handleSubmit}
+                  type="submit"
                   disabled={!password.length}
                   variant="contained"
                   color="primary"
@@ -91,6 +92,7 @@ export const RoomPasswordScreen = compose<Props, {}>(
                   Submit
                 </Button>
               </FormControl>
+            </form>
             </Grid>
           </Grid>
         </Paper>

@@ -26,7 +26,7 @@ export interface Props extends RouteComponentProps<Params> {
   users: Users;
   isSocketConnected: boolean;
   isRoomUndefined: () => boolean;
-  isUserAdmin: (itm: string | number, prevProps?: Props) => boolean;
+  isUserAdmin: (itm: string | number, prevRooms?: Rooms) => boolean;
   handleBeforeUnload: (e: BeforeUnloadEvent) => void;
   changeRoomOwner: () => void;
   initSendRoomMessage: (data: any) => Dispatch;
@@ -57,6 +57,7 @@ const hooks: ReactLifeCycleFunctions<Props, {}> = {
   },
   componentDidUpdate(prevP: Props) {
     const { isUserAdmin, user, handleBeforeUnload } = this.props;
+    const { rooms } = prevP;
 
     if (this.props.isRoomUndefined()) return;
 
@@ -67,13 +68,13 @@ const hooks: ReactLifeCycleFunctions<Props, {}> = {
 
     if (
       isRoomListAvailable &&
-      !isUserAdmin(prevP.user.id, prevP) &&
+      !isUserAdmin(prevP.user.id, rooms) &&
       isUserAdmin(user.id)
     ) {
       window.addEventListener('beforeunload', handleBeforeUnload);
     } else if (
       isRoomListAvailable &&
-      isUserAdmin(prevP.user.id, prevP) &&
+      isUserAdmin(prevP.user.id, rooms) &&
       !isUserAdmin(user.id)
     ) {
       window.removeEventListener('beforeunload', handleBeforeUnload);
@@ -88,13 +89,13 @@ const handlers = {
     if (props.rooms.list === undefined) return true;
     return props.rooms.list[roomId] === undefined;
   },
-  isUserAdmin: (props: Props) => (itm: string | number, prevP?: Props) => {
+  isUserAdmin: (props: Props) => (itm: string | number, prevRooms?: Rooms) => {
     const roomId = props.match.params.id;
 
     if (!Object.keys(props.rooms.list).length) return false;
 
-    const adminId = prevP
-      ? prevP.rooms.list[roomId].adminId
+    const adminId = prevRooms
+      ? prevRooms.list[roomId].adminId
       : props.rooms.list[roomId].adminId;
 
     return Number(itm) === Number(adminId);
