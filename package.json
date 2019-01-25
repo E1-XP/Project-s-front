@@ -22,7 +22,6 @@
   },
   "devDependencies": {
     "@types/lodash": "^4.14.119",
-    "@types/lodash.throttle": "^4.1.4",
     "@types/query-string": "^6.2.0",
     "@types/react": "^16.7.17",
     "@types/react-color": "^2.13.6",
@@ -63,13 +62,12 @@
     "webpack-dev-server": "^3.1.10"
   },
   "dependencies": {
-    "@material-ui/core": "^3.6.2",
-    "@material-ui/lab": "^3.0.0-alpha.25",
+    "@material-ui/core": "^3.9.0",
+    "@material-ui/lab": "^3.0.0-alpha.28",
     "connected-react-router": "^6.0.0",
     "formik": "^1.4.1",
     "history": "^4.7.2",
     "lodash": "^4.17.11",
-    "lodash.throttle": "^4.1.1",
     "query-string": "^6.2.0",
     "react": "^16.6.3",
     "react-color": "^2.14.1",

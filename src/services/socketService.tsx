@@ -64,8 +64,11 @@ export const startSocketService = async (data: UserData): Promise<UserData> => {
     });
 
     Socket.on('connect', () => {
-      console.log('CONNECTED!');
       store.dispatch(actions.global.setSocketConnectionStatus(true));
+    });
+
+    Socket.on('disconnect', () => {
+      store.dispatch(actions.global.setSocketConnectionStatus(false));
     });
   });
 };

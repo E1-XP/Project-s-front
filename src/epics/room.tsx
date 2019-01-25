@@ -13,17 +13,8 @@ import {
   filter,
   concatMap,
 } from 'rxjs/operators';
-import {
-  of,
-  iif,
-  EMPTY,
-  combineLatest,
-  zip,
-  concat,
-  BehaviorSubject,
-} from 'rxjs';
-import { push, LOCATION_CHANGE } from 'connected-react-router';
-import queryString from 'query-string';
+import { of, iif, EMPTY } from 'rxjs';
+import { push } from 'connected-react-router';
 
 import { fetchStreamService } from '../services/fetchService';
 import { Socket } from '../services/socketService';
@@ -35,60 +26,10 @@ import { actions } from '../actions';
 
 import config from './../../config';
 
-const isRoomLinkParamIncludedInLastRoute = new BehaviorSubject(false);
-
-export const routeContainsRoomLinkParam: Epic = (action$, state$) =>
-  action$.ofType(LOCATION_CHANGE).pipe(
-    pluck<any, any>('payload'),
-    filter(
-      payload =>
-        state$.value.router.location.search.includes('link') &&
-        /^room\/\d+$/.test(
-          queryString
-            .parse(state$.value.router.location.search)
-            .link!.toString(),
-        ),
-    ),
-    tap(() => isRoomLinkParamIncludedInLastRoute.next(true)),
-    ignoreElements(),
-  );
-
-export const roomRouteEpic: Epic = (action$, state$) =>
-  action$.ofType(LOCATION_CHANGE).pipe(
-    pluck<any, any>('payload'),
-    filter(
-      payload =>
-        /^\/room\/\d+$/.test(payload.location.pathname) &&
-        state$.value.global.isUserLoggedIn &&
-        state$.value.rooms.list[payload.location.pathname.split('/')[2]],
-    ),
-    mergeMap(payload =>
-      of(actions.global.setIsLoading(true), actions.rooms.initRoomEnter()),
-    ),
-  );
-
-export const handleRoomRouteInstantEnterEpic: Epic = (action$, state$) =>
-  combineLatest([
-    action$
-      .ofType(LOCATION_CHANGE)
-      .pipe(
-        filter(
-          ({ payload }) =>
-            !state$.value.global.isUserLoggedIn &&
-            /^\/room\/\d+$/.test(payload.location.pathname) &&
-            isRoomLinkParamIncludedInLastRoute.value,
-        ),
-      ),
-    action$.ofType(types.SET_USER_DATA).pipe(take(1)),
-    action$.ofType(types.SET_ROOMS).pipe(take(1)),
-    action$.ofType(types.SET_IS_USER_LOGGED_IN).pipe(take(1)),
-  ]).pipe(
-    map(arr =>
-      arr[2].payload[state$.value.router.location.pathname.split('/')[2]]
-        ? actions.rooms.initRoomEnter()
-        : actions.global.setIsLoading(false),
-    ),
-  );
+import {
+  isRoomLinkParamIncludedInLastRoute,
+  isRoomPasswordCheckedAndValid,
+} from './helpers';
 
 export const roomJoinEpic: Epic = (action$, state$) =>
   action$.ofType(types.INIT_ROOM_ENTER).pipe(
@@ -96,25 +37,27 @@ export const roomJoinEpic: Epic = (action$, state$) =>
     map(v => {
       const roomId = state$.value.router.location.pathname.split('/')[2];
       const userId = state$.value.user.userData.id;
-      let password = null;
 
       const isRoomUndefined = !state$.value.rooms.list[roomId];
-      if (isRoomUndefined) return { password, roomId };
+      if (isRoomUndefined) return false;
 
       const isRoomPrivate = state$.value.rooms.list[roomId].isPrivate;
       const isUserAdmin = state$.value.rooms.list[roomId].adminId === userId;
 
-      if (isRoomPrivate && !isUserAdmin) {
-        password = prompt('enter password:') || '';
-      }
-
-      return { password, roomId };
+      return isRoomPrivate && !isUserAdmin;
     }),
-    mergeMap(data =>
+    mergeMap(shouldEnterPassword =>
       iif(
-        () => data.password === null,
+        () => shouldEnterPassword,
+        of(
+          push(
+            `/room/${
+              state$.value.router.location.pathname.split('/')[2]
+            }/password`,
+          ),
+          actions.global.setIsLoading(false),
+        ),
         of(actions.rooms.initRoomEnterSuccess()),
-        of(actions.rooms.initCheckRoomPassword(data)),
       ),
     ),
   );
@@ -122,16 +65,29 @@ export const roomJoinEpic: Epic = (action$, state$) =>
 export const checkRoomPasswordEpic: Epic = (action$, state$) =>
   action$.ofType(types.INIT_CHECK_ROOM_PASSWORD).pipe(
     pluck<any, any>('payload'),
-    mergeMap((roomId, password) =>
+    mergeMap(password =>
       fetchStreamService(
-        `${config.API_URL}/rooms/${roomId}/checkpassword`,
+        `${config.API_URL}/rooms/${
+          state$.value.router.location.pathname.split('/')[2]
+        }/checkpassword`,
         'POST',
         { password },
       ).pipe(
+        tap(resp =>
+          isRoomPasswordCheckedAndValid.next(
+            resp.status === 200 ? true : false,
+          ),
+        ),
         mergeMap(resp =>
           iif(
             () => resp.status === 200,
-            of(actions.rooms.initRoomEnterSuccess()),
+            of(
+              actions.global.setIsLoading(true),
+              push(
+                `/room/${state$.value.router.location.pathname.split('/')[2]}`,
+              ),
+              actions.rooms.initRoomEnterSuccess(),
+            ),
             of(actions.rooms.initCheckRoomPasswordFailure()),
           ),
         ),
@@ -142,10 +98,8 @@ export const checkRoomPasswordEpic: Epic = (action$, state$) =>
 
 export const checkRoomPasswordFailureEpic: Epic = (action$, state$) =>
   action$.ofType(types.INIT_CHECK_ROOM_PASSWORD_FAILURE).pipe(
-    tap(v => {
-      alert('Incorrect password. Please try again.');
-    }),
-    mapTo(push('/dashboard')),
+    tap(v => isRoomPasswordCheckedAndValid.next(null)),
+    mapTo(actions.global.setFormMessage('provided password is incorrect')),
   );
 
 export const handleRoomEnterSuccessEpic: Epic = (action$, state$) =>
@@ -215,11 +169,12 @@ export const concludeRoomEnterEpic: Epic = (action$, state$) =>
         action$.ofType(types.SET_BROADCASTED_DRAWING_POINTS_BULK).pipe(take(1)),
       v => actions.global.setIsLoading(false),
     ),
-    tap(
-      v =>
-        isRoomLinkParamIncludedInLastRoute.value &&
-        isRoomLinkParamIncludedInLastRoute.next(false),
-    ),
+    tap(v => {
+      isRoomLinkParamIncludedInLastRoute.value &&
+        isRoomLinkParamIncludedInLastRoute.next(false);
+      typeof isRoomPasswordCheckedAndValid.value === 'boolean' &&
+        isRoomPasswordCheckedAndValid.next(null);
+    }),
   );
 
 export const roomLeaveEpic: Epic = (action$, state$) =>

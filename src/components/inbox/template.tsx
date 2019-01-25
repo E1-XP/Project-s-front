@@ -24,7 +24,7 @@ export const InboxComponent = ({ user, users, rooms, pushRouter }: Props) => {
     <main id="inbox" className="container">
       <Grid container={true} spacing={16}>
         <Grid item={true} xs={12}>
-          <Paper className="paper">
+          <Paper>
             <Typography variant="display1" align="center" className="mbottom-2">
               Inbox
             </Typography>

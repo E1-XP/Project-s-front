@@ -40,19 +40,15 @@ export interface Props extends RouteComponentProps<Params> {
 
 const hooks: ReactLifeCycleFunctions<Props, {}> = {
   componentDidMount() {
-    // this.props.initRoomEnter();
+    const roomExistAndUserIsAdmin =
+      !this.props.isRoomUndefined() &&
+      this.props.isUserAdmin(this.props.user.id);
 
-    setTimeout(() => {
-      if (this.props.isRoomUndefined()) return;
-
-      if (this.props.isUserAdmin(this.props.user.id)) {
-        window.addEventListener('beforeunload', this.props.handleBeforeUnload);
-      }
-    }, 500);
+    if (roomExistAndUserIsAdmin) {
+      window.addEventListener('beforeunload', this.props.handleBeforeUnload);
+    }
   },
   componentWillUnmount() {
-    if (this.props.isRoomUndefined()) return;
-
     this.props.initRoomLeave();
 
     if (this.props.isUserAdmin(this.props.user.id)) {

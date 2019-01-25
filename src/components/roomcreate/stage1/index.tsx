@@ -33,11 +33,14 @@ export const RoomCreateFormComponent = ({
   setIsPrivate,
   goToNextStage,
 }: CombinedProps) => {
+  const shouldGoToNextStep =
+    state.name.length && (!state.isPrivate || state.password!.length);
+
   return (
     <main id="roomcreate" className="container">
       <Grid container={true} spacing={16}>
         <Grid item={true} xs={12}>
-          <Paper className="paper">
+          <Paper>
             <Typography variant="display1" align="center">
               Create new Room
             </Typography>
@@ -69,6 +72,7 @@ export const RoomCreateFormComponent = ({
                 <FormControl margin="dense">
                   <InputLabel htmlFor="password">Password</InputLabel>
                   <Input
+                    type="password"
                     id="password"
                     placeholder="Password"
                     value={state.password!}
@@ -82,7 +86,7 @@ export const RoomCreateFormComponent = ({
                     variant="contained"
                     color="primary"
                     className="mtop--1"
-                    disabled={!state.name.length}
+                    disabled={!shouldGoToNextStep}
                   >
                     Next
                     <Icon className="icon--mleft">arrow_right_alt</Icon>

@@ -9,6 +9,7 @@ import { Form } from './components/form';
 import { Dashboard } from './components/dashboard';
 import { Inbox } from './components/inbox';
 import { RoomCreate } from './components/roomcreate';
+import { RoomPasswordScreen } from './components/room/enterpassword';
 import { Room } from './components/room';
 import { NotFound } from './components/404';
 import { ErrorPage } from './components/500';
@@ -27,6 +28,10 @@ export const routes = (
       <Route path="/dashboard" component={withAuthentication(Dashboard)} />
       <Route path="/inbox" component={withAuthentication(Inbox)} />
       <Route path="/room/create" component={withAuthentication(RoomCreate)} />
+      <Route
+        path="/room/:id/password"
+        component={withAuthentication(RoomPasswordScreen)}
+      />
       <Route path="/room/:id" component={withAuthentication(Room)} />
       <Route path="/500" component={ErrorPage} />
       <Route component={NotFound} />

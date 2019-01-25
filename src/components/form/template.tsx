@@ -119,7 +119,7 @@ export const FormComponent = (props: Props) => {
     <main className="container">
       <Grid container={true} spacing={16} justify="center">
         <Grid item={true} md={7} sm={9} xs={12}>
-          <Paper className="paper">
+          <Paper>
             <Typography align="center" variant="display1" className="mbottom-2">
               {formHeading}
             </Typography>

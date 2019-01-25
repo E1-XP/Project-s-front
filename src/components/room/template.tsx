@@ -35,7 +35,7 @@ export const RoomComponent = ({
       <main id="room" className="container">
         <Grid container={true} spacing={16}>
           <Grid item={true} xs={12}>
-            <Paper className="paper">
+            <Paper>
               <Typography
                 variant="headline"
                 align="center"
@@ -69,7 +69,7 @@ export const RoomComponent = ({
       <Grid container={true} spacing={16}>
         <Grid item={true} md={3} sm={12}>
           <Grid item={true} xs={12} className="mbottom-1">
-            <Paper className="paper">
+            <Paper>
               <Typography variant="headline">
                 Room {rooms.list[match.params.id].name}
               </Typography>
@@ -99,14 +99,14 @@ export const RoomComponent = ({
             </Paper>
           </Grid>
           <Grid item={true} xs={12}>
-            <Paper className="paper">
+            <Paper>
               <Typography variant="headline">Room chat</Typography>
               <Chat messages={chats.selectedRoom} handleSubmit={handleSubmit} />
             </Paper>
           </Grid>
         </Grid>
         <Grid item={true} md={9} sm={12}>
-          <Paper className="paper">
+          <Paper>
             <Canvas />
           </Paper>
         </Grid>

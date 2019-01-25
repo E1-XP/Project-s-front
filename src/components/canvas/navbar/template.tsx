@@ -1,20 +1,20 @@
-import * as React from "react";
-import "./style.scss";
+import * as React from 'react';
+import './style.scss';
 
-import Button from "@material-ui/core/Button";
-import ExpansionPanel from "@material-ui/core/ExpansionPanel";
-import ExpansionPanelDetails from "@material-ui/core/ExpansionPanelDetails";
-import Slider from "@material-ui/lab/Slider";
-import Modal from "@material-ui/core/Modal";
-import Paper from "@material-ui/core/Paper";
-import List from "@material-ui/core/List";
-import ListItem from "@material-ui/core/ListItem";
-import ListItemText from "@material-ui/core/ListItemText";
-import Typography from "@material-ui/core/Typography";
-import Icon from "@material-ui/core/Icon";
-import { CirclePicker } from "react-color";
+import Button from '@material-ui/core/Button';
+import ExpansionPanel from '@material-ui/core/ExpansionPanel';
+import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
+import Slider from '@material-ui/lab/Slider';
+import Modal from '@material-ui/core/Modal';
+import Paper from '@material-ui/core/Paper';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemText from '@material-ui/core/ListItemText';
+import Typography from '@material-ui/core/Typography';
+import Icon from '@material-ui/core/Icon';
+import { CirclePicker } from 'react-color';
 
-import { CombinedProps } from "./index";
+import { CombinedProps } from './index';
 
 export const CanvasNavbarComponent = ({
   setSelectedColor,
@@ -31,7 +31,7 @@ export const CanvasNavbarComponent = ({
   isColorPickerOpen,
   toggleColorPicker,
   setWeight,
-  weight
+  weight,
 }: CombinedProps) => {
   if (!rooms.active) return <p>...loading</p>;
 
@@ -75,7 +75,7 @@ export const CanvasNavbarComponent = ({
         onClose={closeModal}
       >
         <div>
-          <Paper className="paper modal">
+          <Paper className="modal">
             <Typography variant="title" align="center" className="mbottom-2">
               Select User to invite
             </Typography>
