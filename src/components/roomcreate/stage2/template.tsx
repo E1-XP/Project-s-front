@@ -23,7 +23,7 @@ export const ImageSelectorComponent = ({
     <main id="roomcreate" className="container">
       <Grid container={true} spacing={16}>
         <Grid item={true} xs={12}>
-          <Paper className="paper">
+          <Paper>
             <Typography variant="display1" align="center">
               Select drawing
             </Typography>

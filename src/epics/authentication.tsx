@@ -1,6 +1,7 @@
 import { Epic } from 'redux-observable';
 import {
   map,
+  filter,
   mapTo,
   catchError,
   mergeMap,
@@ -139,16 +140,24 @@ export const authSuccessEpic: Epic = (action$, state$) =>
     tap(() => {
       !localStorage.getItem('isAuth') && localStorage.setItem('isAuth', 'true');
     }),
-    mergeMap(data =>
-      of(
+    mergeMap(data => {
+      const pathName = state$.value.router.location.pathname;
+
+      const isOnFormPage = ['login', 'signup'].includes(
+        pathName.toLowerCase().slice(1),
+      );
+      const shouldSetLoadingAsFalse =
+        !/^\/room\/\d+(\/|\/password|\/password\/)?$/.test(pathName) ||
+        (/^\/room\/\d+(\/password|\/password\/)$/.test(pathName) &&
+          !state$.value.rooms.list[pathName.split('/')[2]]);
+
+      return of(
         actions.user.setUserData(data),
         actions.global.setIsUserLoggedIn(true),
-        !/^\/room\/\d+$/.test(state$.value.router.location.pathname)
+        shouldSetLoadingAsFalse
           ? actions.global.setIsLoading(false)
           : { type: 'NULL' },
-        ['login', 'signup'].includes(
-          state$.value.router.location.pathname.toLowerCase().slice(1),
-        )
+        isOnFormPage
           ? push(
               state$.value.router.location.search.includes('link')
                 ? queryString
@@ -157,27 +166,35 @@ export const authSuccessEpic: Epic = (action$, state$) =>
                 : '/dashboard',
             )
           : { type: 'NULL' },
-      ),
-    ),
+      );
+    }),
   );
 
 export const authFailureEpic: Epic = (action$, state$) =>
   action$
     .ofType(types.INIT_AUTH_FAILURE)
     .pipe(
-      mergeMap(resp =>
-        merge(of(push('/login')), of(actions.global.setIsLoading(false))),
-      ),
+      mergeMap(resp => of(push('/login'), actions.global.setIsLoading(false))),
     );
 
 export const logoutEpic: Epic = (action$, state$) =>
   action$.ofType(types.INIT_LOGOUT).pipe(
-    tap(v => {
+    filter(() => {
+      const pathName = state$.value.router.location.pathname;
+      const isOnRoomRoute = /^\/room\/\d+(\/)?$/.test(pathName);
+
+      let shouldLeave = true;
+      if (isOnRoomRoute) {
+        shouldLeave = confirm('Are you sure? This will close your room.');
+      }
+
+      return shouldLeave;
+    }),
+    tap(() => {
       Socket!.close();
-      console.log('WILL DISCONNECT YOU');
       localStorage.removeItem('isAuth');
     }),
-    mergeMap(action =>
+    mergeMap(() =>
       merge(
         of(actions.global.setIsLoading(true)),
         fetchStreamService(`${config.API_URL}${'/auth/logout'}`, 'POST').pipe(
@@ -185,7 +202,10 @@ export const logoutEpic: Epic = (action$, state$) =>
             of(
               push('/login'),
               actions.global.setIsUserLoggedIn(false),
+              actions.users.setUsers({}),
+              actions.chats.setMessages({ data: [], channel: 'general' }),
               actions.user.setUserData(null),
+              actions.rooms.setRooms(null),
               actions.global.setIsLoading(false),
             ),
           ),

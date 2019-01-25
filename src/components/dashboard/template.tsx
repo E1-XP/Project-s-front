@@ -27,7 +27,7 @@ export const DashboardComponent = ({
       <Grid container={true} spacing={16}>
         <Grid item={true} md={6} container={true} sm={12}>
           <Grid item={true} xs={12} className="mbottom-1">
-            <Paper className="paper">
+            <Paper>
               <Typography variant="headline">
                 Currently online: {Object.keys(users.general).length}
               </Typography>
@@ -41,7 +41,7 @@ export const DashboardComponent = ({
             </Paper>
           </Grid>
           <Grid item={true} xs={12}>
-            <Paper className="paper">
+            <Paper>
               <Typography variant="headline">Available Rooms</Typography>
               <List>
                 {rooms.list && Object.keys(rooms.list).length ? (

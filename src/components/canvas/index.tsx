@@ -8,7 +8,7 @@ import {
 } from 'recompose';
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
-import _throttle from 'lodash.throttle';
+import throttle from 'lodash/throttle';
 
 import { actions } from '../../actions';
 import { State } from '../../store';
@@ -242,7 +242,7 @@ const handlers2 = {
     }, 500);
   },
   handleMouseMove: (props: Props) =>
-    _throttle((e: MouseEvent) => {
+    throttle((e: MouseEvent) => {
       props.drawPoint(e);
       props.renderImage();
     }, 150),
