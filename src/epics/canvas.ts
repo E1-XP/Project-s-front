@@ -13,7 +13,7 @@ import {
 } from 'rxjs/operators';
 import { of } from 'rxjs';
 
-import { fetchStreamService } from '../services/fetchService';
+import { fetchStream } from '../utils/fetchStream';
 import { Socket } from '../services/socketService';
 
 import { store } from '../store';
@@ -40,7 +40,7 @@ export const createNewDrawingEpic: Epic = (action$, state$) =>
       console.log('CREATED NEW DRAWING');
     }),
     mergeMap(action =>
-      fetchStreamService(
+      fetchStream(
         `${config.API_URL}/users/${state$.value.user.userData.id}/drawings/`,
         'POST',
         { name: action.payload.name, userId: state$.value.user.userData.id },
@@ -86,7 +86,7 @@ export const selectDrawingInRoom: Epic = (action$, state$) =>
 //         tap(v => {
 //             console.log('ADDED TO MY PROFILE');
 //         }),
-//         mergeMap(action => from(fetchStreamService(
+//         mergeMap(action => from(fetchStream(
 //             `${config.API_URL}/rooms/${state$.value.rooms.active}/drawing/add`,
 //             'POST',
 //             { userId: state$.value.user.userData.id }
@@ -119,12 +119,9 @@ export const drawingBroadcastMouseUpEpic: Epic = (action$, state$) =>
 
 export const canvasImageSaveEpic: Epic = (action$, state$) =>
   action$.ofType(types.INIT_CANVAS_TO_IMAGE).pipe(
-    debounceTime(2500),
-    tap(v => {
-      console.log('RUN');
-    }),
+    debounceTime(1500),
     mergeMap(action =>
-      fetchStreamService(
+      fetchStream(
         `${config.API_URL}/rooms/${state$.value.rooms.active}/drawing/save/`,
         'POST',
         {

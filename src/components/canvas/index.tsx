@@ -17,7 +17,7 @@ import { CanvasComponent } from './template';
 
 export interface Props {
   onRef: (ref: any) => any;
-  getBoardRef: () => any;
+  getBoardRef: () => HTMLCanvasElement;
   boardState: BoardState;
   setBoardState: (v: object) => void;
   drawingPoints: DrawingPoint[][];
@@ -74,13 +74,13 @@ interface DrawingPoint {
 
 const lifecycleMethods: ReactLifeCycleFunctions<Props, {}> = {
   componentDidMount() {
-    const shouldRender =
+    const shouldDraw =
       this.props.drawingPoints.length ||
       Object.keys(this.props.broadcastedDrawingPoints).length;
 
     this.props.initializeBoard();
     this.props.handleResize();
-    shouldRender && this.props.renderImage();
+    shouldDraw && this.props.renderImage();
   },
   componentWillUnmount() {
     this.props.prepareForUnmount();
@@ -100,8 +100,8 @@ const stateHandlers = {
   setIsMouseDownFalse: (props: Props) => () => {
     props.setBoardState({ ...props.boardState, isMouseDown: false });
   },
-  setIsImageSelectorOpen: (props: Props) => (is?: boolean) => {
-    const value = is || !props.boardState.isImageSelectorOpen;
+  setIsImageSelectorOpen: (props: Props) => (isOpened?: boolean) => {
+    const value = isOpened || !props.boardState.isImageSelectorOpen;
     const bothOpened = value && props.boardState.isColorPickerOpen;
 
     const newState = { ...props.boardState, isImageSelectorOpen: value };
@@ -126,18 +126,16 @@ const stateHandlers = {
 };
 
 const handlers1 = () => {
-  let boardRef: any;
+  let boardRef: HTMLCanvasElement;
   let ctx: CanvasRenderingContext2D;
 
   return {
-    onRef: (props: Props) => (ref: any) => (boardRef = ref),
+    onRef: (props: Props) => (ref: HTMLCanvasElement) => (boardRef = ref),
     getBoardRef: (props: Props) => () => boardRef,
     initializeBoard: (props: Props) => () => {
-      ctx = boardRef.getContext('2d');
+      if (!boardRef) throw new Error('cannot find canvas ref');
+      ctx = boardRef.getContext('2d')!;
       document.addEventListener('mouseup', props.setIsMouseDownFalse);
-    },
-    prepareForUnmount: (props: Props) => () => {
-      document.removeEventListener('mouseup', props.setIsMouseDownFalse);
     },
     drawPoint: (props: Props) => (
       e: MouseEvent,
@@ -147,6 +145,7 @@ const handlers1 = () => {
       weightArg?: number,
     ) => {
       const { pageX, pageY } = e;
+      const { scrollX, scrollY } = window;
       const { selectedColor, weight } = props.boardState;
       const board = boardRef;
       const { top, left, width, height } = boardRef.getBoundingClientRect();
@@ -213,6 +212,10 @@ const handlers1 = () => {
 };
 
 const handlers2 = {
+  prepareForUnmount: (props: Props) => () => {
+    document.removeEventListener('mouseup', props.setIsMouseDownFalse);
+    window.removeEventListener('resize', props.renderImage);
+  },
   handleResize: (props: Props) => () => {
     window.addEventListener('resize', props.renderImage);
   },

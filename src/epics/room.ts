@@ -16,7 +16,7 @@ import {
 import { of, iif, EMPTY } from 'rxjs';
 import { push } from 'connected-react-router';
 
-import { fetchStreamService } from '../services/fetchService';
+import { fetchStream } from '../utils/fetchStream';
 import { Socket } from '../services/socketService';
 
 import { store } from '../store';
@@ -66,7 +66,7 @@ export const checkRoomPasswordEpic: Epic = (action$, state$) =>
   action$.ofType(types.INIT_CHECK_ROOM_PASSWORD).pipe(
     pluck<any, any>('payload'),
     mergeMap(password =>
-      fetchStreamService(
+      fetchStream(
         `${config.API_URL}/rooms/${
           state$.value.router.location.pathname.split('/')[2]
         }/checkpassword`,
@@ -269,7 +269,7 @@ export const handleRoomCreateEpic: Epic = (action$, state$) =>
 export const getUserImagesEpic: Epic = (action$, state$) =>
   action$.ofType(types.INIT_GET_IMAGES_FROM_SERVER).pipe(
     mergeMap(action =>
-      fetchStreamService(
+      fetchStream(
         `${config.API_URL}/users/${state$.value.user.userData.id}/drawings/`,
       ),
     ),

@@ -3,7 +3,7 @@ import './style.scss';
 
 import { Props } from './index';
 
-import { CanvasNavbar } from './navbar';
+import { CanvasNavbar } from './toolbar';
 import { ImageSelector } from './imageselector';
 
 export const CanvasComponent = ({

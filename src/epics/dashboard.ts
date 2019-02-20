@@ -11,7 +11,7 @@ import {
 import { of, from, iif } from 'rxjs';
 import { push } from 'connected-react-router';
 
-import { fetchStreamService } from '../services/fetchService';
+import { fetchStream } from '../utils/fetchStream';
 import { Socket } from '../services/socketService';
 
 import { store } from '../store';
@@ -19,7 +19,7 @@ import { store } from '../store';
 import { types } from '../actions/types';
 import { actions } from '../actions';
 
-import { InvitationData } from '../components/canvas/navbar';
+import { InvitationData } from '../components/canvas/toolbar';
 
 import config from './../../config';
 
@@ -35,7 +35,7 @@ export const handleSendGeneralMessageEpic: Epic = (action$, state$) =>
 export const checkInboxEpic: Epic = (action$, state$) =>
   action$.ofType(types.INIT_CHECK_INBOX).pipe(
     mergeMap(action =>
-      fetchStreamService(
+      fetchStream(
         `${config.API_URL}/users/${state$.value.user.userData.id}/inbox`,
       ),
     ),
