@@ -5,7 +5,7 @@ interface Response {
   status: number;
 }
 
-export const fetchStreamService = (
+export const fetchStream = (
   url: string,
   method = 'GET',
   data?: any,
