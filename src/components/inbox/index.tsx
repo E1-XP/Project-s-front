@@ -4,7 +4,7 @@ import { Dispatch } from 'redux';
 import { push } from 'connected-react-router';
 
 import { actions } from '../../actions';
-import { State, User, Users, RoomsList } from '../../store';
+import { State, User, Users, RoomsList } from '../../store/interfaces';
 
 import { InboxComponent } from './template';
 

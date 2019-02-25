@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
 
 import { actions } from '../../actions';
-import { State, UserData } from '../../store';
+import { State, UserData } from '../../store/interfaces';
 
 import { NavbarComponent } from './template';
 

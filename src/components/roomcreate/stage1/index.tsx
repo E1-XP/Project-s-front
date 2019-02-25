@@ -41,7 +41,7 @@ export const RoomCreateFormComponent = ({
       <Grid container={true} spacing={16}>
         <Grid item={true} xs={12}>
           <Paper>
-            <Typography variant="display1" align="center">
+            <Typography variant="h4" align="center">
               Create new Room
             </Typography>
             <Grid

@@ -1,12 +1,12 @@
-import { connect } from "react-redux";
-import { Dispatch } from "redux";
-import { compose, withHandlers, withState } from "recompose";
-import { withRouter, RouteComponentProps } from "react-router-dom";
+import { connect } from 'react-redux';
+import { Dispatch } from 'redux';
+import { compose, withHandlers, withState } from 'recompose';
+import { withRouter, RouteComponentProps } from 'react-router-dom';
 
-import { actions } from "../../../actions";
-import { State, Rooms, UserData, Users } from "../../../store";
+import { actions } from '../../../actions';
+import { State, Rooms, UserData, Users } from '../../../store/interfaces';
 
-import { CanvasNavbarComponent } from "./template";
+import { CanvasNavbarComponent } from './template';
 
 export interface InvitationData {
   roomId: number;
@@ -27,7 +27,7 @@ export interface Props extends RouteComponentProps<Params> {
   rooms: Rooms;
   user: UserData;
   users: Users;
-  isUserAdmin: (itm: number) => boolean;
+  isUserAdmin: (itm: number | null) => boolean;
   handleLoadImage: () => void;
   sendInvitationLink: () => void;
   initSendRoomInvitation: (data: InvitationData) => Dispatch;
@@ -47,7 +47,8 @@ export interface PassedProps {
 export type CombinedProps = Props & PassedProps;
 
 const handlers = {
-  isUserAdmin: (props: Props) => (id: string) => {
+  isUserAdmin: (props: Props) => (id: string | null) => {
+    if (id === null) return false;
     return id === props.rooms.list[props.match.params.id].adminId;
   },
   handleLoadImage: (props: Props & PassedProps) => () => {
@@ -57,7 +58,9 @@ const handlers = {
     const roomId = Number(props.match.params.id);
     const senderId = props.user.id;
     const senderName = props.user.username;
-    const receiverId = e.target.closest("li").dataset.id;
+    const receiverId = e.target.closest('li').dataset.id;
+
+    if (senderId === null) throw new Error('senderId is not a value');
 
     props.initSendRoomInvitation({ roomId, senderId, senderName, receiverId });
   },
@@ -70,26 +73,26 @@ const handlers = {
   },
   closeModal: (props: Props) => () => {
     props.setState(false);
-  }
+  },
 };
 
 const mapStateToProps = ({ user, users, rooms }: State) => ({
   users,
   rooms,
-  user: user.userData
+  user: user.userData,
 });
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({
   initSendRoomInvitation: (data: InvitationData) =>
-    dispatch(actions.user.initSendRoomInvitation(data))
+    dispatch(actions.user.initSendRoomInvitation(data)),
 });
 
 export const CanvasNavbar = compose<CombinedProps, PassedProps>(
   withRouter,
   connect(
     mapStateToProps,
-    mapDispatchToProps
+    mapDispatchToProps,
   ),
-  withState("isModalOpen", "setState", false),
-  withHandlers(handlers)
+  withState('isModalOpen', 'setState', false),
+  withHandlers(handlers),
 )(CanvasNavbarComponent);

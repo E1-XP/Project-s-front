@@ -9,7 +9,7 @@ import { connect } from 'react-redux';
 import { RouteComponentProps } from 'react-router-dom';
 import { Dispatch } from 'redux';
 
-import { State, Rooms, UserData, Chats, Users } from '../../store';
+import { State, Rooms, UserData, Chats, Users } from '../../store/interfaces';
 import { actions } from '../../actions';
 
 import { RoomComponent } from './template';
@@ -26,7 +26,7 @@ export interface Props extends RouteComponentProps<Params> {
   users: Users;
   isSocketConnected: boolean;
   isRoomUndefined: () => boolean;
-  isUserAdmin: (itm: string | number, prevRooms?: Rooms) => boolean;
+  isUserAdmin: (itm: string | number | null, prevRooms?: Rooms) => boolean;
   handleBeforeUnload: (e: BeforeUnloadEvent) => void;
   changeRoomOwner: () => void;
   initSendRoomMessage: (data: any) => Dispatch;
@@ -89,10 +89,15 @@ const handlers = {
     if (props.rooms.list === undefined) return true;
     return props.rooms.list[roomId] === undefined;
   },
-  isUserAdmin: (props: Props) => (itm: string | number, prevRooms?: Rooms) => {
+  isUserAdmin: (props: Props) => (
+    itm: string | number | null,
+    prevRooms?: Rooms,
+  ) => {
     const roomId = props.match.params.id;
 
     if (!Object.keys(props.rooms.list).length) return false;
+
+    if (itm === null) return false;
 
     const adminId = prevRooms
       ? prevRooms.list[roomId].adminId

@@ -68,7 +68,7 @@ export const setInboxCount: ActionType = (v?: number) => ({
 });
 
 export const setSocketConnectionStatus: ActionType = (bool: boolean) => ({
-  type: types.SET_SOCKET_CONNECTION_STATUS,
+  type: types.SOCKET_SET_CONNECTION_STATUS,
   payload: bool,
 });
 

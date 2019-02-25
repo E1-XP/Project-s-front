@@ -3,7 +3,7 @@ import { compose } from 'recompose';
 import { connect } from 'react-redux';
 import { match } from 'react-router-dom';
 
-import { State, Rooms, Users, UserData } from './../../store';
+import { State, Rooms, Users, UserData } from './../../store/interfaces';
 
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
@@ -24,7 +24,7 @@ interface Props {
 
 interface PassedProps {
   match: match<Params>;
-  isUserAdmin: (itm: string | number, prevRooms?: Rooms) => boolean;
+  isUserAdmin: (itm: string | number | null, prevRooms?: Rooms) => boolean;
   changeRoomOwner: () => void;
 }
 
@@ -46,10 +46,10 @@ export const RoomDashboard = compose<CombinedProps, PassedProps>(
     user,
   }: CombinedProps) => (
     <Paper>
-      <Typography variant="headline">
+      <Typography variant="h5">
         Room {rooms.list[match.params.id].name}
       </Typography>
-      <Typography variant="headline">
+      <Typography variant="h5">
         Currently online: {Object.keys(users.selectedRoom).length}
       </Typography>
       <List>

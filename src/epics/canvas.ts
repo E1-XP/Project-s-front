@@ -14,24 +14,25 @@ import {
 import { of } from 'rxjs';
 
 import { fetchStream } from '../utils/fetchStream';
-import { Socket } from '../services/socketService';
 
 import { store } from '../store';
 
 import { types } from '../actions/types';
 import { actions } from '../actions';
 
-import config from './../../config';
+import config from './../config';
 
 export const drawingBroadcastEpic: Epic = (action$, state$) =>
   action$.ofType(types.SET_DRAWING_POINT).pipe(
-    tap(v => {
-      const roomId = state$.value.rooms.active;
+    pluck('payload'),
+    map(data => {
       const drawingId = state$.value.canvas.currentDrawing;
 
-      Socket!.emit(`${roomId}/draw`, { ...v.payload, drawingId });
+      return { ...data, drawingId };
     }),
-    mapTo(actions.canvas.setDrawCount()),
+    mergeMap(data =>
+      of(actions.socket.emitRoomDraw(data), actions.canvas.setDrawCount()),
+    ),
   );
 
 export const createNewDrawingEpic: Epic = (action$, state$) =>
@@ -67,15 +68,14 @@ export const selectDrawingEpic: Epic = (action$, state$) =>
 export const selectDrawingInRoom: Epic = (action$, state$) =>
   action$.ofType(types.INIT_IN_ROOM_DRAWING_SELECT).pipe(
     pluck('payload'),
-    tap(drawingId => {
+    map(drawingId => {
       const roomId = state$.value.rooms.active;
 
       store.dispatch(actions.canvas.clearDrawingPoints());
       store.dispatch(actions.canvas.setCurrentDrawing(drawingId));
 
-      Socket!.emit(`${roomId}/draw/change`, { drawingId, roomId });
+      return actions.socket.emitRoomDrawChange({ drawingId, roomId });
     }),
-    ignoreElements(),
   );
 
 // export const drawingTakeIntoOwnershipOnMouseDownEpic: Epic = (action$, state$) => action$
@@ -97,24 +97,21 @@ export const selectDrawingInRoom: Epic = (action$, state$) =>
 export const drawingBroadcastNewPointsGroupEpic: Epic = (action$, state$) =>
   action$.ofType(types.SET_NEW_DRAWING_POINTS_GROUP).pipe(
     tap(v => {
-      const roomId = state$.value.rooms.active;
       const userId = state$.value.user.userData.id;
-
-      Socket!.emit(`${roomId}/draw/newgroup`, userId);
+      return actions.socket.emitRoomDrawNewGroup(userId);
     }),
-    ignoreElements(),
   );
 
 export const drawingBroadcastMouseUpEpic: Epic = (action$, state$) =>
   action$.ofType(types.INIT_MOUSE_UP_BROADCAST).pipe(
-    tap(v => {
-      const roomId = state$.value.rooms.active;
+    mergeMap(v => {
       const drawCount = state$.value.canvas.drawCount;
 
-      Socket!.emit(`${roomId}/draw/mouseup`, drawCount);
-      store.dispatch(actions.canvas.setDrawCount(0));
+      return of(
+        actions.socket.emitRoomDrawMouseup(drawCount),
+        actions.canvas.setDrawCount(0),
+      );
     }),
-    ignoreElements(),
   );
 
 export const canvasImageSaveEpic: Epic = (action$, state$) =>
@@ -136,12 +133,11 @@ export const canvasImageSaveEpic: Epic = (action$, state$) =>
 
 export const drawingResetEpic: Epic = (action$, state$) =>
   action$.ofType(types.INIT_CLEAR_DRAWING_POINTS).pipe(
-    tap(v => {
+    map(v => {
       const roomId = state$.value.rooms.active;
       const userId = state$.value.user.userData.id;
       const drawingId = state$.value.canvas.currentDrawing;
 
-      Socket!.emit(`${roomId}/draw/reset`, { userId, drawingId });
+      return actions.socket.emitRoomDrawReset({ userId, drawingId });
     }),
-    ignoreElements(),
   );

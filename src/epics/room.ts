@@ -13,18 +13,17 @@ import {
   filter,
   concatMap,
 } from 'rxjs/operators';
-import { of, iif, EMPTY } from 'rxjs';
+import { of, iif, EMPTY, merge } from 'rxjs';
 import { push } from 'connected-react-router';
 
 import { fetchStream } from '../utils/fetchStream';
-import { Socket } from '../services/socketService';
 
 import { store } from '../store';
 
 import { types } from '../actions/types';
 import { actions } from '../actions';
 
-import config from './../../config';
+import config from './../config';
 
 import {
   isRoomLinkParamIncludedInLastRoute,
@@ -103,64 +102,16 @@ export const checkRoomPasswordFailureEpic: Epic = (action$, state$) =>
   );
 
 export const handleRoomEnterSuccessEpic: Epic = (action$, state$) =>
-  action$.ofType(types.INIT_ROOM_ENTER_SUCCESS).pipe(
-    tap(action => {
-      const roomId =
-        state$.value.router.location.pathname.split('/')[2] ||
-        state$.value.rooms.active;
-      const drawingId = state$.value.canvas.currentDrawing;
-
-      store.dispatch(actions.rooms.setCurrentRoom(roomId));
-
-      if (!Socket) return;
-
-      Socket.emit('room/join', { roomId, drawingId });
-
-      Socket.on(`${roomId}/setdrawing`, (drawingId: number) => {
-        store.dispatch(actions.canvas.setCurrentDrawing(drawingId));
-      });
-
-      Socket.on(`${roomId}/messages`, (data: any) => {
-        store.dispatch(
-          actions.chats.setMessages({
-            data,
-            channel: 'selectedRoom',
-          }),
-        );
-      });
-
-      Socket.on(`${roomId}/draw`, (data: any) => {
-        store.dispatch(actions.canvas.setBroadcastedDrawingPoint(data));
-      });
-
-      Socket.on(`${roomId}/draw/getexisting`, (data: any[]) => {
-        store.dispatch(actions.canvas.setBroadcastedDrawingPointsBulk(data));
-      });
-
-      Socket.on(`${roomId}/draw/newgroup`, (userId: string) => {
-        store.dispatch(
-          actions.canvas.setNewBroadcastedDrawingPointsGroup(userId),
-        );
-      });
-
-      Socket.on(`${roomId}/draw/change`, (drawingId: string) => {
-        store.dispatch(actions.canvas.setCurrentDrawing(drawingId));
-      });
-
-      Socket.on(`${roomId}/draw/reset`, (userId: string) => {
-        store.dispatch(actions.canvas.clearDrawingPoints());
-      });
-
-      Socket.on(`${roomId}/users`, (data: any) => {
-        store.dispatch(actions.users.setRoomUsers(data));
-      });
-
-      Socket.on(`${roomId}/adminleaving`, () => {
-        store.dispatch(actions.rooms.initRoomAdminLeave());
-      });
-    }),
-    mergeMap(v => of(actions.canvas.initGetImagesFromServer())),
-  );
+  action$
+    .ofType(types.INIT_ROOM_ENTER_SUCCESS)
+    .pipe(
+      mergeMap(v =>
+        of(
+          actions.socket.bindRoomHandlers(),
+          actions.canvas.initGetImagesFromServer(),
+        ),
+      ),
+    );
 
 export const concludeRoomEnterEpic: Epic = (action$, state$) =>
   action$.ofType(types.INIT_ROOM_ENTER_SUCCESS).pipe(
@@ -179,21 +130,9 @@ export const concludeRoomEnterEpic: Epic = (action$, state$) =>
 
 export const roomLeaveEpic: Epic = (action$, state$) =>
   action$.ofType(types.INIT_ROOM_LEAVE).pipe(
-    tap(v => {
-      const roomId = state$.value.rooms.active;
-
-      if (!Socket) return;
-
-      Socket.emit('room/leave', roomId);
-      Socket.off(`${roomId}/messages`);
-      Socket.off(`${roomId}/draw`);
-      Socket.off(`${roomId}/draw/getexisting`);
-      Socket.off(`${roomId}/draw/newgroup`);
-      Socket.off(`${roomId}/draw/reset`);
-      Socket.off(`${roomId}/adminleaving`);
-    }),
     mergeMap(v =>
       of(
+        actions.socket.unbindRoomHandlers(),
         actions.global.setIsLoading(true),
         actions.rooms.setCurrentRoom(null),
         actions.users.setRoomUsers({}),
@@ -231,31 +170,29 @@ export const roomAdminLeaveEpic: Epic = (action$, state$) =>
 export const handleSendRoomMessageEpic: Epic = (action$, state$) =>
   action$.ofType(types.INIT_SEND_ROOM_MESSAGE).pipe(
     pluck('payload'),
-    tap((data: any) => {
-      const { message, author, authorId, roomId } = data;
-      Socket!.emit(`${roomId}/messages`, { message, author, authorId });
+    map((data: any) => {
+      const { message, author, authorId } = data;
+      return actions.socket.emitRoomMessage({ message, author, authorId });
     }),
-    ignoreElements(),
   );
 
 export const setRoomAdminEpic: Epic = (action$, state$) =>
   action$.ofType(types.INIT_ROOM_ADMIN_CHANGE).pipe(
     pluck('payload'),
-    tap((data: any) => {
-      const { roomId } = data;
-      Socket!.emit(`${roomId}/setadmin`, data);
-    }),
-    ignoreElements(),
+    map((data: any) => actions.socket.emitRoomSetAdmin(data)),
   );
 
 export const RoomCreateEpic: Epic = (action$, state$) =>
   action$.ofType(types.INIT_ROOM_CREATE).pipe(
     pluck('payload'),
-    tap(data => {
+    mergeMap(data => {
       const drawingId = state$.value.canvas.currentDrawing;
-      Socket!.emit('room/create', { ...data, drawingId });
+
+      return of(
+        actions.socket.emitRoomCreate({ ...data, drawingId }),
+        actions.global.setIsLoading(true),
+      );
     }),
-    mapTo(actions.global.setIsLoading(true)),
   );
 
 export const handleRoomCreateEpic: Epic = (action$, state$) =>

@@ -4,7 +4,7 @@ import { Dispatch } from 'redux';
 import debounce from 'lodash/debounce';
 
 import { actions } from './../actions';
-import { State } from '../store';
+import { State } from '../store/interfaces';
 import { FormikErrors } from 'formik';
 
 export interface RequestBody {

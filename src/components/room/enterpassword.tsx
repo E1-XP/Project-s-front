@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
 
 import { actions } from './../../actions';
-import { State } from '../../store';
+import { State } from '../../store/interfaces';
 
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
@@ -67,32 +67,32 @@ export const RoomPasswordScreen = compose<Props, {}>(
           </Typography>
           <Grid container={true} spacing={16} justify="center">
             <Grid item={true} md={6} sm={7} xs={10}>
-            <form onSubmit={handleSubmit}>
-            <FormControl fullWidth={true}>
-                <TextField
-                  type="password"
-                  label="password"
-                  name="password"
-                  margin="dense"
-                  variant="outlined"
-                  required={true}
-                  value={password}
-                  onChange={onPasswordChange}
-                />
-                <Typography align="center" variant="overline" color="error">
-                  {formMessage}
-                </Typography>
-                <Button
-                  type="submit"
-                  disabled={!password.length}
-                  variant="contained"
-                  color="primary"
-                  fullWidth={true}
-                >
-                  Submit
-                </Button>
-              </FormControl>
-            </form>
+              <form onSubmit={handleSubmit}>
+                <FormControl fullWidth={true}>
+                  <TextField
+                    type="password"
+                    label="password"
+                    name="password"
+                    margin="dense"
+                    variant="outlined"
+                    required={true}
+                    value={password}
+                    onChange={onPasswordChange}
+                  />
+                  <Typography align="center" variant="overline" color="error">
+                    {formMessage}
+                  </Typography>
+                  <Button
+                    type="submit"
+                    disabled={!password.length}
+                    variant="contained"
+                    color="primary"
+                    fullWidth={true}
+                  >
+                    Submit
+                  </Button>
+                </FormControl>
+              </form>
             </Grid>
           </Grid>
         </Paper>

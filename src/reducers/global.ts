@@ -3,7 +3,7 @@ import { types } from '../actions/types';
 
 import { PlainAction } from './index';
 
-import { Global } from '../store';
+import { Global } from '../store/interfaces';
 
 export const globalReducer: Reducer = (
   state: Global | any = {},
@@ -28,7 +28,7 @@ export const globalReducer: Reducer = (
 
       return { ...state, inboxCount };
     }
-    case types.SET_SOCKET_CONNECTION_STATUS:
+    case types.SOCKET_SET_CONNECTION_STATUS:
       return { ...state, isSocketConnected: action.payload };
     case types.NETWORK_ERROR: {
       console.log('ERROR: ', action.payload);

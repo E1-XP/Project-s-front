@@ -7,7 +7,7 @@ import {
   ReactLifeCycleFunctions,
 } from 'recompose';
 
-import { ChatMessage } from '../../store';
+import { ChatMessage } from '../../store/interfaces';
 
 import { ChatComponent } from './template';
 
