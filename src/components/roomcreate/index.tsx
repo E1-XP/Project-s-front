@@ -3,7 +3,7 @@ import { compose, withHandlers, withState } from 'recompose';
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
 
-import { State, UserData } from '../../store';
+import { State, UserData } from '../../store/interfaces';
 import { actions } from '../../actions';
 
 import { RoomCreateComponent } from './template';

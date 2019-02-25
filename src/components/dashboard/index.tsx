@@ -3,7 +3,13 @@ import { compose, withHandlers } from 'recompose';
 import { push } from 'connected-react-router';
 import { Dispatch } from 'redux';
 
-import { State, Users, Rooms, UserData, ChatMessage } from '../../store';
+import {
+  State,
+  Users,
+  Rooms,
+  UserData,
+  ChatMessage,
+} from '../../store/interfaces';
 import { actions } from '../../actions';
 
 import { DashboardComponent } from './template';

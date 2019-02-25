@@ -28,7 +28,7 @@ export const DashboardComponent = ({
         <Grid item={true} md={6} container={true} sm={12}>
           <Grid item={true} xs={12} className="mbottom-1">
             <Paper>
-              <Typography variant="headline">
+              <Typography variant="h5">
                 Currently online: {Object.keys(users.general).length}
               </Typography>
               <List>
@@ -42,7 +42,7 @@ export const DashboardComponent = ({
           </Grid>
           <Grid item={true} xs={12}>
             <Paper>
-              <Typography variant="headline">Available Rooms</Typography>
+              <Typography variant="h5">Available Rooms</Typography>
               <List>
                 {rooms.list && Object.keys(rooms.list).length ? (
                   Object.keys(rooms.list).map(itm => (
@@ -70,7 +70,7 @@ export const DashboardComponent = ({
         </Grid>
         <Grid item={true} md={6} xs={12}>
           <Paper className="paper--double">
-            <Typography variant="headline">General chat</Typography>
+            <Typography variant="h5">General chat</Typography>
             <Chat messages={messages} handleSubmit={handleMessageSubmit} />
           </Paper>
         </Grid>

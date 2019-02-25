@@ -24,7 +24,7 @@ export const NavbarComponent = ({
     <AppBar id="navbar" position="static" color="default">
       <Toolbar className="toolbar">
         <NavLink to="/dashboard">
-          <Typography variant="title" color="inherit">
+          <Typography variant="h6" color="inherit">
             Project-S{' '}
           </Typography>
         </NavLink>
@@ -32,7 +32,7 @@ export const NavbarComponent = ({
           {isUserLoggedIn ? (
             <>
               <Typography
-                variant="body2"
+                variant="body1"
                 color="primary"
                 style={{
                   display: 'inline-block',

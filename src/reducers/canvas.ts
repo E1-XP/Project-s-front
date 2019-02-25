@@ -2,7 +2,7 @@ import { Reducer } from 'redux';
 
 import { types } from '../actions/types';
 import { PlainAction } from './index';
-import { Canvas } from '../store';
+import { Canvas } from '../store/interfaces';
 
 export const canvasReducer: Reducer = (
   state: Canvas | any = {},

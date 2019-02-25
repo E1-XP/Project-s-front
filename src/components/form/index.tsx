@@ -9,7 +9,7 @@ import {
 } from 'recompose';
 import { ErrorMessageProps } from 'formik';
 
-import { State } from '../../store';
+import { State } from '../../store/interfaces';
 import { actions } from '../../actions';
 
 import { FormComponent } from './template';

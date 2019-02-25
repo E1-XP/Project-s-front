@@ -76,7 +76,7 @@ export const CanvasNavbarComponent = ({
       >
         <div>
           <Paper className="modal">
-            <Typography variant="title" align="center" className="mbottom-2">
+            <Typography variant="h6" align="center" className="mbottom-2">
               Select User to invite
             </Typography>
             {userList.length > 1 ? (
@@ -101,7 +101,7 @@ export const CanvasNavbarComponent = ({
                   ))}
               </List>
             ) : (
-              <Typography variant="title" align="center" className="mbottom-2">
+              <Typography variant="h6" align="center" className="mbottom-2">
                 No other users found.
               </Typography>
             )}

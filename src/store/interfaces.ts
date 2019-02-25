@@ -1,11 +1,4 @@
-import { createStore, applyMiddleware, Store, DeepPartial } from 'redux';
-import { routerMiddleware, RouterState } from 'connected-react-router';
-import { createEpicMiddleware } from 'redux-observable';
-import { composeWithDevTools } from 'redux-devtools-extension';
-
-import { history } from './history';
-import { createRootReducer } from './reducers';
-import { rootEpic } from './epics';
+import { RouterState } from 'connected-react-router';
 
 interface DBItem {
   id: number;
@@ -16,7 +9,7 @@ interface DBItem {
 export interface UserData {
   username: string;
   email: string;
-  id: number;
+  id: number | null;
 }
 
 export interface User {
@@ -72,8 +65,18 @@ export interface RoomsList {
   [key: string]: Room;
 }
 
+export interface DrawingPoint {
+  x: number;
+  y: number;
+  fill: string;
+  weight: number;
+  date: number;
+  group: number;
+  user: string;
+}
+
 export interface BroadcastedDrawingPoints {
-  [key: string]: object[];
+  [key: string]: DrawingPoint[][];
 }
 
 export interface Rooms {
@@ -82,10 +85,12 @@ export interface Rooms {
 }
 
 export interface Canvas {
-  drawCount: number;
   currentDrawing: number | null;
-  drawingPoints: object[];
+  isMouseDown: boolean;
+  groupCount: number;
+  drawingPoints: DrawingPoint[][];
   broadcastedDrawingPoints: BroadcastedDrawingPoints;
+  drawingPointsCache: DrawingPoint[][];
 }
 
 export interface Global {
@@ -105,54 +110,3 @@ export interface State {
   canvas: Canvas;
   router: RouterState;
 }
-
-export const initialState: DeepPartial<{}> = {
-  global: {
-    isLoading: true,
-    isUserLoggedIn: false,
-    isSocketConnected: false,
-    inboxCount: 0,
-    formMessage: '',
-  },
-  users: {
-    general: {},
-    selectedRoom: {},
-  },
-  rooms: {
-    active: null,
-    list: undefined,
-  },
-  chats: {
-    general: [],
-    selectedRoom: [],
-  },
-  canvas: {
-    drawCount: 0,
-    currentDrawing: null,
-    drawingPoints: [],
-    broadcastedDrawingPoints: {},
-  },
-  user: {
-    userData: {
-      username: '',
-      email: '',
-      id: null,
-    },
-    drawings: null,
-    inboxMessages: null,
-  },
-};
-
-const epicMiddleWare = createEpicMiddleware();
-
-const middlewares = [routerMiddleware(history), epicMiddleWare];
-
-export const store = createStore(
-  createRootReducer(history),
-  initialState,
-  composeWithDevTools(applyMiddleware(...middlewares)),
-);
-
-epicMiddleWare.run(rootEpic);
-
-store.subscribe(() => console.log('STATE UDATED:', store.getState()));

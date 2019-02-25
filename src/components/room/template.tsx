@@ -32,15 +32,11 @@ export const RoomComponent = ({
         <Grid container={true} spacing={16}>
           <Grid item={true} xs={12}>
             <Paper>
-              <Typography
-                variant="headline"
-                align="center"
-                className="mbottom-2"
-              >
+              <Typography variant="h5" align="center" className="mbottom-2">
                 Room not exist
               </Typography>
               <Typography
-                variant="subheading"
+                variant="subtitle1"
                 align="center"
                 className="mbottom-2"
               >
@@ -73,7 +69,7 @@ export const RoomComponent = ({
           </Grid>
           <Grid item={true} xs={12}>
             <Paper>
-              <Typography variant="headline">Room chat</Typography>
+              <Typography variant="h5">Room chat</Typography>
               <Chat messages={chats.selectedRoom} handleSubmit={handleSubmit} />
             </Paper>
           </Grid>

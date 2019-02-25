@@ -6,6 +6,7 @@ import * as users from './users';
 import * as chats from './chats';
 import * as rooms from './rooms';
 import * as canvas from './canvas';
+import * as socket from './socket';
 
 export type ActionType = ActionCreator<Action>;
 
@@ -16,4 +17,5 @@ export const actions = {
   rooms,
   chats,
   canvas,
+  socket,
 };

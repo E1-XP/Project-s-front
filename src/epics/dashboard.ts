@@ -12,7 +12,6 @@ import { of, from, iif } from 'rxjs';
 import { push } from 'connected-react-router';
 
 import { fetchStream } from '../utils/fetchStream';
-import { Socket } from '../services/socketService';
 
 import { store } from '../store';
 
@@ -21,15 +20,12 @@ import { actions } from '../actions';
 
 import { InvitationData } from '../components/canvas/toolbar';
 
-import config from './../../config';
+import config from './../config';
 
 export const handleSendGeneralMessageEpic: Epic = (action$, state$) =>
   action$.ofType(types.INIT_SEND_GENERAL_MESSAGE).pipe(
     pluck('payload'),
-    tap(data => {
-      Socket!.emit('general/messages', data);
-    }),
-    ignoreElements(),
+    map(data => actions.socket.emitGeneralMessage(data)),
   );
 
 export const checkInboxEpic: Epic = (action$, state$) =>
@@ -45,11 +41,8 @@ export const checkInboxEpic: Epic = (action$, state$) =>
 
 export const sendRoomInvitationEpic: Epic = (action$, state$) =>
   action$.ofType(types.INIT_SEND_INBOX_MESSAGE).pipe(
-    pluck<{}, any>('payload'),
-    tap((data: InvitationData) => {
-      Socket!.emit(`${data.senderId}/inbox`, data);
-    }),
-    ignoreElements(),
+    pluck<{}, InvitationData>('payload'),
+    map(data => actions.socket.emitInboxMessage(data)),
   );
 
 export const receiveRoomInvitationEpic: Epic = (action$, state$) =>

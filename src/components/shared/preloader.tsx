@@ -2,7 +2,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { compose } from 'recompose';
 
-import { State } from '../../store';
+import { State } from '../../store/interfaces';
 
 import CircularProgress from '@material-ui/core/CircularProgress';
 

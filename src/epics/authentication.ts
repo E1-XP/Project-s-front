@@ -13,14 +13,13 @@ import { push } from 'connected-react-router';
 import queryString from 'query-string';
 
 import { fetchStream } from '../utils/fetchStream';
-import { startSocketService, Socket } from '../services/socketService';
 
 import { store } from '../store';
 
 import { types } from '../actions/types';
 import { actions } from '../actions';
 
-import config from './../../config';
+import config from './../config';
 
 export const appStartEpic: Epic = (action$, state$) =>
   action$
@@ -59,11 +58,7 @@ export const authEpic: Epic = (action$, state$) =>
 export const loginEpic: Epic = (action$, state$) =>
   action$.ofType(types.INIT_LOGIN).pipe(
     mergeMap(action =>
-      fetchStream(
-        `${config.API_URL}/auth/login`,
-        'POST',
-        action.payload,
-      ),
+      fetchStream(`${config.API_URL}/auth/login`, 'POST', action.payload),
     ),
     map(resp =>
       resp.status === 200
@@ -105,11 +100,7 @@ export const signUpEpic: Epic = (action$, state$) =>
     mergeMap(({ payload }) =>
       merge(
         of(actions.global.setIsLoading(true)),
-        fetchStream(
-          `${config.API_URL}/auth/signup`,
-          'POST',
-          payload,
-        ).pipe(
+        fetchStream(`${config.API_URL}/auth/signup`, 'POST', payload).pipe(
           map(({ status, data }) =>
             status === 200
               ? actions.global.initAuthSuccess(data)
@@ -136,7 +127,6 @@ export const sessionAuthEpic: Epic = (action$, state$) =>
 
 export const authSuccessEpic: Epic = (action$, state$) =>
   action$.ofType(types.INIT_AUTH_SUCCESS).pipe(
-    mergeMap(action => from(startSocketService(action.payload))),
     tap(() => {
       !localStorage.getItem('isAuth') && localStorage.setItem('isAuth', 'true');
     }),
@@ -191,12 +181,11 @@ export const logoutEpic: Epic = (action$, state$) =>
       return shouldLeave;
     }),
     tap(() => {
-      Socket!.close();
       localStorage.removeItem('isAuth');
     }),
     mergeMap(() =>
       merge(
-        of(actions.global.setIsLoading(true)),
+        of(actions.global.setIsLoading(true), actions.socket.closeSocket()),
         fetchStream(`${config.API_URL}${'/auth/logout'}`, 'POST').pipe(
           mergeMap(resp =>
             of(

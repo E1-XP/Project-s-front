@@ -5,7 +5,7 @@ import { lifecycle, compose, ReactLifeCycleFunctions } from 'recompose';
 import { withRouter } from 'react-router-dom';
 import { push } from 'connected-react-router';
 
-import { State } from '../store';
+import { State } from '../store/interfaces';
 
 interface Props {
   isUserLoggedIn: boolean;
