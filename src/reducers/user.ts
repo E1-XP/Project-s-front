@@ -2,20 +2,33 @@ import { Reducer } from 'redux';
 import { types } from '../actions/types';
 
 import { PlainAction } from './index';
+import { User } from './../store/interfaces';
 
 export const userReducer: Reducer = (
-  state: object = {},
+  state: Partial<User> = {},
   action: PlainAction,
 ) => {
   switch (action.type) {
-    case types.SET_USER_DATA: {
+    case types.USER_SET_USER_DATA: {
       return { ...state, userData: action.payload };
     }
-    case types.SET_USER_DRAWINGS: {
+    case types.CANVAS_SET_USER_DRAWINGS: {
       return { ...state, drawings: action.payload };
     }
-    case types.SET_INBOX_MESSAGES: {
+    case types.USER_SET_INBOX_MESSAGES: {
       return { ...state, inboxMessages: action.payload };
+    }
+    case types.USER_SET_INBOX_COUNT: {
+      const { payload } = action;
+
+      const isValueProvided = payload !== undefined;
+      const isValueEqualZero = payload === 0;
+
+      const inboxCount = isValueEqualZero
+        ? 0
+        : state.inboxCount + (isValueProvided ? payload : 1);
+
+      return { ...state, inboxCount };
     }
     default:
       return state;

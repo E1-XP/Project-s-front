@@ -31,7 +31,7 @@ import {
 } from './helpers';
 
 export const roomJoinEpic: Epic = (action$, state$) =>
-  action$.ofType(types.INIT_ROOM_ENTER).pipe(
+  action$.ofType(types.ROOMS_INIT_ENTER).pipe(
     delay(100),
     map(v => {
       const roomId = state$.value.router.location.pathname.split('/')[2];
@@ -62,7 +62,7 @@ export const roomJoinEpic: Epic = (action$, state$) =>
   );
 
 export const checkRoomPasswordEpic: Epic = (action$, state$) =>
-  action$.ofType(types.INIT_CHECK_ROOM_PASSWORD).pipe(
+  action$.ofType(types.ROOMS_CHECK_PASSWORD).pipe(
     pluck<any, any>('payload'),
     mergeMap(password =>
       fetchStream(
@@ -96,14 +96,14 @@ export const checkRoomPasswordEpic: Epic = (action$, state$) =>
   );
 
 export const checkRoomPasswordFailureEpic: Epic = (action$, state$) =>
-  action$.ofType(types.INIT_CHECK_ROOM_PASSWORD_FAILURE).pipe(
+  action$.ofType(types.ROOMS_CHECK_PASSWORD_FAILURE).pipe(
     tap(v => isRoomPasswordCheckedAndValid.next(null)),
     mapTo(actions.global.setFormMessage('provided password is incorrect')),
   );
 
 export const handleRoomEnterSuccessEpic: Epic = (action$, state$) =>
   action$
-    .ofType(types.INIT_ROOM_ENTER_SUCCESS)
+    .ofType(types.ROOMS_INIT_ENTER_SUCCESS)
     .pipe(
       mergeMap(v =>
         of(
@@ -114,10 +114,10 @@ export const handleRoomEnterSuccessEpic: Epic = (action$, state$) =>
     );
 
 export const concludeRoomEnterEpic: Epic = (action$, state$) =>
-  action$.ofType(types.INIT_ROOM_ENTER_SUCCESS).pipe(
+  action$.ofType(types.ROOMS_INIT_ENTER_SUCCESS).pipe(
     concatMap(
       v =>
-        action$.ofType(types.SET_BROADCASTED_DRAWING_POINTS_BULK).pipe(take(1)),
+        action$.ofType(types.CANVAS_SET_BROADCASTED_DRAWING_POINTS_BULK).pipe(take(1)),
       v => actions.global.setIsLoading(false),
     ),
     tap(v => {
@@ -129,7 +129,7 @@ export const concludeRoomEnterEpic: Epic = (action$, state$) =>
   );
 
 export const roomLeaveEpic: Epic = (action$, state$) =>
-  action$.ofType(types.INIT_ROOM_LEAVE).pipe(
+  action$.ofType(types.ROOMS_INIT_LEAVE).pipe(
     mergeMap(v =>
       of(
         actions.socket.unbindRoomHandlers(),
@@ -147,7 +147,7 @@ export const roomLeaveEpic: Epic = (action$, state$) =>
   );
 
 export const handleLoadingOnRoomLeave: Epic = (action$, state$) =>
-  action$.ofType(types.INIT_ROOM_LEAVE).pipe(
+  action$.ofType(types.ROOMS_INIT_LEAVE).pipe(
     filter(
       v =>
         state$.value.global.isUserLoggedIn &&
@@ -158,7 +158,7 @@ export const handleLoadingOnRoomLeave: Epic = (action$, state$) =>
   );
 
 export const roomAdminLeaveEpic: Epic = (action$, state$) =>
-  action$.ofType(types.INIT_ROOM_ADMIN_LEAVE).pipe(
+  action$.ofType(types.ROOMS_INIT_ADMIN_LEAVE).pipe(
     tap(v => {
       alert(
         'Admin closed this room. You will be redirected back to dashboard.',
@@ -168,7 +168,7 @@ export const roomAdminLeaveEpic: Epic = (action$, state$) =>
   );
 
 export const handleSendRoomMessageEpic: Epic = (action$, state$) =>
-  action$.ofType(types.INIT_SEND_ROOM_MESSAGE).pipe(
+  action$.ofType(types.ROOMS_SEND_MESSAGE).pipe(
     pluck('payload'),
     map((data: any) => {
       const { message, author, authorId } = data;
@@ -177,13 +177,13 @@ export const handleSendRoomMessageEpic: Epic = (action$, state$) =>
   );
 
 export const setRoomAdminEpic: Epic = (action$, state$) =>
-  action$.ofType(types.INIT_ROOM_ADMIN_CHANGE).pipe(
+  action$.ofType(types.ROOMS_INIT_ADMIN_CHANGE).pipe(
     pluck('payload'),
     map((data: any) => actions.socket.emitRoomSetAdmin(data)),
   );
 
 export const RoomCreateEpic: Epic = (action$, state$) =>
-  action$.ofType(types.INIT_ROOM_CREATE).pipe(
+  action$.ofType(types.ROOMS_INIT_CREATE).pipe(
     pluck('payload'),
     mergeMap(data => {
       const drawingId = state$.value.canvas.currentDrawing;
@@ -196,7 +196,7 @@ export const RoomCreateEpic: Epic = (action$, state$) =>
   );
 
 export const handleRoomCreateEpic: Epic = (action$, state$) =>
-  action$.ofType(types.INIT_HANDLE_ROOM_CREATE).pipe(
+  action$.ofType(types.ROOMS_HANDLE_CREATE).pipe(
     pluck('payload'),
     mergeMap(roomId =>
       of(actions.rooms.setCurrentRoom(roomId), push(`/room/${roomId}`)),
@@ -204,7 +204,7 @@ export const handleRoomCreateEpic: Epic = (action$, state$) =>
   );
 
 export const getUserImagesEpic: Epic = (action$, state$) =>
-  action$.ofType(types.INIT_GET_IMAGES_FROM_SERVER).pipe(
+  action$.ofType(types.CANVAS_GET_IMAGES_FROM_SERVER).pipe(
     mergeMap(action =>
       fetchStream(
         `${config.API_URL}/users/${state$.value.user.userData.id}/drawings/`,

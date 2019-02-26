@@ -8,9 +8,9 @@ export const roomsReducer: Reducer = (
   action: PlainAction,
 ) => {
   switch (action.type) {
-    case types.SET_ROOMS:
+    case types.ROOMS_SET:
       return { ...state, list: action.payload };
-    case types.SET_CURRENT_ROOM:
+    case types.ROOMS_SET_CURRENT:
       return { ...state, active: action.payload };
     default:
       return state;

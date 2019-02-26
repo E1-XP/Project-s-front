@@ -32,7 +32,7 @@ const mapStateToProps = ({ user, users, rooms }: State) => ({
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({
   initCheckInbox: () => dispatch(actions.user.initCheckInbox()),
-  setInboxCount: (v?: number) => dispatch(actions.global.setInboxCount(v)),
+  setInboxCount: (v?: number) => dispatch(actions.user.setInboxCount(v)),
   pushRouter: (s: string) => dispatch(push(s)),
 });
 

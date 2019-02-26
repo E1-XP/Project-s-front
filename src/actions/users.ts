@@ -2,11 +2,11 @@ import { ActionType } from './index';
 import { types } from './types';
 
 export const setUsers: ActionType = (data: object) => ({
-  type: types.SET_USERS,
+  type: types.GLOBAL_SET_USERS,
   payload: data,
 });
 
 export const setRoomUsers: ActionType = (data: object) => ({
-  type: types.SET_ACTIVE_ROOM_USERS,
+  type: types.ROOMS_SET_ACTIVE_USERS,
   payload: data,
 });

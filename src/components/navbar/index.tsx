@@ -23,7 +23,7 @@ const handlers = {
 const mapStateToProps = ({ user, global }: State) => ({
   isUserLoggedIn: global.isUserLoggedIn,
   userData: user.userData,
-  inboxCount: global.inboxCount,
+  inboxCount: user.inboxCount,
 });
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({

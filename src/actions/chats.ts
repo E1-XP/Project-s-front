@@ -2,16 +2,16 @@ import { ActionType } from './index';
 import { types } from './types';
 
 export const setMessages: ActionType = (data: object) => ({
-  type: types.SET_MESSAGES,
+  type: types.MESSAGES_SET,
   payload: data,
 });
 
 export const initSendGeneralMesssage: ActionType = (data: object) => ({
-  type: types.INIT_SEND_GENERAL_MESSAGE,
+  type: types.MESSAGES_SEND_GENERAL,
   payload: data,
 });
 
 export const initSendRoomMesssage: ActionType = (data: object) => ({
-  type: types.INIT_SEND_ROOM_MESSAGE,
+  type: types.ROOMS_SEND_MESSAGE,
   payload: data,
 });

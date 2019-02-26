@@ -24,7 +24,7 @@ import config from './../config';
 
 export const appStartEpic: Epic = (action$, state$) =>
   action$
-    .ofType(types.INIT_APP)
+    .ofType(types.GLOBAL_INIT_APP)
     .pipe(
       mergeMap(() =>
         iif(
@@ -47,7 +47,7 @@ export const appStartEpic: Epic = (action$, state$) =>
     );
 
 export const authEpic: Epic = (action$, state$) =>
-  action$.ofType(types.INIT_AUTHENTICATION).pipe(
+  action$.ofType(types.GLOBAL_INIT_AUTHENTICATION).pipe(
     map(({ payload }) =>
       state$.value.router.location.pathname.toLowerCase().slice(1) === 'login'
         ? actions.global.initLogin(payload)
@@ -57,7 +57,7 @@ export const authEpic: Epic = (action$, state$) =>
   );
 
 export const loginEpic: Epic = (action$, state$) =>
-  action$.ofType(types.INIT_LOGIN).pipe(
+  action$.ofType(types.GLOBAL_INIT_LOGIN).pipe(
     mergeMap(action =>
       fetchStream(`${config.API_URL}/auth/login`, 'POST', action.payload),
     ),
@@ -70,7 +70,7 @@ export const loginEpic: Epic = (action$, state$) =>
   );
 
 export const getUserDataEpic: Epic = (action$, state$) =>
-  action$.ofType(types.INIT_GET_USER_DATA).pipe(
+  action$.ofType(types.USER_GET_USER_DATA).pipe(
     mergeMap(({ payload }) =>
       merge(
         of(actions.global.setIsLoading(true)),
@@ -83,7 +83,7 @@ export const getUserDataEpic: Epic = (action$, state$) =>
   );
 
 export const checkEmailEpic: Epic = (action$, state$) =>
-  action$.ofType(types.INIT_EMAIL_CHECK).pipe(
+  action$.ofType(types.GLOBAL_INIT_EMAIL_CHECK).pipe(
     mergeMap(action =>
       fetchStream(`${config.API_URL}${'/auth/emailcheck'}`, 'POST', {
         email: action.payload,
@@ -97,7 +97,7 @@ export const checkEmailEpic: Epic = (action$, state$) =>
   );
 
 export const signUpEpic: Epic = (action$, state$) =>
-  action$.ofType(types.INIT_SIGNUP).pipe(
+  action$.ofType(types.GLOBAL_INIT_SIGNUP).pipe(
     mergeMap(({ payload }) =>
       merge(
         of(actions.global.setIsLoading(true)),
@@ -114,7 +114,7 @@ export const signUpEpic: Epic = (action$, state$) =>
   );
 
 export const sessionAuthEpic: Epic = (action$, state$) =>
-  action$.ofType(types.INIT_SESSION_AUTH).pipe(
+  action$.ofType(types.GLOBAL_INIT_SESSION_AUTH).pipe(
     mergeMap(action =>
       fetchStream(`${config.API_URL}${'/auth/pagerefresh'}`, 'POST'),
     ),
@@ -127,7 +127,7 @@ export const sessionAuthEpic: Epic = (action$, state$) =>
   );
 
 export const authSuccessEpic: Epic = (action$, state$) =>
-  action$.ofType(types.INIT_AUTH_SUCCESS).pipe(
+  action$.ofType(types.GLOBAL_INIT_AUTH_SUCCESS).pipe(
     pluck('payload'),
     tap(() => {
       !localStorage.getItem('isAuth') && localStorage.setItem('isAuth', 'true');
@@ -164,13 +164,13 @@ export const authSuccessEpic: Epic = (action$, state$) =>
 
 export const authFailureEpic: Epic = (action$, state$) =>
   action$
-    .ofType(types.INIT_AUTH_FAILURE)
+    .ofType(types.GLOBAL_INIT_AUTH_FAILURE)
     .pipe(
       mergeMap(resp => of(push('/login'), actions.global.setIsLoading(false))),
     );
 
 export const logoutEpic: Epic = (action$, state$) =>
-  action$.ofType(types.INIT_LOGOUT).pipe(
+  action$.ofType(types.GLOBAL_INIT_LOGOUT).pipe(
     filter(() => {
       const pathName = state$.value.router.location.pathname;
       const isOnRoomRoute = /^\/room\/\d+(\/)?$/.test(pathName);

@@ -9,7 +9,7 @@ export const canvasReducer: Reducer = (
   action: PlainAction,
 ) => {
   switch (action.type) {
-    case types.SET_DRAWING_POINT: {
+    case types.CANVAS_SET_DRAWING_POINT: {
       const drawingPoints = state.drawingPoints
         ? state.drawingPoints.slice()
         : [];
@@ -17,7 +17,7 @@ export const canvasReducer: Reducer = (
 
       return { ...state, drawingPoints };
     }
-    case types.SET_BROADCASTED_DRAWING_POINT: {
+    case types.CANVAS_SET_BROADCASTED_DRAWING_POINT: {
       const { userId } = action.payload;
       const data = action.payload;
 
@@ -39,7 +39,7 @@ export const canvasReducer: Reducer = (
 
       return { ...state, broadcastedDrawingPoints };
     }
-    case types.SET_BROADCASTED_DRAWING_POINTS_BULK: {
+    case types.CANVAS_SET_BROADCASTED_DRAWING_POINTS_BULK: {
       const groupByUserId = (acc: any, itm: any) => {
         if (!acc[itm.userId]) acc[itm.userId] = [];
         acc[itm.userId].push(itm);
@@ -83,7 +83,7 @@ export const canvasReducer: Reducer = (
 
       return { ...state, broadcastedDrawingPoints };
     }
-    case types.SET_NEW_DRAWING_POINTS_GROUP: {
+    case types.CANVAS_SET_NEW_DRAWING_POINTS_GROUP: {
       const drawingPoints = state.drawingPoints.length
         ? state.drawingPoints.map((itm: object[]) => itm.slice())
         : [];
@@ -92,7 +92,7 @@ export const canvasReducer: Reducer = (
 
       return { ...state, drawingPoints };
     }
-    case types.SET_NEW_BROADCASTED_DRAWING_POINTS_GROUP: {
+    case types.CANVAS_SET_NEW_BROADCASTED_DRAWING_POINTS_GROUP: {
       const userId = action.payload;
 
       const userIdPoints = state.broadcastedDrawingPoints[userId]
@@ -110,17 +110,17 @@ export const canvasReducer: Reducer = (
 
       return { ...state, broadcastedDrawingPoints };
     }
-    case types.CLEAR_DRAWING_POINTS: {
+    case types.CANVAS_CLEAR_DRAWING_POINTS: {
       return { ...state, drawingPoints: [], broadcastedDrawingPoints: {} };
     }
-    case types.SET_DRAW_COUNT: {
+    case types.CANVAS_SET_DRAW_COUNT: {
       const payloadExist = action.payload !== undefined;
       return {
         ...state,
         drawCount: payloadExist ? action.payload : state.drawCount + 1,
       };
     }
-    case types.SET_CURRENT_DRAWING: {
+    case types.CANVAS_SET_CURRENT_DRAWING: {
       return { ...state, currentDrawing: action.payload };
     }
     default:

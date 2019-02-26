@@ -22,7 +22,7 @@ import config from './../config';
 export let socket: SocketIOClient.Socket;
 
 export const startSocketEpic: Epic = (action$, state$) =>
-  action$.ofType(types.INIT_AUTH_SUCCESS).pipe(
+  action$.ofType(types.GLOBAL_INIT_AUTH_SUCCESS).pipe(
     pluck<{}, UserData>('payload'),
     tap(data => {
       const { username, id, email } = data;
@@ -33,7 +33,7 @@ export const startSocketEpic: Epic = (action$, state$) =>
       );
 
       socket.on('connect', () => {
-        store.dispatch(actions.global.setSocketConnectionStatus(true));
+        store.dispatch(actions.socket.setSocketConnectionStatus(true));
         store.dispatch(actions.socket.bindHandlers());
       });
     }),
@@ -52,7 +52,7 @@ export const bindSocketHandlersEpic: Epic = (action$, state$) =>
       const { id } = state$.value.user.userData;
 
       socket.on('disconnect', () => {
-        store.dispatch(actions.global.setSocketConnectionStatus(false));
+        store.dispatch(actions.socket.setSocketConnectionStatus(false));
       });
 
       socket.on(`${id}/connect`, ({ users, messages, rooms }: any) => {
@@ -114,7 +114,7 @@ export const bindRoomHandlersEpic: Epic = (action$, state$) =>
       store.dispatch(actions.rooms.setCurrentRoom(roomId));
 
       socket.emit('room/join', { roomId, drawingId });
-     
+
       socket.on(`${roomId}/setdrawing`, (drawingId: number) => {
         store.dispatch(actions.canvas.setCurrentDrawing(drawingId));
       });
