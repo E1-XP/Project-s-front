@@ -11,7 +11,6 @@ import {
 } from 'rxjs/operators';
 import { of } from 'rxjs';
 
-import { InvitationData } from '../components/canvas/toolbar';
 import { UserData } from '../store/interfaces';
 import { store } from '../store';
 
@@ -32,8 +31,13 @@ export const startSocketEpic: Epic = (action$, state$) =>
         config.API_URL,
         { query: `user=${username}&id=${id}` },
       );
+
+      socket.on('connect', () => {
+        store.dispatch(actions.global.setSocketConnectionStatus(true));
+        store.dispatch(actions.socket.bindHandlers());
+      });
     }),
-    mapTo(actions.socket.bindHandlers()),
+    ignoreElements(),
   );
 
 export const closeSocketEpic: Epic = (action$, state$) =>
@@ -46,6 +50,21 @@ export const bindSocketHandlersEpic: Epic = (action$, state$) =>
   action$.ofType(types.SOCKET_BIND_HANDLERS).pipe(
     tap(() => {
       const { id } = state$.value.user.userData;
+
+      socket.on('disconnect', () => {
+        store.dispatch(actions.global.setSocketConnectionStatus(false));
+      });
+
+      socket.on(`${id}/connect`, ({ users, messages, rooms }: any) => {
+        const messageData = {
+          data: messages,
+          channel: 'general',
+        };
+
+        store.dispatch(actions.rooms.setRooms(rooms));
+        store.dispatch(actions.users.setUsers(users));
+        store.dispatch(actions.chats.setMessages(messageData));
+      });
 
       socket.on('general/users', (data: string[]) =>
         store.dispatch(actions.users.setUsers(data)),
@@ -80,30 +99,12 @@ export const bindSocketHandlersEpic: Epic = (action$, state$) =>
         console.log('ROOM CREATE GET');
         store.dispatch(actions.rooms.initHandleRoomCreate(id));
       });
-
-      socket.on(`${id}/connect`, ({ users, messages, rooms }: any) => {
-        const messageData = {
-          data: messages,
-          channel: 'general',
-        };
-
-        store.dispatch(actions.rooms.setRooms(rooms));
-        store.dispatch(actions.users.setUsers(users));
-        store.dispatch(actions.chats.setMessages(messageData));
-      });
-
-      socket.on('connect', () => {
-        store.dispatch(actions.global.setSocketConnectionStatus(true));
-      });
-
-      socket.on('disconnect', () => {
-        store.dispatch(actions.global.setSocketConnectionStatus(false));
-      });
     }),
+    ignoreElements(),
   );
 
 export const bindRoomHandlersEpic: Epic = (action$, state$) =>
-  action$.ofType(types.SOCKET_EMIT_ROOM_DRAW).pipe(
+  action$.ofType(types.SOCKET_BIND_ROOM_HANDLERS).pipe(
     tap(() => {
       const roomId =
         state$.value.router.location.pathname.split('/')[2] ||
@@ -113,7 +114,7 @@ export const bindRoomHandlersEpic: Epic = (action$, state$) =>
       store.dispatch(actions.rooms.setCurrentRoom(roomId));
 
       socket.emit('room/join', { roomId, drawingId });
-
+     
       socket.on(`${roomId}/setdrawing`, (drawingId: number) => {
         store.dispatch(actions.canvas.setCurrentDrawing(drawingId));
       });
