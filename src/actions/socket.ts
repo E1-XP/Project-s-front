@@ -1,5 +1,10 @@
 import { types } from './types';
 
+export const setSocketConnectionStatus = (bool: boolean) => ({
+  type: types.SOCKET_SET_CONNECTION_STATUS,
+  payload: bool,
+});
+
 export const bindHandlers = () => ({
   type: types.SOCKET_BIND_HANDLERS,
 });

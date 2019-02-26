@@ -16,6 +16,7 @@ export interface User {
   userData: UserData;
   drawings: DrawingObject[] | null;
   inboxMessages: InboxMessage[];
+  inboxCount: number;
 }
 
 export interface InboxMessage extends DBItem {
@@ -97,7 +98,6 @@ export interface Global {
   isLoading: boolean;
   isUserLoggedIn: boolean;
   isSocketConnected: boolean;
-  inboxCount: number;
   formMessage: string;
 }
 

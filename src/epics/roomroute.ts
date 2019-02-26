@@ -67,9 +67,9 @@ export const handleRoomRouteInstantEnterEpic: Epic = (action$, state$) =>
             /^\/room\/\d+$/.test(payload.location.pathname),
         ),
       ),
-    action$.ofType(types.SET_USER_DATA).pipe(take(1)),
-    action$.ofType(types.SET_ROOMS).pipe(take(1)),
-    action$.ofType(types.SET_IS_USER_LOGGED_IN).pipe(take(1)),
+    action$.ofType(types.USER_SET_USER_DATA).pipe(take(1)),
+    action$.ofType(types.ROOMS_SET).pipe(take(1)),
+    action$.ofType(types.GLOBAL_SET_IS_USER_LOGGED_IN).pipe(take(1)),
   ]).pipe(
     map(arr =>
       arr[2].payload[state$.value.router.location.pathname.split('/')[2]]
@@ -91,8 +91,8 @@ export const redirectFromPasswordRouteIfRoomNotExistAndNotLogged: Epic = (
           !state$.value.global.isUserLoggedIn,
       ),
     ),
-    action$.ofType(types.SET_IS_USER_LOGGED_IN).pipe(take(1)),
-    action$.ofType(types.SET_ROOMS).pipe(take(1)),
+    action$.ofType(types.GLOBAL_SET_IS_USER_LOGGED_IN).pipe(take(1)),
+    action$.ofType(types.ROOMS_SET).pipe(take(1)),
   ]).pipe(
     mapTo(push(`/room/${state$.value.router.location.pathname.split('/')[2]}`)),
   );

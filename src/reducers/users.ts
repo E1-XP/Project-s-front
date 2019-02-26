@@ -8,9 +8,9 @@ export const usersReducer: Reducer = (
   action: PlainAction,
 ) => {
   switch (action.type) {
-    case types.SET_USERS:
+    case types.GLOBAL_SET_USERS:
       return { ...state, general: action.payload };
-    case types.SET_ACTIVE_ROOM_USERS:
+    case types.ROOMS_SET_ACTIVE_USERS:
       return { ...state, selectedRoom: action.payload };
     default:
       return state;

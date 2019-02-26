@@ -5,7 +5,7 @@ import { PlainAction } from './index';
 
 export const chatsReducer: Reducer = (state: any = {}, action: PlainAction) => {
   switch (action.type) {
-    case types.SET_MESSAGES: {
+    case types.MESSAGES_SET: {
       const { channel } = action.payload;
 
       const newState = { ...state };

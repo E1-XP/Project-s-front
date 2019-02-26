@@ -1,6 +1,8 @@
 import { compose, withHandlers } from 'recompose';
+import { connect } from 'react-redux';
 
-import { drawingService } from './../services/drawingService';
+import { actions } from './../actions';
+import { State } from './../store/interfaces';
 
 const handlers = () => {
   let boardRef: HTMLCanvasElement | null = null;
@@ -23,4 +25,10 @@ const handlers = () => {
   };
 };
 
-export const withCanvasHandlers = compose(withHandlers(handlers()));
+export const withCanvasHandlers = compose(
+  connect(
+    null,
+    {},
+  ),
+  withHandlers(handlers()),
+);

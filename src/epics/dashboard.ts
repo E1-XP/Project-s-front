@@ -23,13 +23,13 @@ import { InvitationData } from '../components/canvas/toolbar';
 import config from './../config';
 
 export const handleSendGeneralMessageEpic: Epic = (action$, state$) =>
-  action$.ofType(types.INIT_SEND_GENERAL_MESSAGE).pipe(
+  action$.ofType(types.MESSAGES_SEND_GENERAL).pipe(
     pluck('payload'),
     map(data => actions.socket.emitGeneralMessage(data)),
   );
 
 export const checkInboxEpic: Epic = (action$, state$) =>
-  action$.ofType(types.INIT_CHECK_INBOX).pipe(
+  action$.ofType(types.USER_CHECK_INBOX).pipe(
     mergeMap(action =>
       fetchStream(
         `${config.API_URL}/users/${state$.value.user.userData.id}/inbox`,
@@ -40,15 +40,15 @@ export const checkInboxEpic: Epic = (action$, state$) =>
   );
 
 export const sendRoomInvitationEpic: Epic = (action$, state$) =>
-  action$.ofType(types.INIT_SEND_INBOX_MESSAGE).pipe(
+  action$.ofType(types.USER_SEND_INBOX_MESSAGE).pipe(
     pluck<{}, InvitationData>('payload'),
     map(data => actions.socket.emitInboxMessage(data)),
   );
 
 export const receiveRoomInvitationEpic: Epic = (action$, state$) =>
-  action$.ofType(types.INIT_RECEIVE_INBOX_MESSAGE).pipe(
+  action$.ofType(types.USER_RECEIVE_INBOX_MESSAGE).pipe(
     tap(v => {
       console.log('RECEIVED NEW MESSAGE');
     }),
-    mapTo(actions.global.setInboxCount()),
+    mapTo(actions.user.setInboxCount()),
   );

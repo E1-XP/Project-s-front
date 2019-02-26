@@ -14,7 +14,6 @@ export const initialState: DeepPartial<State> = {
     isLoading: true,
     isUserLoggedIn: false,
     isSocketConnected: false,
-    inboxCount: 0,
     formMessage: '',
   },
   users: {
@@ -45,6 +44,7 @@ export const initialState: DeepPartial<State> = {
     },
     drawings: null,
     inboxMessages: [],
+    inboxCount: 0,
   },
 };
 
