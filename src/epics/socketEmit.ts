@@ -67,7 +67,7 @@ export const emitRoomDrawResetEpic: Epic = (action$, state$) =>
     ignoreElements(),
   );
 
-export const emitRoomSetAdmin: Epic = (action$, state$) =>
+export const emitRoomSetAdminEpic: Epic = (action$, state$) =>
   action$.ofType(types.SOCKET_EMIT_ROOM_SET_ADMIN).pipe(
     pluck('payload'),
     tap(data => {
@@ -77,10 +77,10 @@ export const emitRoomSetAdmin: Epic = (action$, state$) =>
     ignoreElements(),
   );
 
-export const emitRoomCreate: Epic = (action$, state$) =>
+export const emitRoomCreateEpic: Epic = (action$, state$) =>
   action$.ofType(types.SOCKET_EMIT_ROOM_CREATE).pipe(
     pluck('payload'),
-    tap(data => socket.emit(`room/setadmin`, data)),
+    tap(data => socket.emit(`room/create`, data)),
     ignoreElements(),
   );
 

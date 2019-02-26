@@ -6,6 +6,7 @@ import {
   catchError,
   mergeMap,
   tap,
+  pluck,
   ignoreElements,
 } from 'rxjs/operators';
 import { of, merge, from, iif, EMPTY } from 'rxjs';
@@ -127,6 +128,7 @@ export const sessionAuthEpic: Epic = (action$, state$) =>
 
 export const authSuccessEpic: Epic = (action$, state$) =>
   action$.ofType(types.INIT_AUTH_SUCCESS).pipe(
+    pluck('payload'),
     tap(() => {
       !localStorage.getItem('isAuth') && localStorage.setItem('isAuth', 'true');
     }),
