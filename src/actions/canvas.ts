@@ -32,14 +32,14 @@ export const setBroadcastedDrawingPointsBulk: ActionType = (data: object) => ({
 });
 
 export const createDrawingPoint = (
-  e: MouseEvent,
-  ref: HTMLCanvasElement,
+  event: MouseEvent,
+  boardRef: HTMLCanvasElement,
   onMouseDownMode = false,
 ) => ({
   type: types.CANVAS_CREATE_DRAWING_POINT,
-  event: e,
-  boardRef: ref,
-  isOnMouseDown: onMouseDownMode,
+  event,
+  boardRef,
+  onMouseDownMode,
 });
 
 export const setDrawingPoint: ActionType = (data: DrawingPoint) => ({
@@ -56,4 +56,14 @@ export const clearCanvas: ActionType = (ctx, ref) => ({
 export const drawCanvas: ActionType = ctx => ({
   type: types.CANVAS_DRAW,
   payload: ctx,
+});
+
+export const setWeight: ActionType = data => ({
+  type: types.CANVAS_SET_WEIGHT,
+  payload: data,
+});
+
+export const setFill: ActionType = data => ({
+  type: types.CANVAS_SET_FILL,
+  payload: data,
 });

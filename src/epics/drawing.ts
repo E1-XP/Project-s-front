@@ -19,14 +19,11 @@ import { store } from '../store';
 import { types } from '../actions/types';
 import { actions } from '../actions';
 
-import config from './../config';
-import { Action } from 'history';
-
 export const createDrawingPointEpic: Epic = (action$, state$) =>
   action$.ofType(types.CANVAS_CREATE_DRAWING_POINT).pipe(
     map(({ event, boardRef, onMouseDownMode }) => {
       const { id } = state$.value.user.userData;
-      const { groupCount } = state$.value.canvas;
+      const { groupCount, fill, weight } = state$.value.canvas;
 
       const { pageX, pageY } = event;
       const { scrollX, scrollY } = window;
@@ -37,12 +34,13 @@ export const createDrawingPointEpic: Epic = (action$, state$) =>
       const yPos = ((pageY - top - scrollY) / height) * boardRef.height;
 
       const pointFactory = (opts: Partial<DrawingPoint> = {}) => ({
-        x: opts.x || xPos,
-        y: opts.y || yPos,
+        x: opts.x !== undefined ? opts.x : xPos,
+        y: opts.y !== undefined ? opts.y : yPos,
+        fill: opts.fill || fill,
+        weight: opts.weight || weight,
         date: opts.date || Date.now(),
-        group: opts.group !== undefined || groupCount,
+        group: opts.group !== undefined ? opts.group : groupCount,
         user: opts.user || id,
-        // TODO
       });
 
       if (onMouseDownMode) {
@@ -69,17 +67,19 @@ export const drawCanvasEpic: Epic<any, any, State> = (action$, state$) =>
   action$.ofType(types.CANVAS_DRAW).pipe(
     pluck<{}, CanvasRenderingContext2D>('payload'),
     tap(ctx => {
-      ctx.fillStyle = '#000';
       ctx.lineJoin = 'round';
 
       const toDraw = state$.value.canvas.drawingPoints;
 
       toDraw.forEach(arr =>
         arr.forEach((point, i, arr) => {
-          const { x, y } = point;
+          const { x, y, fill, weight } = point;
 
           i &&
             requestAnimationFrame(() => {
+              ctx.strokeStyle = fill;
+              ctx.lineWidth = weight;
+
               ctx.beginPath();
               ctx.lineTo(arr[i - 1].x, arr[i - 1].y);
               ctx.lineTo(x, y);

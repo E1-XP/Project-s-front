@@ -28,12 +28,13 @@ export const CanvasComponent = ({
   setIsImageSelectorOpen,
   handleImageChange,
   setIsColorPickerOpen,
-  setWeight,
+  handleSetWeight,
   onMouseDown,
   onMouseMove,
   onMouseUp,
   clearCanvas,
   drawCanvas,
+  weight,
 }: Props) => (
   <div id="canvas">
     <CanvasNavbar
@@ -42,8 +43,8 @@ export const CanvasComponent = ({
       setIsImageSelectorOpen={setIsImageSelectorOpen}
       setIsColorPickerOpen={setIsColorPickerOpen}
       isColorPickerOpen={boardState.isColorPickerOpen}
-      setWeight={setWeight}
-      weight={boardState.weight}
+      setWeight={handleSetWeight}
+      weight={weight}
     />
     <ImageSelector
       isOpen={boardState.isImageSelectorOpen}

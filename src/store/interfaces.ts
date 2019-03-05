@@ -89,6 +89,8 @@ export interface Canvas {
   currentDrawing: number | null;
   isMouseDown: boolean;
   groupCount: number;
+  fill: string;
+  weight: number;
   drawingPoints: DrawingPoint[][];
   broadcastedDrawingPoints: BroadcastedDrawingPoints;
   drawingPointsCache: DrawingPoint[][];

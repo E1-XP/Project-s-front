@@ -8,6 +8,8 @@ const initialCanvas = {
   isMouseDown: false,
   groupCount: 0,
   currentDrawing: null,
+  fill: '#000000',
+  weight: 2,
   drawingPoints: [],
   broadcastedDrawingPoints: {},
   drawingPointsCache: [],
@@ -36,6 +38,12 @@ export const canvasReducer: Reducer = (
       drawingPoints[group].push(action.payload);
 
       return { ...state, drawingPoints };
+    }
+    case types.CANVAS_SET_FILL: {
+      return { ...state, fill: action.payload };
+    }
+    case types.CANVAS_SET_WEIGHT: {
+      return { ...state, weight: action.payload };
     }
     default:
       return state;

@@ -45,9 +45,9 @@ const handlers = () => {
     },
     onMouseDown: (props: Props) => (e: MouseEvent) => {
       const { pageX, pageY } = e;
-
+      console.log('mouse down');
       props.setIsMouseDown(true);
-      // props.createDrawingPoint({ pageX, pageY }, boardRef!, true);
+      props.createDrawingPoint({ pageX, pageY }, boardRef!, true);
     },
     onMouseMove: (props: Props) => (e: MouseEvent) => {
       if (!props.isMouseDown) return;
