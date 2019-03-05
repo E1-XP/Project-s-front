@@ -5,8 +5,15 @@ import { PlainAction } from './index';
 
 import { Global } from '../store/interfaces';
 
+const initialGlobal = {
+  isLoading: true,
+  isUserLoggedIn: false,
+  isSocketConnected: false,
+  formMessage: '',
+};
+
 export const globalReducer: Reducer = (
-  state: Global | any = {},
+  state = initialGlobal,
   action: PlainAction,
 ) => {
   switch (action.type) {

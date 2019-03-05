@@ -1,48 +1,6 @@
 import { ActionType } from './index';
 import { types } from './types';
-
-export const setDrawingPoint: ActionType = (data: object) => ({
-  type: types.CANVAS_SET_DRAWING_POINT,
-  payload: data,
-});
-
-export const setBroadcastedDrawingPoint: ActionType = (data: object) => ({
-  type: types.CANVAS_SET_BROADCASTED_DRAWING_POINT,
-  payload: data,
-});
-
-export const setBroadcastedDrawingPointsBulk: ActionType = (data: object) => ({
-  type: types.CANVAS_SET_BROADCASTED_DRAWING_POINTS_BULK,
-  payload: data,
-});
-
-export const setNewDrawingPointsGroup: ActionType = () => ({
-  type: types.CANVAS_SET_NEW_DRAWING_POINTS_GROUP,
-});
-
-export const setNewBroadcastedDrawingPointsGroup: ActionType = (
-  userId: string,
-) => ({
-  type: types.CANVAS_SET_NEW_BROADCASTED_DRAWING_POINTS_GROUP,
-  payload: userId,
-});
-
-export const initMouseUpBroadcast: ActionType = () => ({
-  type: types.CANVAS_INIT_MOUSE_UP_BROADCAST,
-});
-
-export const setDrawCount: ActionType = (v?: number) => ({
-  type: types.CANVAS_SET_DRAW_COUNT,
-  payload: v,
-});
-
-export const initClearDrawingPoints: ActionType = () => ({
-  type: types.CANVAS_INIT_CLEAR_DRAWING_POINTS,
-});
-
-export const clearDrawingPoints: ActionType = () => ({
-  type: types.CANVAS_CLEAR_DRAWING_POINTS,
-});
+import { DrawingPoint } from '../store/interfaces';
 
 export const initCanvasToImage: ActionType = (imgData: any) => ({
   type: types.CANVAS_INIT_CANVAS_TO_IMAGE,
@@ -56,4 +14,46 @@ export const initGetImagesFromServer: ActionType = () => ({
 export const setCurrentDrawing: ActionType = (v: number) => ({
   type: types.CANVAS_SET_CURRENT_DRAWING,
   payload: v,
+});
+
+export const setIsMouseDown = (v: boolean) => ({
+  type: types.CANVAS_SET_IS_MOUSE_DOWN,
+  payload: v,
+});
+
+export const setGroupCount = (v: number) => ({
+  type: types.CANVAS_SET_GROUP_COUNT,
+  payload: v,
+});
+
+export const setBroadcastedDrawingPointsBulk: ActionType = (data: object) => ({
+  type: types.CANVAS_SET_BROADCASTED_DRAWING_POINTS_BULK,
+  payload: data,
+});
+
+export const createDrawingPoint = (
+  e: MouseEvent,
+  ref: HTMLCanvasElement,
+  onMouseDownMode = false,
+) => ({
+  type: types.CANVAS_CREATE_DRAWING_POINT,
+  event: e,
+  boardRef: ref,
+  isOnMouseDown: onMouseDownMode,
+});
+
+export const setDrawingPoint: ActionType = (data: DrawingPoint) => ({
+  type: types.CANVAS_SET_DRAWING_POINT,
+  payload: data,
+});
+
+export const clearCanvas: ActionType = (ctx, ref) => ({
+  type: types.CANVAS_CLEAR,
+  ctx,
+  ref,
+});
+
+export const drawCanvas: ActionType = ctx => ({
+  type: types.CANVAS_DRAW,
+  payload: ctx,
 });

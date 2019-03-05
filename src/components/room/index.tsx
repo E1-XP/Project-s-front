@@ -4,12 +4,13 @@ import {
   withHandlers,
   withState,
   ReactLifeCycleFunctions,
+  shouldUpdate,
 } from 'recompose';
 import { connect } from 'react-redux';
 import { RouteComponentProps } from 'react-router-dom';
 import { Dispatch } from 'redux';
 
-import { State, Rooms, UserData, Chats, Users } from '../../store/interfaces';
+import { State, Rooms, UserData, Chats } from '../../store/interfaces';
 import { actions } from '../../actions';
 
 import { RoomComponent } from './template';
@@ -23,8 +24,6 @@ export interface Props extends RouteComponentProps<Params> {
   rooms: Rooms;
   chats: Chats;
   user: UserData;
-  users: Users;
-  isSocketConnected: boolean;
   isRoomUndefined: () => boolean;
   isUserAdmin: (itm: string | number | null, prevRooms?: Rooms) => boolean;
   handleBeforeUnload: (e: BeforeUnloadEvent) => void;
@@ -129,11 +128,9 @@ const handlers = {
   },
 };
 
-const mapStateToProps = ({ global, rooms, chats, user, users }: State) => ({
+const mapStateToProps = ({ rooms, chats, user }: State) => ({
   rooms,
   chats,
-  users,
-  isSocketConnected: global.isSocketConnected,
   user: user.userData,
 });
 
@@ -149,7 +146,7 @@ const mapDispatchToProps = (dispatch: Dispatch) => ({
     dispatch(actions.rooms.initRoomAdminChange(data)),
 });
 
-export const Room = compose<Props, {}>(
+export const Room = compose<Props, {}>(// curr.match === next.match),
   connect(
     mapStateToProps,
     mapDispatchToProps,
@@ -157,4 +154,5 @@ export const Room = compose<Props, {}>(
   withState('message', 'setState', ''),
   withHandlers(handlers),
   lifecycle<Props, {}>(hooks),
+  shouldUpdate<Props>((curr, next) => false), // curr.match === next.match),
 )(RoomComponent);

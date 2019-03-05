@@ -4,8 +4,19 @@ import { types } from '../actions/types';
 import { PlainAction } from './index';
 import { User } from './../store/interfaces';
 
+const initialUser = {
+  userData: {
+    username: '',
+    email: '',
+    id: null,
+  },
+  drawings: null,
+  inboxMessages: [],
+  inboxCount: 0,
+};
+
 export const userReducer: Reducer = (
-  state: Partial<User> = {},
+  state = initialUser,
   action: PlainAction,
 ) => {
   switch (action.type) {

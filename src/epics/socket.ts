@@ -128,27 +128,19 @@ export const bindRoomHandlersEpic: Epic = (action$, state$) =>
         );
       });
 
-      socket.on(`${roomId}/draw`, (data: any) => {
-        store.dispatch(actions.canvas.setBroadcastedDrawingPoint(data));
-      });
+      socket.on(`${roomId}/draw`, (data: any) => {});
 
       socket.on(`${roomId}/draw/getexisting`, (data: any[]) => {
         store.dispatch(actions.canvas.setBroadcastedDrawingPointsBulk(data));
       });
 
-      socket.on(`${roomId}/draw/newgroup`, (userId: string) => {
-        store.dispatch(
-          actions.canvas.setNewBroadcastedDrawingPointsGroup(userId),
-        );
-      });
+      socket.on(`${roomId}/draw/newgroup`, (userId: string) => {});
 
       socket.on(`${roomId}/draw/change`, (drawingId: string) => {
         store.dispatch(actions.canvas.setCurrentDrawing(drawingId));
       });
-
-      socket.on(`${roomId}/draw/reset`, (userId: string) => {
-        store.dispatch(actions.canvas.clearDrawingPoints());
-      });
+      // TODO
+      socket.on(`${roomId}/draw/reset`, (userId: string) => {});
 
       socket.on(`${roomId}/users`, (data: any) => {
         store.dispatch(actions.users.setRoomUsers(data));

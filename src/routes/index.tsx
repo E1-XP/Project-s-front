@@ -1,18 +1,18 @@
 import * as React from 'react';
 import { Route, Switch, Redirect } from 'react-router-dom';
 
-import { withAuthentication } from './HOCs/withAuthentication';
+import { withAuthentication } from './../HOCs/withAuthentication';
 
-import { Preloader } from './components/shared/preloader';
-import { Navbar } from './components/navbar';
-import { Form } from './components/form';
-import { Dashboard } from './components/dashboard';
-import { Inbox } from './components/inbox';
-import { RoomCreate } from './components/roomcreate';
-import { RoomPasswordScreen } from './components/room/enterpassword';
-import { Room } from './components/room';
-import { NotFound } from './components/404';
-import { ErrorPage } from './components/500';
+import { Preloader } from './../components/shared/preloader';
+import { Navbar } from './../components/navbar';
+import { Form } from './../components/form';
+import { Dashboard } from './../components/dashboard';
+import { Inbox } from './../components/inbox';
+import { RoomCreate } from './../components/roomcreate';
+import { RoomPasswordScreen } from './../components/room/enterpassword';
+import { Room } from './../components/room';
+import { NotFound } from './../components/404';
+import { ErrorPage } from './../components/500';
 
 export const routes = (
   <Preloader>

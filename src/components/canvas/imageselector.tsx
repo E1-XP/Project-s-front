@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { compose } from 'recompose';
+import { compose, onlyUpdateForKeys } from 'recompose';
 import { connect } from 'react-redux';
 
 import { State } from '../../store/interfaces';
@@ -59,4 +59,5 @@ const mapStateToProps = ({ user }: State) => ({ drawings: user.drawings });
 
 export const ImageSelector = compose<CombinedProps, PassedProps>(
   connect(mapStateToProps),
+  onlyUpdateForKeys(['isOpen', 'drawings']),
 )(ImageSelectorComponent);

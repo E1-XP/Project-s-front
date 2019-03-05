@@ -1,6 +1,6 @@
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
-import { compose, withHandlers, withState } from 'recompose';
+import { compose, withHandlers, withState, onlyUpdateForKeys } from 'recompose';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 
 import { actions } from '../../../actions';
@@ -95,4 +95,12 @@ export const CanvasNavbar = compose<CombinedProps, PassedProps>(
   ),
   withState('isModalOpen', 'setState', false),
   withHandlers(handlers),
+  onlyUpdateForKeys([
+    'users',
+    'rooms',
+    'user',
+    'isModalOpen',
+    'isColorPickerOpen',
+    'weight',
+  ]),
 )(CanvasNavbarComponent);

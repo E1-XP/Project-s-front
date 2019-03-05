@@ -3,8 +3,13 @@ import { types } from '../actions/types';
 
 import { PlainAction } from './index';
 
+const initialRooms = {
+  active: undefined,
+  list: undefined,
+};
+
 export const roomsReducer: Reducer = (
-  state: object = {},
+  state = initialRooms,
   action: PlainAction,
 ) => {
   switch (action.type) {

@@ -11,7 +11,7 @@ import './style.scss';
 import { actions } from './actions';
 import { store } from './store';
 import { routes } from './routes';
-import { history } from './history';
+import { history } from './routes/history';
 
 export const App = compose(
   lifecycle<{}, {}>({
