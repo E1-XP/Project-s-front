@@ -3,7 +3,15 @@ import { types } from '../actions/types';
 
 import { PlainAction } from './index';
 
-export const chatsReducer: Reducer = (state: any = {}, action: PlainAction) => {
+const initialChats = {
+  general: [],
+  selectedRoom: [],
+};
+
+export const chatsReducer: Reducer = (
+  state = initialChats,
+  action: PlainAction,
+) => {
   switch (action.type) {
     case types.MESSAGES_SET: {
       const { channel } = action.payload;

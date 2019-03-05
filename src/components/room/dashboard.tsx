@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { compose } from 'recompose';
+import { compose, onlyUpdateForKeys } from 'recompose';
 import { connect } from 'react-redux';
 import { match } from 'react-router-dom';
 
@@ -36,6 +36,7 @@ export const RoomDashboard = compose<CombinedProps, PassedProps>(
     users,
     user: user.userData,
   })),
+  onlyUpdateForKeys(['rooms', 'users', 'user']),
 )(
   ({
     rooms,

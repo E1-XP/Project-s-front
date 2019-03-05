@@ -4,10 +4,10 @@ interface RefObj {
   [key: string]: (ref: Ref<any>) => void;
 }
 
-export const withRef = (refKey: string) => (Component: ComponentType) =>
+export const withRef = (...refKeys: string[]) => (Component: ComponentType) =>
   forwardRef((props: any, ref: any) => {
-    const refProp: RefObj = {};
-    refProp[refKey] = props[refKey];
+    const refProps: RefObj = {};
+    refKeys.forEach(key => (refProps[key] = props[key]));
 
-    return <Component {...props} {...refProp} />;
+    return <Component {...props} {...refProps} />;
   });

@@ -22,19 +22,6 @@ import { actions } from '../actions';
 
 import config from './../config';
 
-export const drawingBroadcastEpic: Epic = (action$, state$) =>
-  action$.ofType(types.CANVAS_SET_DRAWING_POINT).pipe(
-    pluck('payload'),
-    map(data => {
-      const drawingId = state$.value.canvas.currentDrawing;
-
-      return { ...data, drawingId };
-    }),
-    mergeMap(data =>
-      of(actions.socket.emitRoomDraw(data), actions.canvas.setDrawCount()),
-    ),
-  );
-
 export const createNewDrawingEpic: Epic = (action$, state$) =>
   action$.ofType(types.CANVAS_INIT_CREATE_NEW_DRAWING).pipe(
     tap(v => {
@@ -71,7 +58,7 @@ export const selectDrawingInRoom: Epic = (action$, state$) =>
     map(drawingId => {
       const roomId = state$.value.rooms.active;
 
-      store.dispatch(actions.canvas.clearDrawingPoints());
+      // store.dispatch(actions.canvas.clearDrawingPoints());
       store.dispatch(actions.canvas.setCurrentDrawing(drawingId));
 
       return actions.socket.emitRoomDrawChange({ drawingId, roomId });
@@ -94,26 +81,6 @@ export const selectDrawingInRoom: Epic = (action$, state$) =>
 //         ignoreElements()
 //     );
 
-export const drawingBroadcastNewPointsGroupEpic: Epic = (action$, state$) =>
-  action$.ofType(types.CANVAS_SET_NEW_DRAWING_POINTS_GROUP).pipe(
-    tap(v => {
-      const userId = state$.value.user.userData.id;
-      return actions.socket.emitRoomDrawNewGroup(userId);
-    }),
-  );
-
-export const drawingBroadcastMouseUpEpic: Epic = (action$, state$) =>
-  action$.ofType(types.CANVAS_INIT_MOUSE_UP_BROADCAST).pipe(
-    mergeMap(v => {
-      const drawCount = state$.value.canvas.drawCount;
-
-      return of(
-        actions.socket.emitRoomDrawMouseup(drawCount),
-        actions.canvas.setDrawCount(0),
-      );
-    }),
-  );
-
 export const canvasImageSaveEpic: Epic = (action$, state$) =>
   action$.ofType(types.CANVAS_INIT_CANVAS_TO_IMAGE).pipe(
     debounceTime(1500),
@@ -131,13 +98,13 @@ export const canvasImageSaveEpic: Epic = (action$, state$) =>
     ignoreElements(),
   );
 
-export const drawingResetEpic: Epic = (action$, state$) =>
-  action$.ofType(types.CANVAS_INIT_CLEAR_DRAWING_POINTS).pipe(
-    map(v => {
-      const roomId = state$.value.rooms.active;
-      const userId = state$.value.user.userData.id;
-      const drawingId = state$.value.canvas.currentDrawing;
+// export const drawingResetEpic: Epic = (action$, state$) =>
+//   action$.ofType(types.CANVAS_INIT_CLEAR_DRAWING_POINTS).pipe(
+//     map(v => {
+//       const roomId = state$.value.rooms.active;
+//       const userId = state$.value.user.userData.id;
+//       const drawingId = state$.value.canvas.currentDrawing;
 
-      return actions.socket.emitRoomDrawReset({ userId, drawingId });
-    }),
-  );
+//       return actions.socket.emitRoomDrawReset({ userId, drawingId });
+//     }),
+//   );

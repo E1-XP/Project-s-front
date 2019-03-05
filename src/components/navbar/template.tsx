@@ -12,6 +12,11 @@ import Badge from '@material-ui/core/Badge';
 
 import { Props } from './index';
 
+const userDisplayStyle = {
+  display: 'inline-block',
+  paddingRight: '.5rem',
+};
+
 export const NavbarComponent = ({
   isUserLoggedIn,
   userData,
@@ -34,10 +39,7 @@ export const NavbarComponent = ({
               <Typography
                 variant="body1"
                 color="primary"
-                style={{
-                  display: 'inline-block',
-                  paddingRight: '.5rem',
-                }}
+                style={userDisplayStyle}
               >
                 WELCOME {userData.username.toUpperCase()}
               </Typography>

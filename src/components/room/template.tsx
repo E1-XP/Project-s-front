@@ -13,48 +13,43 @@ import { RoomDashboard } from './dashboard';
 import { Canvas } from '../canvas';
 import { Chat } from '../chat';
 
+const NoRoomPlaceholder = () => (
+  <main id="room" className="container">
+    <Grid container={true} spacing={16}>
+      <Grid item={true} xs={12}>
+        <Paper>
+          <Typography variant="h5" align="center" className="mbottom-2">
+            Room not exist
+          </Typography>
+          <Typography variant="subtitle1" align="center" className="mbottom-2">
+            Probably admin closed it or you entered incorrect url.
+          </Typography>
+          <Grid container={true} item={true} md={12} justify="center">
+            <Link to="/dashboard">
+              <Button variant="contained" color="primary">
+                Return to the main page
+              </Button>
+            </Link>
+          </Grid>
+        </Paper>
+      </Grid>
+    </Grid>
+  </main>
+);
+
 export const RoomComponent = ({
+  match,
   changeRoomOwner,
   isUserAdmin,
-  handleSubmit,
-  setMessage,
-  user,
-  users,
-  rooms,
-  chats,
-  message,
-  match,
   isRoomUndefined,
+  handleSubmit,
+  chats,
+  user,
 }: Props) => {
   if (isRoomUndefined()) {
-    return (
-      <main id="room" className="container">
-        <Grid container={true} spacing={16}>
-          <Grid item={true} xs={12}>
-            <Paper>
-              <Typography variant="h5" align="center" className="mbottom-2">
-                Room not exist
-              </Typography>
-              <Typography
-                variant="subtitle1"
-                align="center"
-                className="mbottom-2"
-              >
-                Probably admin closed it or you entered incorrect url.
-              </Typography>
-              <Grid container={true} item={true} md={12} justify="center">
-                <Link to="/dashboard">
-                  <Button variant="contained" color="primary">
-                    Return to the main page
-                  </Button>
-                </Link>
-              </Grid>
-            </Paper>
-          </Grid>
-        </Grid>
-      </main>
-    );
+    return <NoRoomPlaceholder />;
   }
+  console.log('rendering');
 
   return (
     <main id="room" className="container">

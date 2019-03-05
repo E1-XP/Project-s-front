@@ -117,7 +117,9 @@ export const concludeRoomEnterEpic: Epic = (action$, state$) =>
   action$.ofType(types.ROOMS_INIT_ENTER_SUCCESS).pipe(
     concatMap(
       v =>
-        action$.ofType(types.CANVAS_SET_BROADCASTED_DRAWING_POINTS_BULK).pipe(take(1)),
+        action$
+          .ofType(types.CANVAS_SET_BROADCASTED_DRAWING_POINTS_BULK)
+          .pipe(take(1)),
       v => actions.global.setIsLoading(false),
     ),
     tap(v => {
@@ -136,7 +138,7 @@ export const roomLeaveEpic: Epic = (action$, state$) =>
         actions.global.setIsLoading(true),
         actions.rooms.setCurrentRoom(null),
         actions.users.setRoomUsers({}),
-        actions.canvas.clearDrawingPoints(),
+        // actions.canvas.clearDrawingPoints(),
         actions.canvas.setCurrentDrawing(null),
         actions.chats.setMessages({
           channel: 'selectedRoom',

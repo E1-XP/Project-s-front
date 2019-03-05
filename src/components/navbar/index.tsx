@@ -1,4 +1,4 @@
-import { compose, withHandlers } from 'recompose';
+import { compose, withHandlers, onlyUpdateForKeys } from 'recompose';
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
 
@@ -36,4 +36,5 @@ export const Navbar = compose<Props, {}>(
     mapDispatchToProps,
   ),
   withHandlers(handlers),
+  onlyUpdateForKeys(['inboxCount']),
 )(NavbarComponent);

@@ -5,6 +5,7 @@ import {
   withHandlers,
   lifecycle,
   ReactLifeCycleFunctions,
+  onlyUpdateForKeys,
 } from 'recompose';
 
 import { ChatMessage } from '../../store/interfaces';
@@ -63,4 +64,5 @@ export const Chat = compose<CombinedProps, PassedProps>(
   withState('state', 'setState', ''),
   withHandlers(handlers),
   lifecycle(hooks),
+  onlyUpdateForKeys(['state']),
 )(ChatComponent);
