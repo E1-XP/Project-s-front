@@ -16,12 +16,13 @@ const mainCanvasStyle: any = {
   border: '1px solid #999',
   width: '100%',
 };
+const backCanvasStyle = { border: '1px solid #999', width: '100%' };
 
 export const CanvasComponent = ({
   createBoardRef,
   createBackBoardRef,
-  getBoardRef,
   getCtx,
+  getBackCtx,
   boardState,
   setSelectedColor,
   handleResetBtn,
@@ -53,7 +54,6 @@ export const CanvasComponent = ({
     <div style={positionRelativeStyle}>
       <MainCanvas
         createBoardRef={createBoardRef}
-        getBoardRef={getBoardRef}
         getCtx={getCtx}
         onMouseDown={onMouseDown}
         onMouseMove={onMouseMove}
@@ -61,14 +61,18 @@ export const CanvasComponent = ({
         clearCanvas={clearCanvas}
         drawCanvas={drawCanvas}
       />
-      <BackCanvas createBackBoardRef={createBackBoardRef} />
+      <BackCanvas
+        createBackBoardRef={createBackBoardRef}
+        getCtx={getBackCtx}
+        clearCanvas={clearCanvas}
+        drawCanvas={drawCanvas}
+      />
     </div>
   </div>
 );
 
 interface PassedMainCanvasProps {
   createBoardRef: Props['createBoardRef'];
-  getBoardRef: Props['getBoardRef'];
   getCtx: Props['getCtx'];
   onMouseDown: Props['onMouseDown'];
   onMouseMove: Props['onMouseMove'] | undefined;
@@ -85,13 +89,13 @@ type CombinedMainCanvasProps = MainCanvasProps & PassedMainCanvasProps;
 
 const MainCanvas = compose<CombinedMainCanvasProps, PassedMainCanvasProps>(
   connect(({ canvas }: State) => ({ drawingPoints: canvas.drawingPoints })),
-  lifecycle<CombinedMainCanvasProps, {}>({
+  lifecycle<CombinedMainCanvasProps, PassedMainCanvasProps>({
     componentWillReceiveProps(nextP) {
-      const { getCtx, getBoardRef, drawingPoints } = this.props;
+      const { getCtx, drawingPoints } = this.props;
       const shouldRedraw = nextP.drawingPoints !== drawingPoints;
 
       if (shouldRedraw) {
-        this.props.clearCanvas(getCtx(), getBoardRef());
+        this.props.clearCanvas(getCtx());
         this.props.drawCanvas(getCtx());
       }
     },
@@ -116,19 +120,40 @@ const MainCanvas = compose<CombinedMainCanvasProps, PassedMainCanvasProps>(
   ),
 );
 
-interface BackCanvasProps {}
+interface BackCanvasProps {
+  drawingPointsCache: DrawingPoint[][];
+}
 
 interface BackCanvasPassedProps {
   createBackBoardRef: Props['createBackBoardRef'];
+  getCtx: Props['getBackCtx'];
+  clearCanvas: Props['clearCanvas'];
+  drawCanvas: Props['drawCanvas'];
 }
 
 type CombinedBackCanvasProps = BackCanvasProps & BackCanvasPassedProps;
 
-const BackCanvas = ({ createBackBoardRef }: CombinedBackCanvasProps) => (
+const BackCanvas = compose<CombinedBackCanvasProps, BackCanvasPassedProps>(
+  connect(({ canvas }: State) => ({
+    drawingPointsCache: canvas.drawingPointsCache,
+  })),
+  lifecycle<CombinedBackCanvasProps, BackCanvasPassedProps>({
+    componentWillReceiveProps(nextP) {
+      const { getCtx, drawingPointsCache } = this.props;
+      const shouldRedraw = nextP.drawingPointsCache !== drawingPointsCache;
+
+      if (shouldRedraw) {
+        console.log('redrawing back');
+        this.props.clearCanvas(getCtx());
+        this.props.drawCanvas(getCtx(), true);
+      }
+    },
+  }),
+)(({ createBackBoardRef }: CombinedBackCanvasProps) => (
   <canvas
     ref={createBackBoardRef}
     width={1280}
     height={720}
-    style={{ border: '1px solid #999', width: '100%' }}
+    style={backCanvasStyle}
   />
-);
+));

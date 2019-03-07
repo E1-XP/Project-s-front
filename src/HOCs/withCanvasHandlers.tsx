@@ -62,8 +62,8 @@ const handlers = () => {
       props.setGroupCount(groupCount + 1);
     },
     onMouseUpOutsideBoard: (props: Props) => () => {},
-    redraw: (props: Props) => () => {},
-    redrawBack: (props: Props) => () => {},
+    // redraw: (props: Props) => () => {},
+    // redrawBack: (props: Props) => () => {},
   };
 };
 

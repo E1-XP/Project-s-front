@@ -4,10 +4,7 @@ import {
   mergeMap,
   tap,
   ignoreElements,
-  debounceTime,
-  take,
-  takeWhile,
-  mapTo,
+  throttleTime,
   pluck,
   catchError,
 } from 'rxjs/operators';
@@ -18,6 +15,8 @@ import { store } from '../store';
 
 import { types } from '../actions/types';
 import { actions } from '../actions';
+
+import { getCombinedDrawingPoints } from './../selectors/getCombinedDrawingPoints';
 
 export const createDrawingPointEpic: Epic = (action$, state$) =>
   action$.ofType(types.CANVAS_CREATE_DRAWING_POINT).pipe(
@@ -44,7 +43,10 @@ export const createDrawingPointEpic: Epic = (action$, state$) =>
       });
 
       if (onMouseDownMode) {
-        return [pointFactory(), pointFactory({ x: xPos + 3, y: yPos + 3 })];
+        return [
+          pointFactory(),
+          pointFactory({ x: xPos + weight, y: yPos + weight }),
+        ];
       }
 
       return [pointFactory()];
@@ -54,8 +56,8 @@ export const createDrawingPointEpic: Epic = (action$, state$) =>
 
 export const clearCanvasEpic: Epic = (action$, state$) =>
   action$.ofType(types.CANVAS_CLEAR).pipe(
-    tap(({ ctx, ref }) => {
-      const { width, height } = ref;
+    tap(({ ctx }) => {
+      const { width, height } = ctx.canvas;
 
       ctx.fillStyle = '#ffffff';
       ctx.clearRect(0, 0, width, height);
@@ -65,26 +67,30 @@ export const clearCanvasEpic: Epic = (action$, state$) =>
 
 export const drawCanvasEpic: Epic<any, any, State> = (action$, state$) =>
   action$.ofType(types.CANVAS_DRAW).pipe(
-    pluck<{}, CanvasRenderingContext2D>('payload'),
-    tap(ctx => {
-      ctx.lineJoin = 'round';
+    // throttleTime(1000 / 60, undefined, { trailing: true }),
+    map(({ ctx, isDrawingOnBack }) => {
+      const toDraw = !isDrawingOnBack
+        ? getCombinedDrawingPoints(state$.value)
+        : state$.value.canvas.drawingPointsCache;
 
-      const toDraw = state$.value.canvas.drawingPoints;
+      return { ctx, toDraw };
+    }),
+    tap(({ ctx, toDraw }) => {
+      ctx.lineJoin = 'round';
 
       toDraw.forEach(arr =>
         arr.forEach((point, i, arr) => {
           const { x, y, fill, weight } = point;
 
-          i &&
-            requestAnimationFrame(() => {
-              ctx.strokeStyle = fill;
-              ctx.lineWidth = weight;
+          if (i) {
+            ctx.strokeStyle = fill;
+            ctx.lineWidth = weight;
 
-              ctx.beginPath();
-              ctx.lineTo(arr[i - 1].x, arr[i - 1].y);
-              ctx.lineTo(x, y);
-              ctx.stroke();
-            });
+            ctx.beginPath();
+            ctx.lineTo(arr[i - 1].x, arr[i - 1].y);
+            ctx.lineTo(x, y);
+            ctx.stroke();
+          }
         }),
       );
     }),

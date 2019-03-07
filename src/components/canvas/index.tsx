@@ -48,11 +48,11 @@ export interface Props {
   onMouseDown: (e: MouseEvent) => void;
   onMouseMove: (e: MouseEvent) => void;
   onMouseUp: (e: MouseEvent) => void;
-  drawCanvas: (ctx: CanvasRenderingContext2D) => Dispatch;
-  clearCanvas: (
+  drawCanvas: (
     ctx: CanvasRenderingContext2D,
-    ref: HTMLCanvasElement,
+    isDrawingOnBack?: boolean,
   ) => Dispatch;
+  clearCanvas: (ctx: CanvasRenderingContext2D) => Dispatch;
 }
 
 interface BoardState {

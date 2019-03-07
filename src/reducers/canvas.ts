@@ -39,6 +39,9 @@ export const canvasReducer: Reducer = (
 
       return { ...state, drawingPoints };
     }
+    case types.CANVAS_SET_DRAWING_POINTS_CACHE: {
+      return { ...state, drawingPointsCache: action.payload };
+    }
     case types.CANVAS_SET_FILL: {
       return { ...state, fill: action.payload };
     }
