@@ -11,7 +11,7 @@ import {
 } from 'rxjs/operators';
 import { of } from 'rxjs';
 
-import { UserData } from '../store/interfaces';
+import { State, UserData, DrawingPoint } from '../store/interfaces';
 import { store } from '../store';
 
 import { actions } from '../actions';
@@ -103,13 +103,14 @@ export const bindSocketHandlersEpic: Epic = (action$, state$) =>
     ignoreElements(),
   );
 
-export const bindRoomHandlersEpic: Epic = (action$, state$) =>
+export const bindRoomHandlersEpic: Epic<any, any, State> = (action$, state$) =>
   action$.ofType(types.SOCKET_BIND_ROOM_HANDLERS).pipe(
     tap(() => {
       const roomId =
         state$.value.router.location.pathname.split('/')[2] ||
         state$.value.rooms.active;
       const drawingId = state$.value.canvas.currentDrawing;
+      const userId = state$.value.user.userData.id;
 
       store.dispatch(actions.rooms.setCurrentRoom(roomId));
 
@@ -128,10 +129,25 @@ export const bindRoomHandlersEpic: Epic = (action$, state$) =>
         );
       });
 
-      socket.on(`${roomId}/draw`, (data: any) => {});
+      socket.on(`${roomId}/draw`, (data: any) => {
+        // TODO handle this
+      });
 
-      socket.on(`${roomId}/draw/getexisting`, (data: any[]) => {
-        store.dispatch(actions.canvas.setBroadcastedDrawingPointsBulk(data));
+      socket.on(`${roomId}/draw/getexisting`, (data: DrawingPoint[]) => {
+        const drawingGroupCount = data
+          .slice()
+          .reverse()
+          .find(p => p.userId === userId);
+
+        store.dispatch(
+          actions.canvas.setBroadcastedDrawingPointsBulk({ data, userId }),
+        );
+
+        if (drawingGroupCount) {
+          store.dispatch(
+            actions.canvas.setGroupCount(drawingGroupCount.group + 1),
+          );
+        }
       });
 
       socket.on(`${roomId}/draw/newgroup`, (userId: string) => {});

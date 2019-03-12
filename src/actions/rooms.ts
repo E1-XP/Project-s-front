@@ -38,7 +38,7 @@ export const initRoomAdminChange: ActionType = (data: any) => ({
   payload: data,
 });
 
-export const initInRoomDrawingSelect: ActionType = (id: string) => ({
+export const initInRoomDrawingSelect: ActionType = (id: number) => ({
   type: types.CANVAS_INIT_IN_ROOM_DRAWING_SELECT,
   payload: id,
 });

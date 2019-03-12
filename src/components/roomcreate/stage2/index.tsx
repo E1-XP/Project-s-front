@@ -16,7 +16,7 @@ export interface PassedProps {
   handleSubmit: () => void;
   handleDrawingCreate: () => void;
   handleDrawingSelect: (e: any) => void;
-  currentDrawing: string | null;
+  currentDrawing: number | null;
 }
 
 export type CombinedProps = Props & PassedProps;

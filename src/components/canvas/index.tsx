@@ -53,6 +53,8 @@ export interface Props {
     isDrawingOnBack?: boolean,
   ) => Dispatch;
   clearCanvas: (ctx: CanvasRenderingContext2D) => Dispatch;
+  redraw: () => void;
+  redrawBack: () => void;
 }
 
 interface BoardState {
@@ -82,7 +84,7 @@ const stateHandlers = {
 
 const handlers1 = {
   handleImageChange: (props: Props) => (e: any) => {
-    props.initInRoomDrawingSelect(e.target.closest('li').dataset.id);
+    props.initInRoomDrawingSelect(Number(e.target.closest('li').dataset.id));
   },
   setSelectedColor: (props: Props) => (color: any) => {
     console.log(color);
@@ -107,15 +109,6 @@ const handlers1 = {
   //   },
   //   handleResize: (props: Props) => () => {
   //     window.addEventListener('resize', props.renderImage);
-  //   },
-
-  //   handleMouseUp: (props: Props) => () => {
-  //     props.setIsMouseDown(false);
-  //     props.initMouseUpBroadcast();
-  //     setTimeout(() => {
-  //       const imgB64 = props.getBoardRef().toDataURL('image/jpeg', 0.5);
-  //       props.initCanvasToImage(imgB64);
-  //     }, 500);
   //   },
 };
 

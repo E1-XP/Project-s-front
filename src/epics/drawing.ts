@@ -9,6 +9,7 @@ import {
   catchError,
 } from 'rxjs/operators';
 import { of } from 'rxjs';
+import flatMap from 'lodash/flatmap';
 
 import { DrawingPoint, State } from './../store/interfaces';
 import { store } from '../store';
@@ -18,11 +19,19 @@ import { actions } from '../actions';
 
 import { getCombinedDrawingPoints } from './../selectors/getCombinedDrawingPoints';
 
-export const createDrawingPointEpic: Epic = (action$, state$) =>
+export const createDrawingPointEpic: Epic<any, any, State> = (
+  action$,
+  state$,
+) =>
   action$.ofType(types.CANVAS_CREATE_DRAWING_POINT).pipe(
     map(({ event, boardRef, onMouseDownMode }) => {
       const { id } = state$.value.user.userData;
-      const { groupCount, fill, weight } = state$.value.canvas;
+      const {
+        groupCount,
+        fill,
+        weight,
+        currentDrawing: drawingId,
+      } = state$.value.canvas;
 
       const { pageX, pageY } = event;
       const { scrollX, scrollY } = window;
@@ -39,7 +48,9 @@ export const createDrawingPointEpic: Epic = (action$, state$) =>
         weight: opts.weight || weight,
         date: opts.date || Date.now(),
         group: opts.group !== undefined ? opts.group : groupCount,
-        user: opts.user || id,
+        userId: opts.userId !== undefined ? opts.userId : id,
+        drawingId:
+          opts.drawingId !== undefined ? opts.drawingId : Number(drawingId),
       });
 
       if (onMouseDownMode) {
@@ -51,7 +62,14 @@ export const createDrawingPointEpic: Epic = (action$, state$) =>
 
       return [pointFactory()];
     }),
-    mergeMap(data => of(...data.map(p => actions.canvas.setDrawingPoint(p)))),
+    mergeMap(data =>
+      of(
+        ...flatMap(data, p => [
+          actions.canvas.setDrawingPoint(p),
+          actions.socket.emitRoomDraw(p),
+        ]),
+      ),
+    ),
   );
 
 export const clearCanvasEpic: Epic = (action$, state$) =>
@@ -77,7 +95,7 @@ export const drawCanvasEpic: Epic<any, any, State> = (action$, state$) =>
     }),
     tap(({ ctx, toDraw }) => {
       ctx.lineJoin = 'round';
-
+      console.log(ctx);
       toDraw.forEach(arr =>
         arr.forEach((point, i, arr) => {
           const { x, y, fill, weight } = point;
@@ -95,4 +113,13 @@ export const drawCanvasEpic: Epic<any, any, State> = (action$, state$) =>
       );
     }),
     ignoreElements(),
+  );
+
+export const drawMouseUpEpic: Epic<any, any, State> = (action$, state$) =>
+  action$.ofType(types.CANVAS_SET_GROUP_COUNT).pipe(
+    map(action => ({
+      userId: state$.value.user.userData.id,
+      group: action.payload,
+    })),
+    map(data => actions.socket.emitRoomDrawMouseup(data)),
   );

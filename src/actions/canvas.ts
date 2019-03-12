@@ -26,7 +26,7 @@ export const setGroupCount = (v: number) => ({
   payload: v,
 });
 
-export const setBroadcastedDrawingPointsBulk: ActionType = (data: object) => ({
+export const setBroadcastedDrawingPointsBulk: ActionType = data => ({
   type: types.CANVAS_SET_BROADCASTED_DRAWING_POINTS_BULK,
   payload: data,
 });
@@ -50,6 +50,10 @@ export const createDrawingPoint = (
 export const setDrawingPoint: ActionType = (data: DrawingPoint) => ({
   type: types.CANVAS_SET_DRAWING_POINT,
   payload: data,
+});
+
+export const clearDrawingPoints: ActionType = () => ({
+  type: types.CANVAS_CLEAR_DRAWING_POINTS,
 });
 
 export const clearCanvas: ActionType = ctx => ({

@@ -5,7 +5,12 @@ import { MouseEvent } from 'react';
 
 import { actions } from './../actions';
 const {
-  canvas: { setIsMouseDown, setGroupCount, createDrawingPoint },
+  canvas: {
+    setIsMouseDown,
+    setGroupCount,
+    createDrawingPoint,
+    initCanvasToImage,
+  },
 } = actions;
 
 import { State } from './../store/interfaces';
@@ -20,6 +25,25 @@ interface Props {
     ref: HTMLCanvasElement,
     onMouseDown?: boolean,
   ) => Dispatch;
+  initCanvasToImage: (v: any) => Dispatch;
+  drawCanvas: (
+    ctx: CanvasRenderingContext2D,
+    isDrawingOnBack?: boolean,
+  ) => Dispatch;
+  clearCanvas: (ctx: CanvasRenderingContext2D) => Dispatch;
+  createBoardRef: (ref: HTMLCanvasElement) => void;
+  createBackBoardRef: (ref: HTMLCanvasElement) => void;
+  getBoardRef: () => HTMLCanvasElement;
+  getBackBoardRef: () => HTMLCanvasElement;
+  getCtx: () => CanvasRenderingContext2D;
+  getBackCtx: () => CanvasRenderingContext2D;
+  onMouseDown: (e: MouseEvent) => void;
+  onMouseMove: (e: MouseEvent) => void;
+  onMouseUp: (e: MouseEvent) => void;
+  onMouseUpOutsideBoard: () => void;
+  onCanvasResize: () => void;
+  redraw: () => void;
+  redrawBack: () => void;
 }
 
 const handlers = () => {
@@ -60,11 +84,26 @@ const handlers = () => {
 
       props.setIsMouseDown(false);
       props.setGroupCount(groupCount + 1);
+
+      setTimeout(() => {
+        const imgB64 = boardRef.toDataURL('image/jpeg', 0.5);
+        props.initCanvasToImage(imgB64); // TODO merge both layers
+      }, 500);
     },
     onMouseUpOutsideBoard: (props: Props) => () => {},
-    // redraw: (props: Props) => () => {},
-    // redrawBack: (props: Props) => () => {},
+    onCanvasResize: (props: Props) => () => {},
   };
+};
+
+const handlers2 = {
+  redraw: (props: Props) => () => {
+    props.clearCanvas(props.getCtx());
+    props.drawCanvas(props.getCtx());
+  },
+  redrawBack: (props: Props) => () => {
+    props.clearCanvas(props.getBackCtx());
+    props.drawCanvas(props.getBackCtx(), true);
+  },
 };
 
 export const withCanvasHandlers = compose(
@@ -73,7 +112,8 @@ export const withCanvasHandlers = compose(
       groupCount: canvas.groupCount,
       isMouseDown: canvas.isMouseDown,
     }),
-    { setIsMouseDown, setGroupCount, createDrawingPoint },
+    { setIsMouseDown, setGroupCount, createDrawingPoint, initCanvasToImage },
   ),
   withHandlers(handlers()),
+  withHandlers(handlers2),
 );
