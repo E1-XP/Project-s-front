@@ -73,7 +73,8 @@ export interface DrawingPoint {
   weight: number;
   date: number;
   group: number;
-  user: string;
+  userId: number;
+  drawingId: number;
 }
 
 export interface BroadcastedDrawingPoints {

@@ -47,7 +47,7 @@ const calculateCombined = (
 ) => {
   const cacheLen = drawingPointsCache.length;
 
-  console.log('CALC');
+  console.log('CALC'); // TODO optimize
 
   const combineIfNoCache = () =>
     Object.values(broadcastedDrawingPoints)

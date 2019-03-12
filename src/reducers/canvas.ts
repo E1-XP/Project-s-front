@@ -2,7 +2,7 @@ import { Reducer } from 'redux';
 
 import { types } from '../actions/types';
 import { PlainAction } from './index';
-import { Canvas } from '../store/interfaces';
+import { Canvas, DrawingPoint } from '../store/interfaces';
 
 const initialCanvas = {
   isMouseDown: false,
@@ -38,6 +38,40 @@ export const canvasReducer: Reducer = (
       drawingPoints[group].push(action.payload);
 
       return { ...state, drawingPoints };
+    }
+    case types.CANVAS_SET_BROADCASTED_DRAWING_POINTS_BULK: {
+      const { userId: currUser, data } = action.payload;
+      const userPoints: DrawingPoint[][] = [];
+
+      const groupByUserIdAndGroupId = (acc: any, itm: DrawingPoint) => {
+        const { userId, group } = itm;
+
+        if (userId === currUser) {
+          if (!userPoints[group]) userPoints[group] = [];
+          userPoints[group].push(itm);
+        } else {
+          if (!acc[userId]) acc[userId] = [];
+          if (!acc[userId][group]) {
+            acc[userId][group] = [];
+          }
+          acc[userId][group].push(itm);
+        }
+
+        return acc;
+      };
+
+      const broadcastedDrawingPoints = data.reduce(groupByUserIdAndGroupId, {});
+      const drawingPoints = userPoints.concat(state.drawingPoints);
+
+      return { ...state, drawingPoints, broadcastedDrawingPoints };
+    }
+    case types.CANVAS_CLEAR_DRAWING_POINTS: {
+      return {
+        ...state,
+        drawingPoints: [],
+        broadcastedDrawingPoints: {},
+        drawingPointsCache: [],
+      };
     }
     case types.CANVAS_SET_DRAWING_POINTS_CACHE: {
       return { ...state, drawingPointsCache: action.payload };

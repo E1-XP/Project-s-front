@@ -15,7 +15,7 @@ interface NewDrawingData {
 export interface Props {
   state: IState;
   user: UserData;
-  currentDrawing: string;
+  currentDrawing: number | null;
   setState: (v: Partial<IState>) => void;
   handleSubmit: () => void;
   handleDrawingCreate: () => void;
@@ -55,7 +55,7 @@ const handlers = {
     props.initCreateNewDrawing({ name: props.state.name });
   },
   handleDrawingSelect: (props: Props) => (e: any) => {
-    props.initDrawingSelect(e.target.closest('li').dataset.id);
+    props.initDrawingSelect(Number(e.target.closest('li').dataset.id));
   },
   handleSubmit: (props: Props) => (e: any) => {
     const { user, state } = props;

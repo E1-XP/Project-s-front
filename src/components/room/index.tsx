@@ -122,7 +122,7 @@ const handlers = {
   },
   changeRoomOwner: (props: Props) => (e: any) => {
     const roomId = props.match.params.id;
-    const userId = e.target.closest('li').dataset.id;
+    const userId = Number(e.target.closest('li').dataset.id);
 
     props.initRoomAdminChange({ roomId, userId });
   },
@@ -146,7 +146,7 @@ const mapDispatchToProps = (dispatch: Dispatch) => ({
     dispatch(actions.rooms.initRoomAdminChange(data)),
 });
 
-export const Room = compose<Props, {}>(// curr.match === next.match),
+export const Room = compose<Props, {}>(
   connect(
     mapStateToProps,
     mapDispatchToProps,

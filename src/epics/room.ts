@@ -18,6 +18,7 @@ import { push } from 'connected-react-router';
 
 import { fetchStream } from '../utils/fetchStream';
 
+import { State } from '../store/interfaces';
 import { store } from '../store';
 
 import { types } from '../actions/types';
@@ -138,7 +139,7 @@ export const roomLeaveEpic: Epic = (action$, state$) =>
         actions.global.setIsLoading(true),
         actions.rooms.setCurrentRoom(null),
         actions.users.setRoomUsers({}),
-        // actions.canvas.clearDrawingPoints(),
+        actions.canvas.clearDrawingPoints(),
         actions.canvas.setCurrentDrawing(null),
         actions.chats.setMessages({
           channel: 'selectedRoom',
@@ -148,7 +149,10 @@ export const roomLeaveEpic: Epic = (action$, state$) =>
     ),
   );
 
-export const handleLoadingOnRoomLeave: Epic = (action$, state$) =>
+export const handleLoadingOnRoomLeaveEpic: Epic<any, any, State> = (
+  action$,
+  state$,
+) =>
   action$.ofType(types.ROOMS_INIT_LEAVE).pipe(
     filter(
       v =>

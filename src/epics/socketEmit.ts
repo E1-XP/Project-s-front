@@ -8,7 +8,6 @@ import {
   ignoreElements,
   pluck,
 } from 'rxjs/operators';
-import { of } from 'rxjs';
 
 import { InvitationData } from '../components/canvas/toolbar';
 
@@ -22,7 +21,7 @@ export const emitRoomDrawEpic: Epic = (action$, state$) =>
     pluck('payload'),
     tap(data => {
       const roomId = state$.value.rooms.active;
-      socket.emit(`${roomId}/draw`);
+      socket.emit(`${roomId}/draw`, data);
     }),
     ignoreElements(),
   );
