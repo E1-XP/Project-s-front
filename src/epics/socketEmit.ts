@@ -46,16 +46,6 @@ export const emitRoomDrawMouseUpEpic: Epic = (action$, state$) =>
     ignoreElements(),
   );
 
-export const emitRoomDrawNewGroupEpic: Epic = (action$, state$) =>
-  action$.ofType(types.SOCKET_EMIT_ROOM_DRAW_NEWGROUP).pipe(
-    pluck('payload'),
-    tap(data => {
-      const roomId = state$.value.rooms.active;
-      socket.emit(`${roomId}/draw/newgroup`, data);
-    }),
-    ignoreElements(),
-  );
-
 export const emitRoomDrawResetEpic: Epic = (action$, state$) =>
   action$.ofType(types.SOCKET_EMIT_ROOM_DRAW_RESET).pipe(
     pluck('payload'),

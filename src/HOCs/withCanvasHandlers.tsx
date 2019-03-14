@@ -2,6 +2,7 @@ import { compose, withHandlers } from 'recompose';
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
 import { MouseEvent } from 'react';
+import throttle from 'lodash/throttle';
 
 import { actions } from './../actions';
 const {
@@ -91,7 +92,6 @@ const handlers = () => {
       }, 500);
     },
     onMouseUpOutsideBoard: (props: Props) => () => {},
-    onCanvasResize: (props: Props) => () => {},
   };
 };
 
@@ -104,6 +104,11 @@ const handlers2 = {
     props.clearCanvas(props.getBackCtx());
     props.drawCanvas(props.getBackCtx(), true);
   },
+  onCanvasResize: (props: Props) =>
+    throttle(() => {
+      props.clearCanvas(props.getCtx());
+      props.drawCanvas(props.getCtx());
+    }, 1000 / 60),
 };
 
 export const withCanvasHandlers = compose(

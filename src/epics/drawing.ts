@@ -1,6 +1,7 @@
 import { Epic } from 'redux-observable';
 import {
   map,
+  filter,
   mergeMap,
   tap,
   ignoreElements,
@@ -116,10 +117,23 @@ export const drawCanvasEpic: Epic<any, any, State> = (action$, state$) =>
   );
 
 export const drawMouseUpEpic: Epic<any, any, State> = (action$, state$) =>
-  action$.ofType(types.CANVAS_SET_GROUP_COUNT).pipe(
-    map(action => ({
-      userId: state$.value.user.userData.id,
-      group: action.payload,
-    })),
+  action$.ofType(types.CANVAS_SET_IS_MOUSE_DOWN).pipe(
+    pluck('payload'),
+    filter(value => value === false),
+    map(() => {
+      const userId = state$.value.user.userData.id;
+      const {
+        currentDrawing: drawingId,
+        groupCount: group,
+      } = state$.value.canvas;
+
+      const points = state$.value.canvas.drawingPoints.find(
+        arr => arr && !!arr.length && arr[0].group === group,
+      );
+
+      const tstamps = points ? points.map(p => p.date).join('.') : '';
+
+      return [userId, drawingId, group, tstamps].join('|');
+    }),
     map(data => actions.socket.emitRoomDrawMouseup(data)),
   );
