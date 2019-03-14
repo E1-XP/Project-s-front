@@ -39,6 +39,34 @@ export const canvasReducer: Reducer = (
 
       return { ...state, drawingPoints };
     }
+    case types.CANVAS_SET_BROADCASTED_DRAWING_POINT: {
+      const { group, userId } = action.payload;
+
+      const broadcastedDrawingPoints = Object.assign(
+        {},
+        state.broadcastedDrawingPoints,
+      );
+      if (!broadcastedDrawingPoints[userId]) {
+        broadcastedDrawingPoints[userId] = [];
+      }
+      if (!broadcastedDrawingPoints[userId][group]) {
+        broadcastedDrawingPoints[userId][group] = [];
+      }
+      broadcastedDrawingPoints[userId][group].push(action.payload);
+
+      return { ...state, broadcastedDrawingPoints };
+    }
+    case types.CANVAS_SET_BROADCASTED_DRAWING_POINTS_GROUP: {
+      const { group, userId } = action.payload[0];
+
+      const broadcastedDrawingPoints = Object.assign(
+        {},
+        state.broadcastedDrawingPoints,
+      );
+      broadcastedDrawingPoints[userId][group] = action.payload;
+
+      return { ...state, broadcastedDrawingPoints };
+    }
     case types.CANVAS_SET_BROADCASTED_DRAWING_POINTS_BULK: {
       const { userId: currUser, data } = action.payload;
       const userPoints: DrawingPoint[][] = [];

@@ -1,14 +1,6 @@
 import { connect } from 'socket.io-client';
 import { Epic } from 'redux-observable';
-import {
-  map,
-  mergeMap,
-  filter,
-  mapTo,
-  tap,
-  ignoreElements,
-  pluck,
-} from 'rxjs/operators';
+import { tap, ignoreElements, pluck } from 'rxjs/operators';
 import { of } from 'rxjs';
 
 import { State, UserData, DrawingPoint } from '../store/interfaces';
@@ -130,7 +122,39 @@ export const bindRoomHandlersEpic: Epic<any, any, State> = (action$, state$) =>
       });
 
       socket.on(`${roomId}/draw`, (data: any) => {
-        // TODO handle this
+        store.dispatch(actions.canvas.setBroadcastedDrawingPoint(data));
+      });
+
+      socket.on(`${roomId}/drawgroupcheck`, (data: string) => {
+        const [userIdStr, drawingIdStr, groupStr, tstamps] = data.split('|');
+        const test = tstamps.split('.').map(str => Number(str));
+
+        const currGroup = state$.value.canvas.broadcastedDrawingPoints[
+          userIdStr
+        ].find(arr => arr && !!arr.length && arr[0].group === Number(groupStr));
+
+        const groupIsIncorrectOrNotExist =
+          !currGroup || currGroup.some((p, i) => p.date !== test[i]);
+        if (groupIsIncorrectOrNotExist) {
+          // get correct data and replace
+          socket.emit(`${roomId}/sendcorrectgroup`, data);
+        }
+      });
+
+      socket.on(`${roomId}/sendcorrectgroup`, (correctG: DrawingPoint[]) => {
+        store.dispatch(
+          actions.canvas.setBroadcastedDrawingPointsGroup(correctG),
+        );
+      });
+
+      socket.on(`${roomId}/resendcorrectdrawdata`, (groupInfo: number[]) => {
+        const [userId, drawingId, group] = groupInfo;
+
+        const correctGroup = state$.value.canvas.broadcastedDrawingPoints[
+          userId
+        ].find(arr => arr && !!arr.length && arr[0].group === group);
+
+        socket.emit(`${roomId}/resendcorrectdrawdata`, correctGroup);
       });
 
       socket.on(`${roomId}/draw/getexisting`, (data: DrawingPoint[]) => {
@@ -149,8 +173,6 @@ export const bindRoomHandlersEpic: Epic<any, any, State> = (action$, state$) =>
           );
         }
       });
-
-      socket.on(`${roomId}/draw/newgroup`, (userId: string) => {});
 
       socket.on(`${roomId}/draw/change`, (drawingId: string) => {
         store.dispatch(actions.canvas.setCurrentDrawing(drawingId));

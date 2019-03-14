@@ -46,9 +46,6 @@ export const createNewDrawingEpic: Epic = (action$, state$) =>
 export const selectDrawingEpic: Epic = (action$, state$) =>
   action$.ofType(types.CANVAS_INIT_DRAWING_SELECT).pipe(
     pluck('payload'),
-    tap(v => {
-      console.log('SELECTED DRAWING');
-    }),
     map(id => actions.canvas.setCurrentDrawing(id)),
   );
 

@@ -36,11 +36,6 @@ export const emitRoomDrawMouseup = (data: any) => ({
   payload: data,
 });
 
-export const emitRoomDrawNewGroup = (data: any) => ({
-  type: types.SOCKET_EMIT_ROOM_DRAW_NEWGROUP,
-  payload: data,
-});
-
 export const emitRoomDrawReset = (data: any) => ({
   type: types.SOCKET_EMIT_ROOM_DRAW_RESET,
   payload: data,
