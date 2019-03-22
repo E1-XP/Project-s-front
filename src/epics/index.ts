@@ -1,7 +1,7 @@
 import { combineEpics } from 'redux-observable';
 
 import * as authEpics from './authentication';
-import * as dashboardEpics from './dashboard';
+import * as messagesEpics from './messages';
 import * as roomEpics from './room';
 import * as roomRouteEpics from './roomRoute';
 import * as canvasEpics from './canvas';
@@ -18,7 +18,7 @@ const mapObjectToArray = (obj: any): any[] =>
 
 export const rootEpic = combineEpics(
   ...mapObjectToArray(authEpics),
-  ...mapObjectToArray(dashboardEpics),
+  ...mapObjectToArray(messagesEpics),
   ...mapObjectToArray(roomEpics),
   ...mapObjectToArray(roomRouteEpics),
   ...mapObjectToArray(canvasEpics),

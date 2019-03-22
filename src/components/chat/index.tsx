@@ -7,18 +7,25 @@ import {
   ReactLifeCycleFunctions,
   onlyUpdateForKeys,
 } from 'recompose';
+import { connect } from 'react-redux';
+import { Dispatch } from 'redux';
 
-import { ChatMessage } from '../../store/interfaces';
+import { writeMessage } from './../../actions/chats';
+
+import { ChatMessage, State } from '../../store/interfaces';
 
 import { ChatComponent } from './template';
 
 export interface Props {
   state: string;
+  isWriting: boolean;
+  writers: string[];
   setState: (e: any) => void;
-  setMessage: (e: any) => void;
+  onMessageWrite: (e: any) => void;
+  writeMessage: () => Dispatch;
   handleMessageSubmit: (e: any) => void;
   onListRef: () => void;
-  scrollTo: () => void;
+  scrollToBottom: () => void;
   getListRef: () => Ref<any>;
 }
 
@@ -31,8 +38,8 @@ export type CombinedProps = Props & PassedProps;
 
 const hooks: ReactLifeCycleFunctions<CombinedProps, {}> = {
   componentDidUpdate(prevP: CombinedProps) {
-    if (prevP.messages.length !== this.props.messages.length) {
-      requestAnimationFrame(this.props.scrollTo);
+    if (prevP.messages.length < this.props.messages.length) {
+      this.props.scrollToBottom;
     }
   },
 };
@@ -43,8 +50,9 @@ const handlers = () => {
   return {
     onListRef: (props: CombinedProps) => (ref: any) => (listRef = ref),
     getListRef: (props: CombinedProps) => () => listRef,
-    setMessage: (props: CombinedProps) => (e: any) => {
+    onMessageWrite: (props: CombinedProps) => (e: any) => {
       props.setState(e.target.value);
+      props.writeMessage();
     },
     handleMessageSubmit: (props: CombinedProps) => (e: any) => {
       if (!props.state.length) return;
@@ -52,17 +60,25 @@ const handlers = () => {
       props.handleSubmit(props.state);
       props.setState('');
     },
-    scrollTo: (props: CombinedProps) => (timestamp: number) => {
+    scrollToBottom: (props: CombinedProps) => (timestamp: number) => {
       const animTime = 2000;
       listRef.parentElement.scrollTop = listRef.getBoundingClientRect().height;
-      // requestAnimationFrame()
     },
   };
 };
 
 export const Chat = compose<CombinedProps, PassedProps>(
+  connect(
+    ({ chats, users }: State) => ({
+      isWriting: chats.isWriting,
+      writers: !!chats.writersById.length
+        ? chats.writersById.map(id => users.general[id])
+        : [],
+    }),
+    { writeMessage },
+  ),
   withState('state', 'setState', ''),
   withHandlers(handlers),
   lifecycle(hooks),
-  onlyUpdateForKeys(['state']),
+  onlyUpdateForKeys(['state', 'messages', 'isWriting', 'writers']),
 )(ChatComponent);
