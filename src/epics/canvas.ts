@@ -16,6 +16,7 @@ import { of } from 'rxjs';
 import { fetchStream } from '../utils/fetchStream';
 
 import { store } from '../store';
+import { State } from '../store/interfaces';
 
 import { types } from '../actions/types';
 import { actions } from '../actions';
@@ -78,12 +79,14 @@ export const selectDrawingInRoom: Epic = (action$, state$) =>
 //         ignoreElements()
 //     );
 
-export const canvasImageSaveEpic: Epic = (action$, state$) =>
+export const canvasImageSaveEpic: Epic<any, any, State> = (action$, state$) =>
   action$.ofType(types.CANVAS_INIT_CANVAS_TO_IMAGE).pipe(
     debounceTime(1500),
     mergeMap(action =>
       fetchStream(
-        `${config.API_URL}/rooms/${state$.value.rooms.active}/drawing/save/`,
+        `${config.API_URL}/drawings/${
+          state$.value.canvas.currentDrawing
+        }/save/`,
         'POST',
         {
           image: action.payload,
@@ -95,7 +98,7 @@ export const canvasImageSaveEpic: Epic = (action$, state$) =>
     ignoreElements(),
   );
 
-// export const drawingResetEpic: Epic = (action$, state$) =>
+// export const drawingResetEpic: Epic = (action$, state$) => // TODO
 //   action$.ofType(types.CANVAS_INIT_CLEAR_DRAWING_POINTS).pipe(
 //     map(v => {
 //       const roomId = state$.value.rooms.active;

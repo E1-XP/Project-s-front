@@ -10,6 +10,7 @@ import {
 } from 'rxjs/operators';
 
 import { InvitationData } from '../components/canvas/toolbar';
+import { State } from '../store/interfaces';
 
 import { actions } from '../actions';
 import { types } from '../actions/types';
@@ -78,6 +79,15 @@ export const emitGeneralMessageEpic: Epic = (action$, state$) =>
     pluck('payload'),
     tap(data => {
       socket.emit(`general/messages`, data);
+    }),
+    ignoreElements(),
+  );
+
+export const emitMessageWriteEpic: Epic<any, any, State> = (action$, state$) =>
+  action$.ofType(types.SOCKET_EMIT_MESSAGE_WRITE).pipe(
+    pluck<{}, string>('payload'),
+    tap(channel => {
+      socket.emit(`${channel}/messages/write`, channel);
     }),
     ignoreElements(),
   );

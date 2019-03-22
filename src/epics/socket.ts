@@ -38,7 +38,10 @@ export const closeSocketEpic: Epic = (action$, state$) =>
     ignoreElements(),
   );
 
-export const bindSocketHandlersEpic: Epic = (action$, state$) =>
+export const bindSocketHandlersEpic: Epic<any, any, State> = (
+  action$,
+  state$,
+) =>
   action$.ofType(types.SOCKET_BIND_HANDLERS).pipe(
     tap(() => {
       const { id } = state$.value.user.userData;
@@ -69,6 +72,18 @@ export const bindSocketHandlersEpic: Epic = (action$, state$) =>
         };
 
         store.dispatch(actions.chats.setMessages(payload));
+      });
+
+      socket.on(`general/messages/write`, (authorId: string) => {
+        const isOnDashboardPage = state$.value.router.location.pathname
+          .toLowerCase()
+          .startsWith('/dashboard');
+
+        if (isOnDashboardPage) {
+          store.dispatch(
+            actions.chats.handleWriteMessageBroadcast(authorId, 'general'),
+          );
+        }
       });
 
       socket.on('inbox/get', (data: any) => {
@@ -121,7 +136,13 @@ export const bindRoomHandlersEpic: Epic<any, any, State> = (action$, state$) =>
         );
       });
 
-      socket.on(`${roomId}/draw`, (data: any) => {
+      socket.on(`${roomId}/messages/write`, (authorId: string) => {
+        store.dispatch(
+          actions.chats.handleWriteMessageBroadcast(authorId, roomId),
+        );
+      });
+
+      socket.on(`${roomId}/draw`, (data: DrawingPoint) => {
         store.dispatch(actions.canvas.setBroadcastedDrawingPoint(data));
       });
 
@@ -198,6 +219,7 @@ export const unbindSocketHandlersEpic: Epic = (action$, state$) =>
 
       socket.emit('room/leave', roomId);
       socket.off(`${roomId}/messages`);
+      socket.off(`${roomId}/messages/write`);
       socket.off(`${roomId}/draw`);
       socket.off(`${roomId}/draw/getexisting`);
       socket.off(`${roomId}/draw/newgroup`);

@@ -53,6 +53,9 @@ export interface ChatMessage {
 export interface Chats {
   general: ChatMessage[];
   selectedRoom: ChatMessage[];
+  isWriting: boolean;
+  writingIn: null | string;
+  writersById: string[];
 }
 
 export interface Room {
@@ -107,7 +110,7 @@ export interface Global {
 export interface State {
   global: Global;
   user: User;
-  users: object;
+  users: Users;
   rooms: Rooms;
   chats: Chats;
   canvas: Canvas;

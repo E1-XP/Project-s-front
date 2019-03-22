@@ -56,6 +56,11 @@ export const emitGeneralMessage = (data: any) => ({
   payload: data,
 });
 
+export const emitMessageWrite = (data: any) => ({
+  type: types.SOCKET_EMIT_MESSAGE_WRITE,
+  payload: data,
+});
+
 export const emitRoomMessage = (data: any) => ({
   type: types.SOCKET_EMIT_ROOM_MESSAGE,
   payload: data,
