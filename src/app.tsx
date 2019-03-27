@@ -5,7 +5,7 @@ import { compose, lifecycle } from 'recompose';
 
 import MuiThemeProvider from '@material-ui/core/styles/MuiThemeProvider';
 import CssBaseline from '@material-ui/core/CssBaseline';
-import { theme } from './theme';
+import { theme } from './styles/theme';
 import './style.scss';
 
 import { actions } from './actions';

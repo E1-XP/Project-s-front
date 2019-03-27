@@ -12,6 +12,8 @@ import GridList from '@material-ui/core/GridList';
 import GridListTile from '@material-ui/core/GridListTile';
 import GridListTileBar from '@material-ui/core/GridListTileBar';
 
+import config from './../../../config';
+
 export const ImageSelectorComponent = ({
   handleSubmit,
   handleDrawingCreate,
@@ -54,9 +56,7 @@ export const ImageSelectorComponent = ({
                         onClick={handleDrawingSelect}
                       >
                         <img
-                          src={`http://localhost:3001/static/images/${
-                            itm.id
-                          }.jpg`}
+                          src={`${config.API_URL}/static/images/${itm.id}.jpg`}
                           alt="user drawing"
                         />
                         {itm.id}

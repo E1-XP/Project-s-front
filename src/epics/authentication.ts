@@ -133,15 +133,14 @@ export const authSuccessEpic: Epic = (action$, state$) =>
       !localStorage.getItem('isAuth') && localStorage.setItem('isAuth', 'true');
     }),
     mergeMap(data => {
-      const pathName = state$.value.router.location.pathname;
+      const pathName = state$.value.router.location.pathname.toLowerCase();
 
-      const isOnFormPage = ['login', 'signup'].includes(
-        pathName.toLowerCase().slice(1),
-      );
+      const isOnFormPage = ['login', 'signup'].includes(pathName.slice(1));
       const shouldSetLoadingAsFalse =
-        !/^\/room\/\d+(\/|\/password|\/password\/)?$/.test(pathName) ||
-        (/^\/room\/\d+(\/password|\/password\/)$/.test(pathName) &&
-          !state$.value.rooms.list[pathName.split('/')[2]]);
+        !pathName.startsWith('/gallery') &&
+        (!/^\/room\/\d+(\/|\/password|\/password\/)?$/.test(pathName) ||
+          (/^\/room\/\d+(\/password|\/password\/)$/.test(pathName) &&
+            !state$.value.rooms.list[pathName.split('/')[2]]));
 
       return of(
         actions.user.setUserData(data),
