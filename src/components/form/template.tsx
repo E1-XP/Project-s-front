@@ -10,6 +10,8 @@ import FormControl from '@material-ui/core/FormControl';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 
+import { MainContainer } from './../../styles';
+
 interface InputProps {
   values: FormikProps<FormState>['values'];
   handleChange: FormikProps<FormState>['handleChange'];
@@ -116,7 +118,7 @@ export const FormComponent = (props: Props) => {
       : 'Sign Up to enter Project-S';
 
   return (
-    <main className="container">
+    <MainContainer>
       <Grid container={true} spacing={16} justify="center">
         <Grid item={true} md={7} sm={9} xs={12}>
           <Paper>
@@ -143,6 +145,6 @@ export const FormComponent = (props: Props) => {
           </Paper>
         </Grid>
       </Grid>
-    </main>
+    </MainContainer>
   );
 };

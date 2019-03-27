@@ -9,12 +9,14 @@ import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 
+import { MainContainer } from './../../styles';
+
 import { RoomDashboard } from './dashboard';
 import { Canvas } from '../canvas';
 import { Chat } from '../chat';
 
 const NoRoomPlaceholder = () => (
-  <main id="room" className="container">
+  <MainContainer>
     <Grid container={true} spacing={16}>
       <Grid item={true} xs={12}>
         <Paper>
@@ -34,7 +36,7 @@ const NoRoomPlaceholder = () => (
         </Paper>
       </Grid>
     </Grid>
-  </main>
+  </MainContainer>
 );
 
 export const RoomComponent = ({
@@ -52,7 +54,7 @@ export const RoomComponent = ({
   console.log('rendering');
 
   return (
-    <main id="room" className="container">
+    <MainContainer>
       <Grid container={true} spacing={16}>
         <Grid item={true} md={3} sm={12}>
           <Grid item={true} xs={12} className="mbottom-1">
@@ -80,6 +82,6 @@ export const RoomComponent = ({
         when={isUserAdmin(user.id)}
         message={'Are you want to leave? This will close your room.'}
       />
-    </main>
+    </MainContainer>
   );
 };

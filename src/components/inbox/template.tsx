@@ -12,6 +12,8 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import Button from '@material-ui/core/Button';
 
+import { MainContainer } from './../../styles';
+
 export const InboxComponent = ({ user, users, rooms, pushRouter }: Props) => {
   const addZero = (num: number) => (num < 10 ? `0${num}` : num);
   const dateFormat = (d: Date) =>
@@ -21,7 +23,7 @@ export const InboxComponent = ({ user, users, rooms, pushRouter }: Props) => {
     pushRouter(`/room/${e.target.closest('button').dataset.id}`);
 
   return (
-    <main id="inbox" className="container">
+    <MainContainer>
       <Grid container={true} spacing={16}>
         <Grid item={true} xs={12}>
           <Paper>
@@ -38,12 +40,13 @@ export const InboxComponent = ({ user, users, rooms, pushRouter }: Props) => {
                           <ListItem key={i}>
                             <ListItemText
                               primary={`${dateFormat(new Date(itm.updatedAt))} :
-                                                 ${
-                                                   itm.senderName
-                                                 } send you invitation link to enter
-                    room ${
-                      rooms[itm.roomId] ? rooms[itm.roomId].name : '[closed]'
-                    }`}
+                                ${
+                                  itm.senderName
+                                } send you invitation link to enter room ${
+                                rooms[itm.roomId]
+                                  ? rooms[itm.roomId].name
+                                  : '[closed]'
+                              }`}
                             />
                             <Button
                               variant="contained"
@@ -58,7 +61,10 @@ export const InboxComponent = ({ user, users, rooms, pushRouter }: Props) => {
                         ))}
                       </List>
                     ) : (
-                      `You don't received any messages yet`
+                      <Typography
+                        variant="subtitle1"
+                        align="center"
+                      >{`You don't received any messages yet`}</Typography>
                     )
                   ) : (
                     'loading...'
@@ -69,6 +75,6 @@ export const InboxComponent = ({ user, users, rooms, pushRouter }: Props) => {
           </Paper>
         </Grid>
       </Grid>
-    </main>
+    </MainContainer>
   );
 };

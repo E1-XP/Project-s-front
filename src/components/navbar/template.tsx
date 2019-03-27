@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { NavLink } from 'react-router-dom';
-import './style.scss';
+import styled from 'styled-components';
 
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -12,69 +12,70 @@ import Badge from '@material-ui/core/Badge';
 
 import { Props } from './index';
 
-const userDisplayStyle = {
-  display: 'inline-block',
-  paddingRight: '.5rem',
-};
+const UserWelcomeTxt = styled(Typography)`
+  && {
+    display: inline-block;
+    padding-right: 0.5rem;
+  }
+`;
+
+const CustomToolbar = styled(Toolbar)`
+  justify-content: space-between;
+  max-width: 1200px;
+  margin: 0 auto;
+  width: inherit;
+`;
 
 export const NavbarComponent = ({
   isUserLoggedIn,
   userData,
   inboxCount,
   handleLogout,
-}: Props) => {
-  // if (!userData) return (<p>Loading..</p>);
-
-  return (
-    <AppBar id="navbar" position="static" color="default">
-      <Toolbar className="toolbar">
-        <NavLink to="/dashboard">
-          <Typography variant="h6" color="inherit">
-            Project-S{' '}
-          </Typography>
-        </NavLink>
-        <div>
-          {isUserLoggedIn ? (
-            <>
-              <Typography
-                variant="body1"
-                color="primary"
-                style={userDisplayStyle}
-              >
-                WELCOME {userData.username.toUpperCase()}
-              </Typography>
-              <NavLink to="/inbox">
-                <IconButton color="inherit">
-                  {inboxCount ? (
-                    <Badge badgeContent={inboxCount} color="secondary">
-                      <Icon color="primary">notifications</Icon>
-                    </Badge>
-                  ) : (
+}: Props) => (
+  <AppBar position="static" color="secondary">
+    <CustomToolbar>
+      <NavLink to="/dashboard">
+        <Typography variant="h6" color="inherit">
+          Project-S
+        </Typography>
+      </NavLink>
+      <div>
+        {isUserLoggedIn ? (
+          <>
+            <UserWelcomeTxt variant="body2" color="inherit">
+              WELCOME {userData.username.toUpperCase()}
+            </UserWelcomeTxt>
+            <NavLink to="/inbox">
+              <IconButton color="inherit">
+                {inboxCount ? (
+                  <Badge badgeContent={inboxCount} color="secondary">
                     <Icon color="primary">notifications</Icon>
-                  )}
-                </IconButton>
-              </NavLink>
-              <NavLink to="/gallery">
-                <IconButton color="inherit">
-                  <Icon color="primary">photo_library</Icon>
-                </IconButton>
-              </NavLink>
-              <Button color="inherit" onClick={handleLogout}>
-                Logout
-              </Button>
-            </>
-          ) : (
-            <>
-              <NavLink to="/login">
-                <Button color="inherit">Login</Button>
-              </NavLink>
-              <NavLink to="/signup">
-                <Button color="inherit">Sign Up</Button>
-              </NavLink>
-            </>
-          )}
-        </div>
-      </Toolbar>
-    </AppBar>
-  );
-};
+                  </Badge>
+                ) : (
+                  <Icon color="inherit">notifications</Icon>
+                )}
+              </IconButton>
+            </NavLink>
+            <NavLink to="/gallery">
+              <IconButton color="inherit">
+                <Icon color="inherit">photo_library</Icon>
+              </IconButton>
+            </NavLink>
+            <Button color="inherit" onClick={handleLogout}>
+              Logout
+            </Button>
+          </>
+        ) : (
+          <>
+            <NavLink to="/login">
+              <Button color="inherit">Login</Button>
+            </NavLink>
+            <NavLink to="/signup">
+              <Button color="inherit">Sign Up</Button>
+            </NavLink>
+          </>
+        )}
+      </div>
+    </CustomToolbar>
+  </AppBar>
+);

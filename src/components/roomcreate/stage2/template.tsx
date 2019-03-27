@@ -12,6 +12,8 @@ import GridList from '@material-ui/core/GridList';
 import GridListTile from '@material-ui/core/GridListTile';
 import GridListTileBar from '@material-ui/core/GridListTileBar';
 
+import { MainContainer } from './../../../styles';
+
 import config from './../../../config';
 
 export const ImageSelectorComponent = ({
@@ -22,7 +24,7 @@ export const ImageSelectorComponent = ({
   currentDrawing,
 }: CombinedProps) => {
   return (
-    <main id="roomcreate" className="container">
+    <MainContainer>
       <Grid container={true} spacing={16}>
         <Grid item={true} xs={12}>
           <Paper>
@@ -83,6 +85,6 @@ export const ImageSelectorComponent = ({
           </Paper>
         </Grid>
       </Grid>
-    </main>
+    </MainContainer>
   );
 };

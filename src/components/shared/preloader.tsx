@@ -22,7 +22,7 @@ export const PreloaderComponent: any = ({
 }: Props) => {
   return isLoading ? (
     <div className="container--fullwidthcenter windowheight">
-      <CircularProgress />
+      <CircularProgress color="secondary" />
     </div>
   ) : (
     children
