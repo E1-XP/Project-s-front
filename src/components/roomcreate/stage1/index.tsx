@@ -14,6 +14,8 @@ import Switch from '@material-ui/core/Switch';
 import Button from '@material-ui/core/Button';
 import Icon from '@material-ui/core/Icon';
 
+import { MainContainer } from './../../../styles';
+
 interface Props {}
 
 interface PassedProps {
@@ -37,7 +39,7 @@ export const RoomCreateFormComponent = ({
     state.name.length && (!state.isPrivate || state.password!.length);
 
   return (
-    <main id="roomcreate" className="container">
+    <MainContainer>
       <Grid container={true} spacing={16}>
         <Grid item={true} xs={12}>
           <Paper>
@@ -97,7 +99,7 @@ export const RoomCreateFormComponent = ({
           </Paper>
         </Grid>
       </Grid>
-    </main>
+    </MainContainer>
   );
 };
 

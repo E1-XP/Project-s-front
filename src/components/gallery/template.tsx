@@ -12,7 +12,7 @@ import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 
-import { MainContainer } from './../../styles/style';
+import { MainContainer } from './../../styles';
 
 const Img = styled.img`
   width: 100%;
