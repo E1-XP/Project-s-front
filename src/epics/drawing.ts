@@ -1,16 +1,18 @@
 import { Epic } from 'redux-observable';
 import {
   map,
+  mapTo,
   filter,
   mergeMap,
   tap,
   ignoreElements,
   throttleTime,
   pluck,
-  catchError,
+  take,
 } from 'rxjs/operators';
-import { of } from 'rxjs';
+import { of, combineLatest } from 'rxjs';
 import flatMap from 'lodash/flatmap';
+import { LOCATION_CHANGE } from 'connected-react-router';
 
 import { DrawingPoint, State } from './../store/interfaces';
 import { store } from '../store';
@@ -75,18 +77,20 @@ export const createDrawingPointEpic: Epic<any, any, State> = (
 
 export const clearCanvasEpic: Epic = (action$, state$) =>
   action$.ofType(types.CANVAS_CLEAR).pipe(
+    throttleTime(1000 / 60, undefined, { trailing: true }),
     tap(({ ctx }) => {
       const { width, height } = ctx.canvas;
 
       ctx.fillStyle = '#ffffff';
       ctx.clearRect(0, 0, width, height);
+      ctx.fillRect(0, 0, width, height);
     }),
     ignoreElements(),
   );
 
 export const drawCanvasEpic: Epic<any, any, State> = (action$, state$) =>
   action$.ofType(types.CANVAS_DRAW).pipe(
-    // throttleTime(1000 / 60, undefined, { trailing: true }),
+    throttleTime(1000 / 60, undefined, { trailing: true }),
     map(({ ctx, isDrawingOnBack }) => {
       const toDraw = !isDrawingOnBack
         ? getCombinedDrawingPoints(state$.value)
@@ -136,4 +140,48 @@ export const drawMouseUpEpic: Epic<any, any, State> = (action$, state$) =>
       return [userId, drawingId, group, tstamps].join('|');
     }),
     map(data => actions.socket.emitRoomDrawMouseup(data)),
+  );
+
+export const galleryRouteEpic: Epic = (action$, state$) =>
+  action$.ofType(LOCATION_CHANGE).pipe(
+    filter(
+      ({ payload }) =>
+        payload.location.pathname.toLowerCase().startsWith('/gallery') &&
+        state$.value.user.userData.id !== null,
+    ),
+    mergeMap(() =>
+      of(
+        actions.global.setIsLoading(true),
+        actions.canvas.initGetImagesFromServer(),
+      ),
+    ),
+  );
+
+export const galleryRouteInstantEpic: Epic<any, any, State> = (
+  action$,
+  state$,
+) =>
+  combineLatest([
+    action$
+      .ofType(LOCATION_CHANGE)
+      .pipe(
+        filter(
+          ({ payload }) =>
+            payload.location.pathname.toLowerCase().startsWith('/gallery') &&
+            !state$.value.global.isUserLoggedIn,
+        ),
+      ),
+    action$.ofType(types.USER_SET_USER_DATA).pipe(take(1)),
+    action$.ofType(types.ROOMS_SET).pipe(take(1)),
+    action$.ofType(types.GLOBAL_SET_IS_USER_LOGGED_IN).pipe(take(1)),
+  ]).pipe(mapTo(actions.canvas.initGetImagesFromServer()));
+
+export const galleryRouteEnterEpic: Epic<any, any, State> = (action$, state$) =>
+  action$.ofType(types.CANVAS_SET_USER_DRAWINGS).pipe(
+    filter(() =>
+      state$.value.router.location.pathname
+        .toLowerCase()
+        .startsWith('/gallery'),
+    ),
+    mapTo(actions.global.setIsLoading(false)),
   );

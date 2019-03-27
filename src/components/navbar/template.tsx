@@ -54,9 +54,11 @@ export const NavbarComponent = ({
                   )}
                 </IconButton>
               </NavLink>
-              <IconButton color="inherit">
-                <Icon color="primary">settings</Icon>
-              </IconButton>
+              <NavLink to="/gallery">
+                <IconButton color="inherit">
+                  <Icon color="primary">photo_library</Icon>
+                </IconButton>
+              </NavLink>
               <Button color="inherit" onClick={handleLogout}>
                 Logout
               </Button>

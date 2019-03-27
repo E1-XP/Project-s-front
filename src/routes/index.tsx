@@ -8,6 +8,7 @@ import { Navbar } from './../components/navbar';
 import { Form } from './../components/form';
 import { Dashboard } from './../components/dashboard';
 import { Inbox } from './../components/inbox';
+import { Gallery } from './../components/gallery';
 import { RoomCreate } from './../components/roomcreate';
 import { RoomPasswordScreen } from './../components/room/enterpassword';
 import { Room } from './../components/room';
@@ -27,6 +28,7 @@ export const routes = (
       <Route path="/login" component={Form} />
       <Route path="/dashboard" component={withAuthentication(Dashboard)} />
       <Route path="/inbox" component={withAuthentication(Inbox)} />
+      <Route path="/gallery" component={withAuthentication(Gallery)} />
       <Route path="/room/create" component={withAuthentication(RoomCreate)} />
       <Route
         path="/room/:id/password"
