@@ -134,17 +134,15 @@ const mapStateToProps = ({ rooms, chats, user }: State) => ({
   user: user.userData,
 });
 
-const mapDispatchToProps = (dispatch: Dispatch) => ({
-  initRoomEnter: () => dispatch(actions.rooms.initRoomEnter()),
-  initRoomLeave: () => dispatch(actions.rooms.initRoomLeave()),
-  setCurrentRoom: (id: string) => dispatch(actions.rooms.setCurrentRoom(id)),
-  setRoomUsers: (data: object) => dispatch(actions.users.setRoomUsers(data)),
-  setMessages: (data: object) => dispatch(actions.chats.setMessages(data)),
-  initSendRoomMessage: (data: any) =>
-    dispatch(actions.chats.initSendRoomMesssage(data)),
-  initRoomAdminChange: (data: any) =>
-    dispatch(actions.rooms.initRoomAdminChange(data)),
-});
+const mapDispatchToProps = {
+  initRoomEnter: actions.rooms.initRoomEnter,
+  initRoomLeave: actions.rooms.initRoomLeave,
+  setCurrentRoom: actions.rooms.setCurrentRoom,
+  setRoomUsers: actions.users.setRoomUsers,
+  setMessages: actions.chats.setMessages,
+  initSendRoomMessage: actions.chats.initSendRoomMesssage,
+  initRoomAdminChange: actions.rooms.initRoomAdminChange,
+};
 
 export const Room = compose<Props, {}>(
   connect(

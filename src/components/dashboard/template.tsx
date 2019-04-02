@@ -12,18 +12,31 @@ import { Props } from './index';
 
 import { MainContainer, HeadlineIcon } from './../../styles';
 
+const minHeightNoSidePadding = {
+  minHeight: '650px',
+};
+const halfHeight = { height: '50%' };
+
 export const DashboardComponent = ({
   handleMessageSubmit,
   users,
   messages,
+  user,
 }: Props) => (
   <MainContainer>
     <Grid container={true} spacing={16}>
-      <Grid container={true} item={true} spacing={16} md={6} xs={12}>
-        <Grid item={true} xs={12}>
-          <UsersList users={users} />
+      <Grid
+        container={true}
+        item={true}
+        spacing={16}
+        md={6}
+        xs={12}
+        style={minHeightNoSidePadding}
+      >
+        <Grid item={true} xs={12} style={halfHeight}>
+          <UsersList users={users} user={user} />
         </Grid>
-        <Grid item={true} xs={12}>
+        <Grid item={true} xs={12} style={halfHeight}>
           <RoomsList />
         </Grid>
       </Grid>

@@ -1,4 +1,5 @@
 import React from 'react';
+import styled from 'styled-components';
 
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
@@ -11,13 +12,19 @@ import Icon from '@material-ui/core/Icon';
 
 import { HeadlineIcon, FullHeightPaper } from './../../styles';
 
-import { Users } from './../../store/interfaces';
+import { Users, UserData } from './../../store/interfaces';
 
 interface Props {
   users: Users;
+  user: UserData;
 }
 
-export const UsersList = ({ users }: Props) => (
+const ListWrapper = styled.div`
+  height: 90%;
+  overflow: auto;
+`;
+
+export const UsersList = ({ users, user }: Props) => (
   <FullHeightPaper>
     <Grid container={true} alignItems="center">
       <HeadlineIcon>people</HeadlineIcon>
@@ -25,17 +32,28 @@ export const UsersList = ({ users }: Props) => (
         Currently online: {Object.keys(users.general).length}
       </Typography>
     </Grid>
-    <List>
-      {Object.keys(users.general).map((key: string) => (
-        <ListItem key={key}>
-          <ListItemAvatar>
-            <Avatar>
-              <Icon>account_circle</Icon>
-            </Avatar>
-          </ListItemAvatar>
-          <ListItemText primary={users.general[key]} />
-        </ListItem>
-      ))}
-    </List>
+    <ListWrapper>
+      <List>
+        {Object.keys(users.general).map((key: string) => (
+          <ListItem key={key}>
+            <ListItemAvatar>
+              <Avatar>
+                <Icon>account_circle</Icon>
+              </Avatar>
+            </ListItemAvatar>
+            <ListItemText
+              primary={users.general[key]}
+              primaryTypographyProps={{
+                color:
+                  key === user!.id!.toString() ? 'primary' : ('default' as any),
+                style: {
+                  fontWeight: key === user!.id!.toString() ? 600 : 'inherit',
+                },
+              }}
+            />
+          </ListItem>
+        ))}
+      </List>
+    </ListWrapper>
   </FullHeightPaper>
 );
