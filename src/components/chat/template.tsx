@@ -88,10 +88,13 @@ const wordbreakStyle = {
   wordBreak: 'break-all' as 'break-all',
 };
 
-const getMessages = (messages: CombinedProps['messages']) =>
+const getMessages = (
+  messages: CombinedProps['messages'],
+  user: CombinedProps['user'],
+) =>
   messages.length ? (
     messages.map((itm, i) => (
-      <ListItem key={i}>
+      <ListItem key={itm.id}>
         <Avatar>
           <Icon>account_circle</Icon>
         </Avatar>
@@ -99,6 +102,12 @@ const getMessages = (messages: CombinedProps['messages']) =>
           primary={itm.author}
           secondary={itm.message}
           style={wordbreakStyle}
+          primaryTypographyProps={{
+            color: itm.authorId === user!.id! ? 'primary' : ('default' as any),
+            style: {
+              fontWeight: itm.authorId === user!.id! ? 600 : 'inherit',
+            },
+          }}
         />
       </ListItem>
     ))
@@ -126,6 +135,7 @@ export const ChatComponent = ({
   state,
   onMessageWrite,
   messages,
+  user,
   handleMessageSubmit,
   onListRef,
   writers,
@@ -145,7 +155,7 @@ export const ChatComponent = ({
     <div>
       <ChatListWrapper>
         <RootRef rootRef={onListRef}>
-          <List>{getMessages(messages)}</List>
+          <List>{getMessages(messages, user)}</List>
         </RootRef>
       </ChatListWrapper>
       <ChipWithOpacity

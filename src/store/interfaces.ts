@@ -46,7 +46,9 @@ export interface Users {
 }
 
 export interface ChatMessage {
+  id: number;
   author: string;
+  authorId: number;
   message: string;
 }
 

@@ -1,4 +1,5 @@
 import React from 'react';
+import styled from 'styled-components';
 
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
@@ -12,10 +13,16 @@ import { Props } from './index';
 
 import { MainContainer, HeadlineIcon } from './../../styles';
 
-const minHeightNoSidePadding = {
-  minHeight: '650px',
-};
-const halfHeight = { height: '50%' };
+const OuterGrid = styled(Grid)`
+  min-height: 650px;
+  margin: -8px auto !important;
+`;
+
+const NestedGrid = styled(Grid)`
+  height: 50%;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+`;
 
 export const DashboardComponent = ({
   handleMessageSubmit,
@@ -25,21 +32,14 @@ export const DashboardComponent = ({
 }: Props) => (
   <MainContainer>
     <Grid container={true} spacing={16}>
-      <Grid
-        container={true}
-        item={true}
-        spacing={16}
-        md={6}
-        xs={12}
-        style={minHeightNoSidePadding}
-      >
-        <Grid item={true} xs={12} style={halfHeight}>
+      <OuterGrid container={true} item={true} spacing={16} md={6} xs={12}>
+        <NestedGrid item={true} xs={12}>
           <UsersList users={users} user={user} />
-        </Grid>
-        <Grid item={true} xs={12} style={halfHeight}>
+        </NestedGrid>
+        <NestedGrid item={true} xs={12}>
           <RoomsList />
-        </Grid>
-      </Grid>
+        </NestedGrid>
+      </OuterGrid>
       <Grid item={true} md={6} xs={12}>
         <Paper>
           <Grid container={true} alignItems="center">

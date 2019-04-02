@@ -12,7 +12,7 @@ import { Dispatch } from 'redux';
 
 import { writeMessage } from './../../actions/chats';
 
-import { ChatMessage, State } from '../../store/interfaces';
+import { ChatMessage, UserData, State } from '../../store/interfaces';
 
 import { ChatComponent } from './template';
 
@@ -22,6 +22,7 @@ export interface Props {
   state: CState;
   isWriting: boolean;
   writers: string[];
+  user: UserData;
   setState: (s: CState) => void;
   onMessageWrite: (e: any) => void;
   writeMessage: () => Dispatch;
@@ -101,6 +102,7 @@ export const Chat = compose<CombinedProps, PassedProps>(
     (state: State) => ({
       isWriting: state.chats.isWriting,
       writers: getWriters(state),
+      user: state.user.userData,
     }),
     { writeMessage },
   ),

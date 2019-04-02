@@ -11,12 +11,10 @@ import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
-import Button from '@material-ui/core/Button';
 import Icon from '@material-ui/core/Icon';
 
-import { FullHeightPaper, HeadlineIcon } from './../../styles';
+import { FullHeightPaper, HeadlineIcon, GradientButton } from './../../styles';
 
-import { actions } from './../../actions';
 import { State, Rooms } from './../../store/interfaces';
 
 interface Props {
@@ -37,18 +35,17 @@ const handlers = {
   },
 };
 
-const mSTP = ({ rooms }: State) => ({ rooms });
-const mDTP = { pushRouter: push };
-
 const ListWrapper = styled.div`
   height: calc(100% - 80px);
   overflow: auto;
 `;
 
+const marginLeft = { marginLeft: '.5rem' };
+
 export const RoomsList = compose<Props, {}>(
   connect(
-    mSTP,
-    mDTP,
+    ({ rooms }: State) => ({ rooms }),
+    { pushRouter: push },
   ),
   withHandlers(handlers),
 )(({ rooms, handleRoomClick, goToCreateRoom }: Props) => (
@@ -58,9 +55,9 @@ export const RoomsList = compose<Props, {}>(
       <Typography variant="h4">Available Rooms</Typography>
     </Grid>
     <ListWrapper>
-      {rooms.list && Object.keys(rooms.list).length ? (
-        <List>
-          {Object.keys(rooms.list).map(itm => (
+      <List>
+        {rooms.list && Object.keys(rooms.list).length ? (
+          Object.keys(rooms.list).map(itm => (
             <ListItem
               key={itm}
               data-id={itm}
@@ -76,17 +73,21 @@ export const RoomsList = compose<Props, {}>(
                 secondary={rooms.list[itm].isPrivate ? 'private' : 'public'}
               />
             </ListItem>
-          ))}
-        </List>
-      ) : (
-        <Typography variant="subtitle1">
-          No rooms available. Create one using button below.
-        </Typography>
-      )}
+          ))
+        ) : (
+          <ListItem key={0}>
+            <ListItemText primary="No rooms available. Create one using button below." />
+          </ListItem>
+        )}
+      </List>
     </ListWrapper>
-    <Button variant="contained" color="secondary" onClick={goToCreateRoom}>
+    <GradientButton
+      variant="contained"
+      color="secondary"
+      onClick={goToCreateRoom}
+    >
       Create new room
-      <Icon>create</Icon>
-    </Button>
+      <Icon style={marginLeft}>create</Icon>
+    </GradientButton>
   </FullHeightPaper>
 ));

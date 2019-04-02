@@ -12,6 +12,10 @@ import Badge from '@material-ui/core/Badge';
 
 import { Props } from './index';
 
+const AppBarWithGradient = styled(AppBar)`
+  background: linear-gradient(to right, #ff00cc, #333399);
+`;
+
 const UserWelcomeTxt = styled(Typography)`
   && {
     display: inline-block;
@@ -32,7 +36,7 @@ export const NavbarComponent = ({
   inboxCount,
   handleLogout,
 }: Props) => (
-  <AppBar position="static" color="secondary">
+  <AppBarWithGradient position="static" color="primary">
     <CustomToolbar>
       <NavLink to="/dashboard">
         <Typography variant="h6" color="inherit">
@@ -42,7 +46,7 @@ export const NavbarComponent = ({
       <div>
         {isUserLoggedIn ? (
           <>
-            <UserWelcomeTxt variant="body2" color="inherit">
+            <UserWelcomeTxt variant="body1" color="inherit">
               WELCOME {userData.username.toUpperCase()}
             </UserWelcomeTxt>
             <NavLink to="/inbox">
@@ -77,5 +81,5 @@ export const NavbarComponent = ({
         )}
       </div>
     </CustomToolbar>
-  </AppBar>
+  </AppBarWithGradient>
 );
