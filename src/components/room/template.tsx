@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { Prompt, Link } from 'react-router-dom';
-import './style.scss';
 
 import { Props } from './index';
 

@@ -1,16 +1,18 @@
-import * as React from 'react';
-import './style.scss';
+import React from 'react';
 import styled, { keyframes } from 'styled-components';
+import EmojiPicker from 'emoji-picker-react';
 
+import Grid from '@material-ui/core/Grid';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import Avatar from '@material-ui/core/Avatar';
 import TextField from '@material-ui/core/TextField';
-import Fab from '@material-ui/core/Fab';
 import Icon from '@material-ui/core/Icon';
+import IconButton from '@material-ui/core/IconButton';
 import RootRef from '@material-ui/core/RootRef';
 import Chip from '@material-ui/core/Chip';
+import Popover, { PopoverOrigin } from '@material-ui/core/Popover';
 
 import { CombinedProps } from './index';
 
@@ -57,6 +59,35 @@ const BouncingDots = () => (
   </Wrapper>
 );
 
+const ChatListWrapper = styled.div`
+  height: 600px;
+  overflow: auto;
+`;
+
+const posRelative = { position: 'relative' as 'relative' };
+
+const PositionedIconButton = styled(IconButton)`
+  position: absolute !important;
+  right: 0;
+  top: 0;
+
+  & :hover {
+    background-color: transparent;
+  }
+`;
+
+const TextFieldWithPadding = styled(TextField)`
+  margin-top: 0 !important;
+
+  & :first-child {
+    padding-top: 1.3rem;
+  }
+`;
+
+const wordbreakStyle = {
+  wordBreak: 'break-all' as 'break-all',
+};
+
 const getMessages = (messages: CombinedProps['messages']) =>
   messages.length ? (
     messages.map((itm, i) => (
@@ -67,13 +98,29 @@ const getMessages = (messages: CombinedProps['messages']) =>
         <ListItemText
           primary={itm.author}
           secondary={itm.message}
-          className="text--wordbreak"
+          style={wordbreakStyle}
         />
       </ListItem>
     ))
   ) : (
     <ListItem>No Messages found. Write the first one!</ListItem>
   );
+
+const ChipWithOpacity = styled(({ isWriting, ...props }) => (
+  <Chip {...props} />
+))<{ isWriting: boolean }>`
+  opacity: ${props => (props.isWriting ? 1 : 0)};
+`;
+
+const popoverPlacement: PopoverOrigin = {
+  vertical: 'top',
+  horizontal: 'right',
+};
+
+const popoverTransform: PopoverOrigin = {
+  vertical: 'bottom',
+  horizontal: 'right',
+};
 
 export const ChatComponent = ({
   state,
@@ -83,6 +130,8 @@ export const ChatComponent = ({
   onListRef,
   writers,
   isWriting,
+  toggleEmojiPicker,
+  handleEmojiClick,
 }: CombinedProps) => {
   const formatChip = () => {
     if (writers.length === 1) return `${writers[0]} is writing...`;
@@ -93,28 +142,49 @@ export const ChatComponent = ({
   };
 
   return (
-    <div id="chat">
-      <div className="list--chat">
+    <div>
+      <ChatListWrapper>
         <RootRef rootRef={onListRef}>
           <List>{getMessages(messages)}</List>
         </RootRef>
-      </div>
-      {isWriting && (
-        <Chip label={formatChip()} color="primary" icon={<BouncingDots />} />
-      )}
-      <TextField
-        multiline={true}
-        rows="1"
-        rowsMax="5"
-        placeholder="Type here..."
-        margin="normal"
-        value={state}
-        onChange={onMessageWrite}
-        className="textfield--fullwidth"
+      </ChatListWrapper>
+      <ChipWithOpacity
+        label={formatChip()}
+        color="primary"
+        icon={<BouncingDots />}
+        isWriting={isWriting}
       />
-      <Fab color="secondary" aria-label="Send" onClick={handleMessageSubmit}>
-        <Icon>done</Icon>
-      </Fab>
+      <Popover
+        open={state.isEmojiPickerOpen}
+        onClose={toggleEmojiPicker}
+        anchorEl={state.emojiPickerAnchorRef}
+        anchorOrigin={popoverPlacement}
+        transformOrigin={popoverTransform}
+      >
+        <EmojiPicker onEmojiClick={handleEmojiClick} />
+      </Popover>
+      <Grid container={true} style={posRelative}>
+        <TextFieldWithPadding
+          variant="filled"
+          multiline={true}
+          rows="1"
+          rowsMax="5"
+          placeholder="Type here..."
+          margin="normal"
+          value={state.message}
+          onChange={onMessageWrite}
+          onKeyDown={handleMessageSubmit}
+          autoFocus={true}
+          fullWidth={true}
+        />
+        <PositionedIconButton
+          aria-label="select emoji"
+          disableRipple={true}
+          onClick={toggleEmojiPicker}
+        >
+          <Icon fontSize="small">insert_emoticon</Icon>
+        </PositionedIconButton>
+      </Grid>
     </div>
   );
 };
