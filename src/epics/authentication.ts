@@ -7,15 +7,16 @@ import {
   mergeMap,
   tap,
   pluck,
+  take,
   ignoreElements,
 } from 'rxjs/operators';
-import { of, merge, from, iif, EMPTY } from 'rxjs';
+import { of, merge, from, iif, EMPTY, combineLatest } from 'rxjs';
 import { push } from 'connected-react-router';
 import queryString from 'query-string';
 
 import { fetchStream } from '../utils/fetchStream';
 
-import { store } from '../store';
+import { State } from '../store/interfaces';
 
 import { types } from '../actions/types';
 import { actions } from '../actions';
@@ -134,20 +135,11 @@ export const authSuccessEpic: Epic = (action$, state$) =>
     }),
     mergeMap(data => {
       const pathName = state$.value.router.location.pathname.toLowerCase();
-
       const isOnFormPage = ['login', 'signup'].includes(pathName.slice(1));
-      const shouldSetLoadingAsFalse =
-        !pathName.startsWith('/gallery') &&
-        (!/^\/room\/\d+(\/|\/password|\/password\/)?$/.test(pathName) ||
-          (/^\/room\/\d+(\/password|\/password\/)$/.test(pathName) &&
-            !state$.value.rooms.list[pathName.split('/')[2]]));
 
       return of(
         actions.user.setUserData(data),
         actions.global.setIsUserLoggedIn(true),
-        shouldSetLoadingAsFalse
-          ? actions.global.setIsLoading(false)
-          : { type: 'NULL' },
         isOnFormPage
           ? push(
               state$.value.router.location.search.includes('link')
@@ -160,6 +152,28 @@ export const authSuccessEpic: Epic = (action$, state$) =>
       );
     }),
   );
+
+export const authSuccessHandleLoadEpic: Epic<any, any, State> = (
+  action$,
+  state$,
+) =>
+  combineLatest([
+    action$.ofType(types.GLOBAL_INIT_AUTH_SUCCESS).pipe(
+      filter(() => {
+        const pathName = state$.value.router.location.pathname.toLowerCase();
+
+        return (
+          !pathName.startsWith('/gallery') &&
+          (!/^\/room\/\d+(\/|\/password|\/password\/)?$/.test(pathName) ||
+            (/^\/room\/\d+(\/password|\/password\/)$/.test(pathName) &&
+              !state$.value.rooms.list[pathName.split('/')[2]]))
+        );
+      }),
+    ),
+    action$.ofType(types.USER_SET_USER_DATA).pipe(take(1)),
+    action$.ofType(types.ROOMS_SET).pipe(take(1)),
+    action$.ofType(types.GLOBAL_SET_IS_USER_LOGGED_IN).pipe(take(1)),
+  ]).pipe(mapTo(actions.global.setIsLoading(false)));
 
 export const authFailureEpic: Epic = (action$, state$) =>
   action$

@@ -1,5 +1,6 @@
 import styled, { createGlobalStyle } from 'styled-components';
 import Paper from '@material-ui/core/Paper';
+import Button from '@material-ui/core/Button';
 import Icon from '@material-ui/core/Icon';
 
 export const GlobalStyle = createGlobalStyle`
@@ -23,6 +24,10 @@ export const MainContainer = styled.main`
 
 export const FullHeightPaper = styled(Paper)`
   height: 100%;
+`;
+
+export const GradientButton = styled(Button)`
+  background: linear-gradient(to right, #ff00cc, #333399);
 `;
 
 export const HeadlineIcon = styled(Icon)`
