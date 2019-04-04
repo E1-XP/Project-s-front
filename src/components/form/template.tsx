@@ -8,9 +8,8 @@ import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import FormControl from '@material-ui/core/FormControl';
 import TextField from '@material-ui/core/TextField';
-import Button from '@material-ui/core/Button';
 
-import { MainContainer } from './../../styles';
+import { MainContainer, GradientButton } from './../../styles';
 
 interface InputProps {
   values: FormikProps<FormState>['values'];
@@ -95,9 +94,9 @@ const Form = ({
               ', ',
             )}
         </Typography>
-        <Button type="submit" variant="contained" color="primary">
+        <GradientButton type="submit" variant="contained" color="primary">
           Submit
-        </Button>
+        </GradientButton>
       </FormControl>
     </form>
   );

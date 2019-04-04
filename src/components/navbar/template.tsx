@@ -52,8 +52,8 @@ export const NavbarComponent = ({
             <NavLink to="/inbox">
               <IconButton color="inherit">
                 {inboxCount ? (
-                  <Badge badgeContent={inboxCount} color="secondary">
-                    <Icon color="primary">notifications</Icon>
+                  <Badge badgeContent={inboxCount} color="primary">
+                    <Icon color="inherit">notifications</Icon>
                   </Badge>
                 ) : (
                   <Icon color="inherit">notifications</Icon>

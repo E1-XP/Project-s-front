@@ -12,12 +12,18 @@ import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 
-import { MainContainer } from './../../styles';
+import { MainContainer, HeadlineIcon } from './../../styles';
+
+import { PreloaderComponent } from './../shared/preloader';
 
 const Img = styled.img`
   width: 100%;
   position: relative;
   z-index: -1;
+`;
+
+const PaperWithMinHeight = styled(Paper)`
+  min-height: 1020px;
 `;
 
 const NoImagesPlaceholder = styled.div`
@@ -70,10 +76,11 @@ export const GalleryComponent = ({
     <MainContainer>
       <Grid container={true} spacing={16}>
         <Grid item={true} xs={12}>
-          <Paper>
-            <Typography variant="h4" align="center">
-              Drawings gallery
-            </Typography>
+          <PaperWithMinHeight>
+            <Grid container={true} justify="center" alignItems="center">
+              <HeadlineIcon>image</HeadlineIcon>
+              <Typography variant="h4">Gallery </Typography>
+            </Grid>
             {drawings ? (
               <>
                 <Carousel
@@ -118,9 +125,9 @@ export const GalleryComponent = ({
                 />
               </>
             ) : (
-              'loading...'
+              <PreloaderComponent />
             )}
-          </Paper>
+          </PaperWithMinHeight>
         </Grid>
       </Grid>
     </MainContainer>
