@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { compose, onlyUpdateForKeys } from 'recompose';
 import { connect } from 'react-redux';
+import styled from 'styled-components';
 
 import { State, DrawingObject } from '../../store/interfaces';
 
@@ -23,6 +24,20 @@ interface PassedProps {
 
 type CombinedProps = Props & PassedProps;
 
+const ImageContainer = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  overflow: hidden;
+  width: 100%;
+`;
+
+const GridListHorizontal = styled(GridList)`
+  flex-wrap: nowrap !important;
+  width: 100%;
+  transform: translateZ(0);
+`;
+
 const ImageSelectorComponent = ({
   isOpen,
   drawings,
@@ -33,10 +48,10 @@ const ImageSelectorComponent = ({
   return (
     <ExpansionPanel expanded={isOpen}>
       <ExpansionPanelDetails>
-        <div className="image-container--horizontal">
-          <GridList className="image_container__list--horizontal" cols={2.5}>
+        <ImageContainer>
+          <GridListHorizontal cols={2.5}>
             {drawings.length
-              ? drawings.map((itm: any) => (
+              ? drawings.map(itm => (
                   <GridListTile
                     key={itm.id}
                     data-id={itm.id}
@@ -46,12 +61,12 @@ const ImageSelectorComponent = ({
                       src={`${config.API_URL}/static/images/${itm.id}.jpg`}
                       alt="user drawing"
                     />
-                    <GridListTileBar title={itm.id} />
+                    <GridListTileBar title={itm.name} />
                   </GridListTile>
                 ))
               : 'no images found'}
-          </GridList>
-        </div>
+          </GridListHorizontal>
+        </ImageContainer>
       </ExpansionPanelDetails>
     </ExpansionPanel>
   );

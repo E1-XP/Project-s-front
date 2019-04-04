@@ -2,13 +2,13 @@ import { compose, lifecycle, ReactLifeCycleFunctions } from 'recompose';
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
 
-import { State } from './../../../store/interfaces';
+import { State, DrawingObject } from './../../../store/interfaces';
 import { actions } from '../../../actions';
 
 import { ImageSelectorComponent } from './template';
 
 export interface Props {
-  drawings: string[];
+  drawings: DrawingObject[];
   initGetImagesFromTheServer: () => Dispatch;
 }
 

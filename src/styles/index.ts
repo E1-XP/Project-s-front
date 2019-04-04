@@ -27,7 +27,12 @@ export const FullHeightPaper = styled(Paper)`
 `;
 
 export const GradientButton = styled(Button)`
-  background: linear-gradient(to right, #ff00cc, #333399);
+  background: ${({ disabled }) =>
+    disabled ? 'inherit' : 'linear-gradient(to right, #ff00cc, #333399)'};
+`;
+
+export const ButtonIcon = styled(Icon)`
+  margin-left: 0.5rem;
 `;
 
 export const HeadlineIcon = styled(Icon)`

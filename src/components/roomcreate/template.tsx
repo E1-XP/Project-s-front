@@ -1,5 +1,4 @@
 import * as React from 'react';
-import './style.scss';
 
 import { Props } from './index';
 

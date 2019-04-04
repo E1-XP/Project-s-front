@@ -7,7 +7,6 @@ import MuiThemeProvider from '@material-ui/core/styles/MuiThemeProvider';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import { theme } from './styles/theme';
 import { GlobalStyle } from './styles';
-import './style.scss';
 
 import { actions } from './actions';
 import { store } from './store';

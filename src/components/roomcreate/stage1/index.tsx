@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { compose } from 'recompose';
 
 import { IState } from './../index';
 
@@ -11,10 +10,8 @@ import InputLabel from '@material-ui/core/InputLabel';
 import FormControl from '@material-ui/core/FormControl';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Switch from '@material-ui/core/Switch';
-import Button from '@material-ui/core/Button';
-import Icon from '@material-ui/core/Icon';
 
-import { MainContainer } from './../../../styles';
+import { MainContainer, GradientButton, ButtonIcon } from './../../../styles';
 
 interface Props {}
 
@@ -27,6 +24,8 @@ interface PassedProps {
 }
 
 type CombinedProps = Props & PassedProps;
+
+const height500 = { height: '500px' };
 
 export const RoomCreateFormComponent = ({
   state,
@@ -46,55 +45,52 @@ export const RoomCreateFormComponent = ({
             <Typography variant="h4" align="center">
               Create new Room
             </Typography>
-            <Grid
-              item={true}
-              xs={6}
-              className="griditem--center mtop--2 mbottom--2"
-            >
-              <FormControl fullWidth={true} margin="normal">
-                <FormControl margin="dense">
-                  <InputLabel htmlFor="name">Name</InputLabel>
-                  <Input
-                    id="name"
-                    placeholder="Name"
-                    value={state.name}
-                    onChange={setName}
-                  />
-                </FormControl>
-                <FormControlLabel
-                  control={
-                    <Switch
-                      checked={state.isPrivate}
-                      onChange={setIsPrivate}
-                      color="secondary"
+            <Grid container={true} justify="center" style={height500}>
+              <Grid item={true} xs={6}>
+                <FormControl fullWidth={true} margin="normal">
+                  <FormControl margin="dense">
+                    <InputLabel htmlFor="name">Name</InputLabel>
+                    <Input
+                      id="name"
+                      placeholder="Name"
+                      value={state.name}
+                      onChange={setName}
                     />
-                  }
-                  label="is Room Private?"
-                />
-                <FormControl margin="dense">
-                  <InputLabel htmlFor="password">Password</InputLabel>
-                  <Input
-                    type="password"
-                    id="password"
-                    placeholder="Password"
-                    value={state.password!}
-                    onChange={setPassword}
-                    disabled={!state.isPrivate}
+                  </FormControl>
+                  <FormControlLabel
+                    control={
+                      <Switch
+                        checked={state.isPrivate}
+                        onChange={setIsPrivate}
+                        color="primary"
+                      />
+                    }
+                    label="is Room Private?"
                   />
+                  <FormControl margin="dense">
+                    <InputLabel htmlFor="password">Password</InputLabel>
+                    <Input
+                      type="password"
+                      id="password"
+                      placeholder="Password"
+                      value={state.password!}
+                      onChange={setPassword}
+                      disabled={!state.isPrivate}
+                    />
+                  </FormControl>
+                  <Grid container={true} justify="flex-end">
+                    <GradientButton
+                      onClick={goToNextStage}
+                      variant="contained"
+                      color="primary"
+                      disabled={!shouldGoToNextStep}
+                    >
+                      Next
+                      <ButtonIcon>arrow_right_alt</ButtonIcon>
+                    </GradientButton>
+                  </Grid>
                 </FormControl>
-                <Grid container={true} justify="flex-end">
-                  <Button
-                    onClick={goToNextStage}
-                    variant="contained"
-                    color="primary"
-                    className="mtop--1"
-                    disabled={!shouldGoToNextStep}
-                  >
-                    Next
-                    <Icon className="icon--mleft">arrow_right_alt</Icon>
-                  </Button>
-                </Grid>
-              </FormControl>
+              </Grid>
             </Grid>
           </Paper>
         </Grid>

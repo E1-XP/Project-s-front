@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { compose, shouldUpdate, lifecycle } from 'recompose';
-import './style.scss';
+import styled from 'styled-components';
 
 import {
   State,
@@ -14,13 +14,22 @@ import { Props } from './index';
 import { CanvasNavbar } from './toolbar';
 import { ImageSelector } from './imageselector';
 
-const positionRelativeStyle: any = { position: 'relative' };
-const mainCanvasStyle: any = {
-  position: 'absolute',
-  border: '1px solid #999',
-  width: '100%',
-};
-const backCanvasStyle = { border: '1px solid #999', width: '100%' };
+const CanvasWrapper = styled.div`
+  position: relative;
+`;
+
+const MainCanvasElem = styled.canvas`
+  position: absolute;
+  border: 1px solid #999;
+  width: 100%;
+`;
+
+const BackCanvasElem = styled.canvas`
+  border: 1px solid #999;
+  width: 100%;
+`;
+
+const backCanvasStyle = {};
 
 export const CanvasComponent = ({
   createBoardRef,
@@ -41,7 +50,7 @@ export const CanvasComponent = ({
   redrawBack,
   weight,
 }: Props) => (
-  <div id="canvas">
+  <>
     <CanvasNavbar
       setSelectedColor={setSelectedColor}
       handleResetBtn={handleResetBtn}
@@ -55,7 +64,7 @@ export const CanvasComponent = ({
       isOpen={boardState.isImageSelectorOpen}
       handleImageChange={handleImageChange}
     />
-    <div style={positionRelativeStyle}>
+    <CanvasWrapper>
       <MainCanvas
         createBoardRef={createBoardRef}
         getCtx={getCtx}
@@ -69,8 +78,8 @@ export const CanvasComponent = ({
         getCtx={getBackCtx}
         redraw={redrawBack}
       />
-    </div>
-  </div>
+    </CanvasWrapper>
+  </>
 );
 
 interface PassedMainCanvasProps {
@@ -120,11 +129,10 @@ const MainCanvas = compose<CombinedMainCanvasProps, PassedMainCanvasProps>(
     onMouseUp,
     drawingPoints,
   }: CombinedMainCanvasProps) => (
-    <canvas
+    <MainCanvasElem
       ref={createBoardRef}
       width={1280}
       height={720}
-      style={mainCanvasStyle}
       onMouseDown={onMouseDown}
       onMouseMove={onMouseMove}
       onMouseUp={onMouseUp}
@@ -160,10 +168,5 @@ const BackCanvas = compose<CombinedBackCanvasProps, BackCanvasPassedProps>(
     },
   }),
 )(({ createBackBoardRef }: CombinedBackCanvasProps) => (
-  <canvas
-    ref={createBackBoardRef}
-    width={1280}
-    height={720}
-    style={backCanvasStyle}
-  />
+  <BackCanvasElem ref={createBackBoardRef} width={1280} height={720} />
 ));

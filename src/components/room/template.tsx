@@ -6,9 +6,8 @@ import { Props } from './index';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
-import Button from '@material-ui/core/Button';
 
-import { MainContainer } from './../../styles';
+import { MainContainer, GradientButton } from './../../styles';
 
 import { RoomDashboard } from './dashboard';
 import { Canvas } from '../canvas';
@@ -27,9 +26,9 @@ const NoRoomPlaceholder = () => (
           </Typography>
           <Grid container={true} item={true} md={12} justify="center">
             <Link to="/dashboard">
-              <Button variant="contained" color="primary">
+              <GradientButton variant="contained" color="primary">
                 Return to the main page
-              </Button>
+              </GradientButton>
             </Link>
           </Grid>
         </Paper>
