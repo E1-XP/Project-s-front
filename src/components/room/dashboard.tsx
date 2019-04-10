@@ -2,15 +2,20 @@ import * as React from 'react';
 import { compose, onlyUpdateForKeys } from 'recompose';
 import { connect } from 'react-redux';
 import { match } from 'react-router-dom';
+import styled from 'styled-components';
 
 import { State, Rooms, Users, UserData } from './../../store/interfaces';
 
-import Paper from '@material-ui/core/Paper';
+import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
-import Button from '@material-ui/core/Button';
+import ListItemAvatar from '@material-ui/core/ListItemAvatar';
+import Avatar from '@material-ui/core/Avatar';
+import Icon from '@material-ui/core/Icon';
+
+import { GradientButton, HeadlineIcon, FullHeightPaper } from './../../styles';
 
 interface Params {
   id: string;
@@ -30,6 +35,11 @@ interface PassedProps {
 
 type CombinedProps = Props & PassedProps;
 
+const ListWrapper = styled.div`
+  height: 90%;
+  overflow: auto;
+`;
+
 export const RoomDashboard = compose<CombinedProps, PassedProps>(
   connect(({ rooms, users, user }: State) => ({
     rooms,
@@ -46,33 +56,52 @@ export const RoomDashboard = compose<CombinedProps, PassedProps>(
     changeRoomOwner,
     user,
   }: CombinedProps) => (
-    <Paper>
-      <Typography variant="h5">
-        Room {rooms.list[match.params.id].name}
-      </Typography>
+    <FullHeightPaper>
+      <Grid container={true} alignItems="center">
+        <HeadlineIcon>people</HeadlineIcon>
+        <Typography variant="h4">
+          Room {rooms.list[match.params.id].name}
+        </Typography>
+      </Grid>
       <Typography variant="h5">
         Currently online: {Object.keys(users.selectedRoom).length}
       </Typography>
-      <List>
-        {Object.keys(users.selectedRoom).map(id => (
-          <ListItem key={id} data-id={id}>
-            <ListItemText
-              primary={users.general[id]}
-              secondary={isUserAdmin(Number(id)) && 'admin'}
-            />
-            {isUserAdmin(user.id) && !isUserAdmin(Number(id)) && (
-              <Button
-                size="small"
-                variant="contained"
-                color="primary"
-                onClick={changeRoomOwner}
-              >
-                Set admin
-              </Button>
-            )}
-          </ListItem>
-        ))}
-      </List>
-    </Paper>
+      <ListWrapper>
+        <List>
+          {Object.keys(users.selectedRoom).map(id => (
+            <ListItem key={id} data-id={id}>
+              <ListItemAvatar>
+                <Avatar>
+                  <Icon>account_circle</Icon>
+                </Avatar>
+              </ListItemAvatar>
+              <ListItemText
+                primary={users.general[id]}
+                secondary={isUserAdmin(Number(id)) && 'admin'}
+                primaryTypographyProps={{
+                  color:
+                    id === user!.id!.toString()
+                      ? 'primary'
+                      : ('default' as any),
+                  style: {
+                    fontWeight: id === user!.id!.toString() ? 600 : 'inherit',
+                  },
+                }}
+              />
+              {isUserAdmin(user.id) && !isUserAdmin(Number(id)) && (
+                <GradientButton
+                  size="small"
+                  variant="contained"
+                  color="primary"
+                  onClick={changeRoomOwner}
+                >
+                  Set admin
+                </GradientButton>
+              )}
+            </ListItem>
+          ))}
+        </List>
+      </ListWrapper>
+    </FullHeightPaper>
   ),
 );

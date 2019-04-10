@@ -3,6 +3,8 @@ import styled, { keyframes } from 'styled-components';
 import EmojiPicker from 'emoji-picker-react';
 
 import Grid from '@material-ui/core/Grid';
+import Paper from '@material-ui/core/Paper';
+import Typography from '@material-ui/core/Typography';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
@@ -15,6 +17,8 @@ import Chip from '@material-ui/core/Chip';
 import Popover, { PopoverOrigin } from '@material-ui/core/Popover';
 
 import { CombinedProps } from './index';
+
+import { HeadlineIcon } from './../../styles';
 
 const Wrapper = styled.div`
   position: relative;
@@ -59,8 +63,8 @@ const BouncingDots = () => (
   </Wrapper>
 );
 
-const ChatListWrapper = styled.div`
-  height: 600px;
+const ChatListWrapper = styled.div<{ chatHeight: string | undefined }>`
+  height: ${({ chatHeight }) => chatHeight || '600px'};
   overflow: auto;
 `;
 
@@ -84,7 +88,7 @@ const TextFieldWithPadding = styled(TextField)`
   }
 `;
 
-const wordbreakStyle = {
+const wordBreakStyle = {
   wordBreak: 'break-all' as 'break-all',
 };
 
@@ -101,7 +105,7 @@ const getMessages = (
         <ListItemText
           primary={itm.author}
           secondary={itm.message}
-          style={wordbreakStyle}
+          style={wordBreakStyle}
           primaryTypographyProps={{
             color: itm.authorId === user!.id! ? 'primary' : ('default' as any),
             style: {
@@ -142,6 +146,8 @@ export const ChatComponent = ({
   isWriting,
   toggleEmojiPicker,
   handleEmojiClick,
+  chatHeight,
+  heading,
 }: CombinedProps) => {
   const formatChip = () => {
     if (writers.length === 1) return `${writers[0]} is writing...`;
@@ -152,8 +158,12 @@ export const ChatComponent = ({
   };
 
   return (
-    <div>
-      <ChatListWrapper>
+    <Paper>
+      <Grid container={true} alignItems="center">
+        <HeadlineIcon>chat</HeadlineIcon>
+        <Typography variant="h4">{heading}</Typography>
+      </Grid>
+      <ChatListWrapper chatHeight={chatHeight}>
         <RootRef rootRef={onListRef}>
           <List>{getMessages(messages, user)}</List>
         </RootRef>
@@ -195,6 +205,6 @@ export const ChatComponent = ({
           <Icon fontSize="small">insert_emoticon</Icon>
         </PositionedIconButton>
       </Grid>
-    </div>
+    </Paper>
   );
 };

@@ -29,8 +29,6 @@ const BackCanvasElem = styled.canvas`
   width: 100%;
 `;
 
-const backCanvasStyle = {};
-
 export const CanvasComponent = ({
   createBoardRef,
   createBackBoardRef,

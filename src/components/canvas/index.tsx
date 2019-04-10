@@ -11,7 +11,7 @@ import { Dispatch } from 'redux';
 
 import { actions } from '../../actions';
 const {
-  canvas: { initCanvasToImage, drawCanvas, clearCanvas, setFill, setWeight },
+  canvas: { initCanvasToImage, setFill, setWeight },
   rooms: { initInRoomDrawingSelect },
 } = actions;
 
@@ -48,11 +48,6 @@ export interface Props {
   onMouseDown: (e: MouseEvent) => void;
   onMouseMove: (e: MouseEvent) => void;
   onMouseUp: (e: MouseEvent) => void;
-  drawCanvas: (
-    ctx: CanvasRenderingContext2D,
-    isDrawingOnBack?: boolean,
-  ) => Dispatch;
-  clearCanvas: (ctx: CanvasRenderingContext2D) => Dispatch;
   redraw: () => void;
   redrawBack: () => void;
 }
@@ -87,7 +82,6 @@ const handlers1 = {
     props.initInRoomDrawingSelect(Number(e.target.closest('li').dataset.id));
   },
   setSelectedColor: (props: Props) => (color: any) => {
-    console.log(color);
     props.setFill(color.hex);
   },
   handleSetWeight: (props: Props) => (e: any, value: number) => {
@@ -115,8 +109,6 @@ const handlers1 = {
 const mapDispatchToProps = {
   // initClearDrawingPoints: () => null,
   // dispatch(actions.canvas.initClearDrawingPoints()),
-  drawCanvas,
-  clearCanvas,
   initCanvasToImage,
   initInRoomDrawingSelect,
   setFill,

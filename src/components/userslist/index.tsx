@@ -12,10 +12,10 @@ import Icon from '@material-ui/core/Icon';
 
 import { HeadlineIcon, FullHeightPaper } from './../../styles';
 
-import { Users, UserData } from './../../store/interfaces';
+import { AllUsers, UserData } from './../../store/interfaces';
 
 interface Props {
-  users: Users;
+  users: AllUsers;
   user: UserData;
 }
 
@@ -29,25 +29,25 @@ export const UsersList = ({ users, user }: Props) => (
     <Grid container={true} alignItems="center">
       <HeadlineIcon>people</HeadlineIcon>
       <Typography variant="h4">
-        Currently online: {Object.keys(users.general).length}
+        {`Currently online: ${Object.keys(users).length}`}
       </Typography>
     </Grid>
     <ListWrapper>
       <List>
-        {Object.keys(users.general).map((key: string) => (
-          <ListItem key={key}>
+        {Object.keys(users).map((id: string) => (
+          <ListItem key={id}>
             <ListItemAvatar>
               <Avatar>
                 <Icon>account_circle</Icon>
               </Avatar>
             </ListItemAvatar>
             <ListItemText
-              primary={users.general[key]}
+              primary={users[id]}
               primaryTypographyProps={{
                 color:
-                  key === user!.id!.toString() ? 'primary' : ('default' as any),
+                  id === user!.id!.toString() ? 'primary' : ('default' as any),
                 style: {
-                  fontWeight: key === user!.id!.toString() ? 600 : 'inherit',
+                  fontWeight: id === user!.id!.toString() ? 600 : 'inherit',
                 },
               }}
             />
