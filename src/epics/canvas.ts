@@ -50,13 +50,14 @@ export const selectDrawingEpic: Epic = (action$, state$) =>
     map(id => actions.canvas.setCurrentDrawing(id)),
   );
 
-export const selectDrawingInRoom: Epic = (action$, state$) =>
+export const selectDrawingInRoomEpic: Epic = (action$, state$) =>
   action$.ofType(types.CANVAS_INIT_IN_ROOM_DRAWING_SELECT).pipe(
     pluck('payload'),
+    map(drawingId => Number(drawingId)),
     map(drawingId => {
       const roomId = state$.value.rooms.active;
 
-      // store.dispatch(actions.canvas.clearDrawingPoints());
+      store.dispatch(actions.canvas.clearDrawingPoints());
       store.dispatch(actions.canvas.setCurrentDrawing(drawingId));
 
       return actions.socket.emitRoomDrawChange({ drawingId, roomId });
@@ -81,7 +82,7 @@ export const selectDrawingInRoom: Epic = (action$, state$) =>
 
 export const canvasImageSaveEpic: Epic<any, any, State> = (action$, state$) =>
   action$.ofType(types.CANVAS_INIT_CANVAS_TO_IMAGE).pipe(
-    debounceTime(1500),
+    debounceTime(700),
     mergeMap(action =>
       fetchStream(
         `${config.API_URL}/drawings/${

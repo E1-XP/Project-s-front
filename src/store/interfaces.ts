@@ -87,7 +87,7 @@ export interface BroadcastedDrawingPoints {
 }
 
 export interface Rooms {
-  active: string;
+  active: string | null;
   list: RoomsList;
 }
 

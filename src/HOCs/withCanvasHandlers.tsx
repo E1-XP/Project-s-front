@@ -11,6 +11,8 @@ const {
     setGroupCount,
     createDrawingPoint,
     initCanvasToImage,
+    drawCanvas,
+    clearCanvas,
   },
 } = actions;
 
@@ -117,7 +119,14 @@ export const withCanvasHandlers = compose(
       groupCount: canvas.groupCount,
       isMouseDown: canvas.isMouseDown,
     }),
-    { setIsMouseDown, setGroupCount, createDrawingPoint, initCanvasToImage },
+    {
+      setIsMouseDown,
+      setGroupCount,
+      createDrawingPoint,
+      initCanvasToImage,
+      drawCanvas,
+      clearCanvas,
+    },
   ),
   withHandlers(handlers()),
   withHandlers(handlers2),

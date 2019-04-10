@@ -37,6 +37,8 @@ export interface Props {
 export interface PassedProps {
   messages: ChatMessage[];
   handleSubmit: (e: any) => void;
+  heading: string;
+  chatHeight?: string;
 }
 
 export type CombinedProps = Props & PassedProps;
@@ -99,7 +101,7 @@ const handlers = () => {
 
 export const Chat = compose<CombinedProps, PassedProps>(
   connect(
-    (state: State) => ({
+    (state: State, props: CombinedProps) => ({
       isWriting: state.chats.isWriting,
       writers: getWriters(state),
       user: state.user.userData,

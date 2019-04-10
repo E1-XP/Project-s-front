@@ -5,7 +5,7 @@ import { Props } from './index';
 import config from './../../config';
 
 import Carousel from 'react-alice-carousel';
-import 'react-alice-carousel/src/alice-carousel.scss';
+import 'react-alice-carousel/lib/alice-carousel.css';
 
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
@@ -23,7 +23,7 @@ const Img = styled.img`
 `;
 
 const PaperWithMinHeight = styled(Paper)`
-  min-height: 1020px;
+  /* min-height: 1020px; */
 `;
 
 const NoImagesPlaceholder = styled.div`

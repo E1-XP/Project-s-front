@@ -4,13 +4,13 @@ import {
   withHandlers,
   withState,
   ReactLifeCycleFunctions,
-  shouldUpdate,
+  onlyUpdateForKeys,
 } from 'recompose';
 import { connect } from 'react-redux';
 import { RouteComponentProps } from 'react-router-dom';
 import { Dispatch } from 'redux';
 
-import { State, Rooms, UserData, Chats } from '../../store/interfaces';
+import { State, Rooms, UserData, Chats, Users } from '../../store/interfaces';
 import { actions } from '../../actions';
 
 import { RoomComponent } from './template';
@@ -24,8 +24,9 @@ export interface Props extends RouteComponentProps<Params> {
   rooms: Rooms;
   chats: Chats;
   user: UserData;
+  users: Users;
   isRoomUndefined: () => boolean;
-  isUserAdmin: (itm: string | number | null, prevRooms?: Rooms) => boolean;
+  isUserAdmin: (uId: string | number | null, prevRooms?: Rooms) => boolean;
   handleBeforeUnload: (e: BeforeUnloadEvent) => void;
   changeRoomOwner: () => void;
   initSendRoomMessage: (data: any) => Dispatch;
@@ -46,6 +47,8 @@ const hooks: ReactLifeCycleFunctions<Props, {}> = {
     if (roomExistAndUserIsAdmin) {
       window.addEventListener('beforeunload', this.props.handleBeforeUnload);
     }
+
+    window.scrollTo(0, 0);
   },
   componentWillUnmount() {
     this.props.initRoomLeave();
@@ -128,9 +131,10 @@ const handlers = {
   },
 };
 
-const mapStateToProps = ({ rooms, chats, user }: State) => ({
+const mapStateToProps = ({ rooms, chats, user, users }: State) => ({
   rooms,
   chats,
+  users,
   user: user.userData,
 });
 
@@ -152,5 +156,5 @@ export const Room = compose<Props, {}>(
   withState('message', 'setState', ''),
   withHandlers(handlers),
   lifecycle<Props, {}>(hooks),
-  shouldUpdate<Props>((curr, next) => false), // curr.match === next.match),
+  // onlyUpdateForKeys(['message']),
 )(RoomComponent);
