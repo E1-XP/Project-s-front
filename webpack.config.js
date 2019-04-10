@@ -1,24 +1,23 @@
 const webpack = require('webpack');
 const htmlWebpackPlugin = require('html-webpack-plugin');
-const HardSourceWebpackPlugin = require('hard-source-webpack-plugin');
 
 module.exports = {
-  entry: ['react-hot-loader/patch', './src/index.tsx'],
+  entry: './src/index.tsx',
   module: {
     rules: [
       {
-        test: /\.(js|jsx)$/,
+        test: /\.(js|jsx|ts|tsx)$/,
         exclude: /node_modules/,
-        use: ['babel-loader'],
+        loader: 'babel-loader',
       },
       {
-        test: /\.(ts|tsx)?$/,
-        use: ['ts-loader'],
-        exclude: /node_modules/,
+        test: /\.js$/,
+        use: ['source-map-loader'],
+        enforce: 'pre',
       },
       {
-        test: /\.scss$/,
-        use: ['style-loader', 'css-loader', 'sass-loader'],
+        test: /\.css$/,
+        use: ['style-loader', 'css-loader'],
       },
     ],
   },
@@ -35,7 +34,6 @@ module.exports = {
       template: './public/index.html',
       filename: './index.html',
     }),
-    // new HardSourceWebpackPlugin(),
     new webpack.HotModuleReplacementPlugin(),
   ],
   devServer: {
