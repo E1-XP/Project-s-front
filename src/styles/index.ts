@@ -18,8 +18,7 @@ a {
 export const MainContainer = styled.main`
   margin: 0 auto;
   max-width: 1200px;
-  padding: 1rem;
-  padding-top: 30px;
+  padding: 16px;
 `;
 
 export const FullHeightPaper = styled(Paper)`

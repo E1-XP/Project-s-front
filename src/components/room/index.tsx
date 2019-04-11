@@ -92,20 +92,20 @@ const handlers = {
     return props.rooms.list[roomId] === undefined;
   },
   isUserAdmin: (props: Props) => (
-    itm: string | number | null,
+    id: string | number | null,
     prevRooms?: Rooms,
   ) => {
     const roomId = props.match.params.id;
 
     if (!Object.keys(props.rooms.list).length) return false;
 
-    if (itm === null) return false;
+    if (id === null) return false;
 
     const adminId = prevRooms
       ? prevRooms.list[roomId].adminId
       : props.rooms.list[roomId].adminId;
 
-    return Number(itm) === Number(adminId);
+    return Number(id) === Number(adminId);
   },
   handleBeforeUnload: (props: Props) => (e: BeforeUnloadEvent) => {
     const message = 'Are you sure?';

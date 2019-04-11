@@ -14,6 +14,11 @@ import { RoomDashboard } from './dashboard';
 import { Canvas } from '../canvas';
 import { Chat } from '../chat';
 
+const GridWithPadding = styled(Grid)`
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+`;
+
 const NoRoomPlaceholder = () => (
   <MainContainer>
     <Grid container={true} spacing={16}>
@@ -22,10 +27,13 @@ const NoRoomPlaceholder = () => (
           <Typography variant="h5" align="center" className="mbottom-2">
             Room not exist
           </Typography>
-          <Typography variant="subtitle1" align="center" className="mbottom-2">
-            Probably admin closed it or you entered incorrect url.
-          </Typography>
-          <Grid container={true} item={true} md={12} justify="center">
+          <GridWithPadding container={true} justify="center">
+            <Typography variant="subtitle1">
+              Probably admin closed it or you entered incorrect url.
+            </Typography>
+          </GridWithPadding>
+
+          <Grid container={true} justify="center">
             <Link to="/dashboard">
               <GradientButton variant="contained" color="primary">
                 Return to the main page
