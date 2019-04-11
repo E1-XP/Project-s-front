@@ -21,7 +21,7 @@ import {
   isRoomPasswordCheckedAndValid,
 } from './helpers';
 
-export const setRouteContainsRoomLinkParam: Epic = (action$, state$) =>
+export const setRouteContainsRoomLinkParamEpic: Epic = (action$, state$) =>
   action$.ofType(LOCATION_CHANGE).pipe(
     pluck<any, any>('payload'),
     filter(
@@ -78,7 +78,7 @@ export const handleRoomRouteInstantEnterEpic: Epic = (action$, state$) =>
     ),
   );
 
-export const redirectFromPasswordRouteIfRoomNotExistAndNotLogged: Epic = (
+export const redirectFromPasswordRouteIfRoomNotExistAndNotLoggedEpic: Epic = (
   action$,
   state$,
 ) =>

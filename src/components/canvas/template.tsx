@@ -1,6 +1,11 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { compose, shouldUpdate, lifecycle } from 'recompose';
+import {
+  compose,
+  shouldUpdate,
+  lifecycle,
+  ReactLifeCycleFunctions,
+} from 'recompose';
 import styled from 'styled-components';
 
 import {
@@ -96,29 +101,34 @@ interface MainCanvasProps {
 
 type CombinedMainCanvasProps = MainCanvasProps & PassedMainCanvasProps;
 
+const hooks: ReactLifeCycleFunctions<
+  CombinedMainCanvasProps,
+  PassedMainCanvasProps
+> = {
+  componentDidMount() {
+    const { drawingPoints, broadcastedDrawingPoints } = this.props;
+    const shouldRedraw =
+      drawingPoints.length ||
+      Object.values(broadcastedDrawingPoints).some(v => !!v.length);
+
+    if (shouldRedraw) this.props.redraw();
+  },
+  componentWillReceiveProps(nextP) {
+    const { drawingPoints, broadcastedDrawingPoints } = this.props;
+    const shouldRedraw =
+      nextP.drawingPoints !== drawingPoints ||
+      nextP.broadcastedDrawingPoints !== broadcastedDrawingPoints;
+
+    if (shouldRedraw) this.props.redraw();
+  },
+};
+
 const MainCanvas = compose<CombinedMainCanvasProps, PassedMainCanvasProps>(
   connect(({ canvas }: State) => ({
     drawingPoints: canvas.drawingPoints,
     broadcastedDrawingPoints: canvas.broadcastedDrawingPoints,
   })),
-  lifecycle<CombinedMainCanvasProps, PassedMainCanvasProps>({
-    componentDidMount() {
-      const { drawingPoints, broadcastedDrawingPoints } = this.props;
-      const shouldRedraw =
-        drawingPoints.length ||
-        Object.values(broadcastedDrawingPoints).some(v => !!v.length);
-
-      if (shouldRedraw) this.props.redraw();
-    },
-    componentWillReceiveProps(nextP) {
-      const { drawingPoints, broadcastedDrawingPoints } = this.props;
-      const shouldRedraw =
-        nextP.drawingPoints !== drawingPoints ||
-        nextP.broadcastedDrawingPoints !== broadcastedDrawingPoints;
-
-      if (shouldRedraw) this.props.redraw();
-    },
-  }),
+  lifecycle(hooks),
 )(
   ({
     createBoardRef,

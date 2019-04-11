@@ -27,7 +27,7 @@ type CombinedProps = Props & PassedProps;
 
 const height500 = { height: '500px' };
 
-export const RoomCreateFormComponent = ({
+export const RoomCreateForm = ({
   state,
   setName,
   setPassword,
@@ -46,7 +46,7 @@ export const RoomCreateFormComponent = ({
               Create new Room
             </Typography>
             <Grid container={true} justify="center" style={height500}>
-              <Grid item={true} xs={6}>
+              <Grid item={true} xs={9} md={6}>
                 <FormControl fullWidth={true} margin="normal">
                   <FormControl margin="dense">
                     <InputLabel htmlFor="name">Name</InputLabel>
@@ -98,5 +98,3 @@ export const RoomCreateFormComponent = ({
     </MainContainer>
   );
 };
-
-export const RoomCreateForm = RoomCreateFormComponent;
