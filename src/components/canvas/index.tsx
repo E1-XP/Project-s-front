@@ -5,6 +5,8 @@ import {
   withState,
   onlyUpdateForKeys,
   pure,
+  lifecycle,
+  ReactLifeCycleFunctions,
 } from 'recompose';
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
@@ -33,12 +35,12 @@ export interface Props {
   setFill: (val: string) => void;
   setIsColorPickerOpen: (val: boolean) => void;
   setIsImageSelectorOpen: (val?: boolean) => void;
-  initClearDrawingPoints: () => Dispatch;
+  clearDrawingPoints: () => Dispatch;
   initCanvasToImage: (v: any) => Dispatch;
   setSelectedColor: (e: any) => void;
   handleImageChange: (e: any) => void;
   initInRoomDrawingSelect: (id: number) => Dispatch;
-  handleResetBtn: () => void;
+  handleReset: () => void;
   createBoardRef: (ref: any) => void;
   createBackBoardRef: (ref: HTMLCanvasElement) => void;
   getBoardRef: () => HTMLCanvasElement;
@@ -50,12 +52,22 @@ export interface Props {
   onMouseUp: (e: MouseEvent) => void;
   redraw: () => void;
   redrawBack: () => void;
+  onCanvasResize: () => void;
 }
 
 interface BoardState {
   isImageSelectorOpen: boolean;
   isColorPickerOpen: boolean;
 }
+
+const hooks: ReactLifeCycleFunctions<Props, {}> = {
+  componentDidMount() {
+    window.addEventListener('resize', this.props.onCanvasResize);
+  },
+  componentWillUnmount() {
+    window.removeEventListener('resize', this.props.onCanvasResize);
+  },
+};
 
 const stateHandlers = {
   setIsImageSelectorOpen: (props: Props) => (isOpened?: boolean) => {
@@ -87,28 +99,9 @@ const handlers1 = {
   handleSetWeight: (props: Props) => (e: any, value: number) => {
     props.setWeight(value);
   },
-  handleResetBtn: (props: Props) => (e: HTMLButtonElement) => {
-    // ctx.clearRect(0, 0, boardRef.width, boardRef.height);
-    // ctx.fillStyle = '#ffffff';
-    // ctx.fillRect(0, 0, boardRef.width, boardRef.height);
-    // props.initClearDrawingPoints();
-    // setTimeout(() => {
-    //   const imgB64 = boardRef.toDataURL('image/jpeg', 0.5);
-    //   props.initCanvasToImage(imgB64);
-    // }, 500);
-  },
-  //   prepareForUnmount: (props: Props) => () => {
-  //     document.removeEventListener('mouseup', props.setIsMouseDownFalse);
-  //     window.removeEventListener('resize', props.renderImage);
-  //   },
-  //   handleResize: (props: Props) => () => {
-  //     window.addEventListener('resize', props.renderImage);
-  //   },
 };
 
 const mapDispatchToProps = {
-  // initClearDrawingPoints: () => null,
-  // dispatch(actions.canvas.initClearDrawingPoints()),
   initCanvasToImage,
   initInRoomDrawingSelect,
   setFill,
@@ -127,6 +120,7 @@ export const Canvas = compose<Props, {}>(
   withHandlers(stateHandlers),
   withHandlers(handlers1),
   withCanvasHandlers,
+  lifecycle(hooks),
   pure,
   withRef('createBoardRef', 'createBackBoardRef'),
 )(CanvasComponent);

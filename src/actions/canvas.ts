@@ -66,6 +66,10 @@ export const clearDrawingPoints: ActionType = () => ({
   type: types.CANVAS_CLEAR_DRAWING_POINTS,
 });
 
+export const resetDrawing: ActionType = () => ({
+  type: types.CANVAS_RESET_DRAWING,
+});
+
 export const clearCanvas: ActionType = ctx => ({
   type: types.CANVAS_CLEAR,
   ctx,
