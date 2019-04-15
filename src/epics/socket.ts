@@ -179,6 +179,8 @@ export const bindRoomHandlersEpic: Epic<any, any, State> = (action$, state$) =>
       });
 
       socket.on(`${roomId}/draw/getexisting`, (data: DrawingPoint[]) => {
+        console.log(data, 'check');
+
         const drawingGroupCount = data
           .slice()
           .reverse()
@@ -198,8 +200,10 @@ export const bindRoomHandlersEpic: Epic<any, any, State> = (action$, state$) =>
       socket.on(`${roomId}/draw/change`, (drawingId: string) => {
         store.dispatch(actions.canvas.setCurrentDrawing(drawingId));
       });
-      // TODO
-      socket.on(`${roomId}/draw/reset`, (userId: string) => {});
+
+      socket.on(`${roomId}/draw/reset`, (userId: string) => {
+        store.dispatch(actions.canvas.clearDrawingPoints());
+      });
 
       socket.on(`${roomId}/users`, (data: any) => {
         store.dispatch(actions.users.setRoomUsers(data));

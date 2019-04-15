@@ -41,7 +41,7 @@ export const CanvasComponent = ({
   getBackCtx,
   boardState,
   setSelectedColor,
-  handleResetBtn,
+  handleReset,
   setIsImageSelectorOpen,
   handleImageChange,
   setIsColorPickerOpen,
@@ -56,7 +56,7 @@ export const CanvasComponent = ({
   <>
     <CanvasNavbar
       setSelectedColor={setSelectedColor}
-      handleResetBtn={handleResetBtn}
+      handleResetBtn={handleReset}
       setIsImageSelectorOpen={setIsImageSelectorOpen}
       setIsColorPickerOpen={setIsColorPickerOpen}
       isColorPickerOpen={boardState.isColorPickerOpen}
@@ -111,7 +111,10 @@ const hooks: ReactLifeCycleFunctions<
       drawingPoints.length ||
       Object.values(broadcastedDrawingPoints).some(v => !!v.length);
 
-    if (shouldRedraw) this.props.redraw();
+    if (shouldRedraw) {
+      console.log('redrawing front');
+      this.props.redraw();
+    }
   },
   componentWillReceiveProps(nextP) {
     const { drawingPoints, broadcastedDrawingPoints } = this.props;
@@ -119,7 +122,10 @@ const hooks: ReactLifeCycleFunctions<
       nextP.drawingPoints !== drawingPoints ||
       nextP.broadcastedDrawingPoints !== broadcastedDrawingPoints;
 
-    if (shouldRedraw) this.props.redraw();
+    if (shouldRedraw) {
+      console.log('redrawing front');
+      this.props.redraw();
+    }
   },
 };
 

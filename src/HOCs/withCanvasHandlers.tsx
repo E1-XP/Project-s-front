@@ -13,6 +13,7 @@ const {
     initCanvasToImage,
     drawCanvas,
     clearCanvas,
+    resetDrawing,
   },
 } = actions;
 
@@ -47,13 +48,13 @@ interface Props {
   onCanvasResize: () => void;
   redraw: () => void;
   redrawBack: () => void;
+  handleReset: () => void;
+  resetDrawing: () => Dispatch;
 }
 
 const handlers = () => {
   let boardRef: HTMLCanvasElement;
   let backBoardRef: HTMLCanvasElement;
-  let ctx: CanvasRenderingContext2D;
-  let backCtx: CanvasRenderingContext2D;
 
   return {
     createBoardRef: (props: Props) => (ref: HTMLCanvasElement) =>
@@ -62,14 +63,8 @@ const handlers = () => {
       (backBoardRef = ref),
     getBoardRef: (props: Props) => () => boardRef,
     getBackBoardRef: (props: Props) => () => backBoardRef,
-    getCtx: (props: Props) => () => {
-      if (!ctx) ctx = boardRef.getContext('2d')!;
-      return ctx;
-    },
-    getBackCtx: (props: Props) => () => {
-      if (!backCtx) backCtx = backBoardRef.getContext('2d')!;
-      return backCtx;
-    },
+    getCtx: (props: Props) => () => boardRef.getContext('2d')!,
+    getBackCtx: (props: Props) => () => backBoardRef.getContext('2d')!,
     onMouseDown: (props: Props) => (e: MouseEvent) => {
       const { pageX, pageY } = e;
       console.log('mouse down');
@@ -106,6 +101,15 @@ const handlers2 = {
     props.clearCanvas(props.getBackCtx());
     props.drawCanvas(props.getBackCtx(), true);
   },
+  handleReset: (props: Props) => () => {
+    props.clearCanvas(props.getCtx());
+    props.resetDrawing();
+
+    setTimeout(() => {
+      const imgB64 = props.getBoardRef().toDataURL('image/jpeg', 0.5);
+      props.initCanvasToImage(imgB64);
+    }, 500);
+  },
   onCanvasResize: (props: Props) =>
     throttle(() => {
       props.clearCanvas(props.getCtx());
@@ -126,6 +130,7 @@ export const withCanvasHandlers = compose(
       initCanvasToImage,
       drawCanvas,
       clearCanvas,
+      resetDrawing,
     },
   ),
   withHandlers(handlers()),

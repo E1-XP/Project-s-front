@@ -99,13 +99,12 @@ export const canvasImageSaveEpic: Epic<any, any, State> = (action$, state$) =>
     ignoreElements(),
   );
 
-// export const drawingResetEpic: Epic = (action$, state$) => // TODO
-//   action$.ofType(types.CANVAS_INIT_CLEAR_DRAWING_POINTS).pipe(
-//     map(v => {
-//       const roomId = state$.value.rooms.active;
-//       const userId = state$.value.user.userData.id;
-//       const drawingId = state$.value.canvas.currentDrawing;
+export const drawingResetEpic: Epic = (action$, state$) =>
+  action$.ofType(types.CANVAS_RESET_DRAWING).pipe(
+    map(v => {
+      const userId = state$.value.user.userData.id;
+      const drawingId = state$.value.canvas.currentDrawing;
 
-//       return actions.socket.emitRoomDrawReset({ userId, drawingId });
-//     }),
-//   );
+      return actions.socket.emitRoomDrawReset({ userId, drawingId });
+    }),
+  );

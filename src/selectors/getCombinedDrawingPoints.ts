@@ -27,16 +27,17 @@ export const getCombinedDrawingPoints = createSelector(
     const isNewCacheLengthDifferent =
       Math.floor(cacheLen / divisor) !== Math.floor(combined.length / divisor);
 
-    if (isNewCacheLengthDifferent) {
-      const newCacheLen = combined.length - (combined.length % divisor);
-      const newCache = combined.slice(0, newCacheLen);
+    // if (isNewCacheLengthDifferent) {
+    //   const newCacheLen = combined.length - (combined.length % divisor);
+    //   const newCache = combined.slice(0, newCacheLen);
 
-      store.dispatch(actions.canvas.setDrawingPointsCache(newCache));
+    //   store.dispatch(actions.canvas.setDrawingPointsCache(newCache));
 
-      return combined.slice(newCacheLen);
-    }
-
-    return cacheLen ? combined.slice(cacheLen - 1) : combined;
+    //   return combined.slice(newCacheLen);
+    // }
+    console.log(combined);
+    return combined;
+    // return cacheLen ? combined.slice(cacheLen - 1) : combined;
   },
 );
 
