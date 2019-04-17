@@ -6,7 +6,6 @@ import {
   mergeMap,
   tap,
   ignoreElements,
-  throttleTime,
   pluck,
   take,
 } from 'rxjs/operators';
@@ -77,20 +76,16 @@ export const createDrawingPointEpic: Epic<any, any, State> = (
 
 export const clearCanvasEpic: Epic = (action$, state$) =>
   action$.ofType(types.CANVAS_CLEAR).pipe(
-    // throttleTime(1000 / 60, undefined, { trailing: true }),
     tap(({ ctx }) => {
       const { width, height } = ctx.canvas;
 
-      ctx.fillStyle = '#ffffff';
       ctx.clearRect(0, 0, width, height);
-      ctx.fillRect(0, 0, width, height);
     }),
     ignoreElements(),
   );
 
 export const drawCanvasEpic: Epic<any, any, State> = (action$, state$) =>
   action$.ofType(types.CANVAS_DRAW).pipe(
-    // throttleTime(1000 / 60, undefined, { trailing: true }),
     map(({ ctx, isDrawingOnBack }) => {
       const toDraw = !isDrawingOnBack
         ? getCombinedDrawingPoints(state$.value)

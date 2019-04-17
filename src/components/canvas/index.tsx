@@ -53,6 +53,7 @@ export interface Props {
   redraw: () => void;
   redrawBack: () => void;
   onCanvasResize: () => void;
+  onMouseUpOutsideBoard: () => void;
 }
 
 interface BoardState {
@@ -63,9 +64,11 @@ interface BoardState {
 const hooks: ReactLifeCycleFunctions<Props, {}> = {
   componentDidMount() {
     window.addEventListener('resize', this.props.onCanvasResize);
+    document.addEventListener('mouseup', this.props.onMouseUpOutsideBoard);
   },
   componentWillUnmount() {
     window.removeEventListener('resize', this.props.onCanvasResize);
+    document.removeEventListener('mouseup', this.props.onMouseUpOutsideBoard);
   },
 };
 

@@ -83,16 +83,27 @@ export const selectDrawingInRoomEpic: Epic = (action$, state$) =>
 export const canvasImageSaveEpic: Epic<any, any, State> = (action$, state$) =>
   action$.ofType(types.CANVAS_INIT_CANVAS_TO_IMAGE).pipe(
     debounceTime(700),
-    mergeMap(action =>
+    map(({ boardRef, backBoardRef }) => {
+      const combinedDrawing = document.createElement('canvas');
+      combinedDrawing.width = 1280;
+      combinedDrawing.height = 720;
+
+      const ctx = combinedDrawing.getContext('2d');
+      ctx!.fillStyle = '#ffffff';
+
+      ctx!.fillRect(0, 0, combinedDrawing.width, combinedDrawing.height);
+      ctx!.drawImage(backBoardRef, 0, 0);
+      ctx!.drawImage(boardRef, 0, 0);
+
+      return combinedDrawing.toDataURL('image/jpeg', 0.5);
+    }),
+    mergeMap(image =>
       fetchStream(
         `${config.API_URL}/drawings/${
           state$.value.canvas.currentDrawing
-        }/save/`,
+        }/save?drawingId=${state$.value.canvas.currentDrawing}`,
         'POST',
-        {
-          image: action.payload,
-          drawingId: state$.value.canvas.currentDrawing,
-        },
+        { image },
       ),
     ),
     catchError(err => of(actions.global.networkError(err))),
