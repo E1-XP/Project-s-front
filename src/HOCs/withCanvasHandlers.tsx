@@ -29,7 +29,10 @@ interface Props {
     ref: HTMLCanvasElement,
     onMouseDown?: boolean,
   ) => Dispatch;
-  initCanvasToImage: (v: any) => Dispatch;
+  initCanvasToImage: (
+    ref: HTMLCanvasElement,
+    backRef: HTMLCanvasElement,
+  ) => Dispatch;
   drawCanvas: (
     ctx: CanvasRenderingContext2D,
     isDrawingOnBack?: boolean,
@@ -67,7 +70,7 @@ const handlers = () => {
     getBackCtx: (props: Props) => () => backBoardRef.getContext('2d')!,
     onMouseDown: (props: Props) => (e: MouseEvent) => {
       const { pageX, pageY } = e;
-      console.log('mouse down');
+    
       props.setIsMouseDown(true);
       props.createDrawingPoint({ pageX, pageY }, boardRef!, true);
     },
@@ -83,12 +86,19 @@ const handlers = () => {
       props.setIsMouseDown(false);
       props.setGroupCount(groupCount + 1);
 
-      setTimeout(() => {
-        const imgB64 = boardRef.toDataURL('image/jpeg', 0.5);
-        props.initCanvasToImage(imgB64); // TODO merge both layers
-      }, 500);
+      props.initCanvasToImage(boardRef, backBoardRef);
     },
-    onMouseUpOutsideBoard: (props: Props) => () => {},
+    onMouseUpOutsideBoard: ({
+      isMouseDown,
+      groupCount,
+      setIsMouseDown,
+      setGroupCount,
+    }: Props) => () => {
+      if (isMouseDown) {
+        setIsMouseDown(false);
+        setGroupCount(groupCount + 1);
+      }
+    },
   };
 };
 
@@ -105,10 +115,7 @@ const handlers2 = {
     props.clearCanvas(props.getCtx());
     props.resetDrawing();
 
-    setTimeout(() => {
-      const imgB64 = props.getBoardRef().toDataURL('image/jpeg', 0.5);
-      props.initCanvasToImage(imgB64);
-    }, 500);
+    props.initCanvasToImage(props.getBoardRef(), props.getBackBoardRef());
   },
   onCanvasResize: (props: Props) =>
     throttle(() => {

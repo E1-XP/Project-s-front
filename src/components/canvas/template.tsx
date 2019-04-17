@@ -79,7 +79,7 @@ export const CanvasComponent = ({
       <BackCanvas
         createBackBoardRef={createBackBoardRef}
         getCtx={getBackCtx}
-        redraw={redrawBack}
+        redrawBack={redrawBack}
       />
     </CanvasWrapper>
   </>
@@ -161,7 +161,7 @@ interface BackCanvasProps {
 interface BackCanvasPassedProps {
   createBackBoardRef: Props['createBackBoardRef'];
   getCtx: Props['getBackCtx'];
-  redraw: Props['redraw'];
+  redrawBack: Props['redrawBack'];
 }
 
 type CombinedBackCanvasProps = BackCanvasProps & BackCanvasPassedProps;
@@ -176,8 +176,7 @@ const BackCanvas = compose<CombinedBackCanvasProps, BackCanvasPassedProps>(
         nextP.drawingPointsCache !== this.props.drawingPointsCache;
 
       if (shouldRedraw) {
-        console.log('redrawing back');
-        this.props.redraw();
+        this.props.redrawBack();
       }
     },
   }),

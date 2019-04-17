@@ -2,9 +2,13 @@ import { ActionType } from './index';
 import { types } from './types';
 import { DrawingPoint } from '../store/interfaces';
 
-export const initCanvasToImage: ActionType = (imgData: any) => ({
+export const initCanvasToImage: ActionType = (
+  boardRef: HTMLCanvasElement,
+  backBoardRef: HTMLCanvasElement,
+) => ({
   type: types.CANVAS_INIT_CANVAS_TO_IMAGE,
-  payload: imgData,
+  boardRef,
+  backBoardRef,
 });
 
 export const initGetImagesFromServer: ActionType = () => ({
