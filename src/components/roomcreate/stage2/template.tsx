@@ -11,7 +11,7 @@ import GridList from '@material-ui/core/GridList';
 import GridListTile from '@material-ui/core/GridListTile';
 import GridListTileBar from '@material-ui/core/GridListTileBar';
 
-import { PreloaderComponent } from './../../shared/preloader';
+import { PreloaderComponent } from './../../preloader';
 
 import { MainContainer, GradientButton, ButtonIcon } from './../../../styles';
 
