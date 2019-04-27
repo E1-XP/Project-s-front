@@ -7,15 +7,12 @@ import {
   ignoreElements,
   debounceTime,
   take,
-  takeWhile,
   mapTo,
   pluck,
   concatMap,
-  withLatestFrom,
-  takeUntil,
   catchError,
 } from 'rxjs/operators';
-import { of, combineLatest, zip } from 'rxjs';
+import { of } from 'rxjs';
 
 import { fetchStream } from '../utils/fetchStream';
 
@@ -27,7 +24,7 @@ import { actions } from '../actions';
 
 import config from './../config';
 
-import { currentDrawingOnRoomEnter } from './helpers';
+import { currentDrawingOnRoomEnter$ } from './helpers';
 
 export const createNewDrawingEpic: Epic = (action$, state$) =>
   action$.ofType(types.CANVAS_INIT_CREATE_NEW_DRAWING).pipe(
@@ -85,7 +82,7 @@ export const drawingTakeIntoOwnershipOnMouseDownOnEnterEpic: Epic<
           const isFetching = state$.value.global.isFetching;
           const userDrawings = state$.value.user.drawings;
           const currentDrawing = state$.value.canvas.currentDrawing;
-          const drawingIdOnRoomEnter = currentDrawingOnRoomEnter.value;
+          const drawingIdOnRoomEnter = currentDrawingOnRoomEnter$.value;
           const hasDrawingChanged = drawingIdOnRoomEnter !== currentDrawing;
 
           if (!userDrawings || isFetching || hasDrawingChanged) return false;
@@ -114,7 +111,7 @@ export const setCurrentDrawingOnRoomEnterHelperEpic: Epic<any, any, State> = (
       action$.ofType(types.CANVAS_SET_CURRENT_DRAWING).pipe(take(1)),
     ),
     tap(v =>
-      currentDrawingOnRoomEnter.next(state$.value.canvas.currentDrawing),
+      currentDrawingOnRoomEnter$.next(state$.value.canvas.currentDrawing),
     ),
     ignoreElements(),
   );
@@ -129,9 +126,9 @@ export const setCurrentDrawingOnEnterrAfterChangeHelperEpic: Epic<
       () =>
         !state$.value.global.isLoading &&
         !!state$.value.rooms.active &&
-        currentDrawingOnRoomEnter.value !== null,
+        currentDrawingOnRoomEnter$.value !== null,
     ),
-    tap(() => currentDrawingOnRoomEnter.next(null)),
+    tap(() => currentDrawingOnRoomEnter$.next(null)),
     ignoreElements(),
   );
 
@@ -159,7 +156,7 @@ export const drawingTakeIntoOwnershipOnMouseDownEpic: Epic<any, any, State> = (
     filter(({ drawingId }) => {
       const userDrawings = state$.value.user.drawings;
       const isRoomActive = !!state$.value.rooms.active;
-      const isDrawingSame = currentDrawingOnRoomEnter.value !== null;
+      const isDrawingSame = currentDrawingOnRoomEnter$.value !== null;
 
       if (!userDrawings) return false;
       return (

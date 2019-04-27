@@ -17,8 +17,8 @@ import { types } from '../actions/types';
 import { actions } from '../actions';
 
 import {
-  isRoomLinkParamIncludedInLastRoute,
-  isRoomPasswordCheckedAndValid,
+  isRoomLinkParamIncludedInLastRoute$,
+  isRoomPasswordCheckedAndValid$,
 } from './helpers';
 
 export const setRouteContainsRoomLinkParamEpic: Epic = (action$, state$) =>
@@ -33,7 +33,7 @@ export const setRouteContainsRoomLinkParamEpic: Epic = (action$, state$) =>
             .link!.toString(),
         ),
     ),
-    tap(() => isRoomLinkParamIncludedInLastRoute.next(true)),
+    tap(() => isRoomLinkParamIncludedInLastRoute$.next(true)),
     ignoreElements(),
   );
 
@@ -48,7 +48,7 @@ export const roomRouteEpic: Epic = (action$, state$) =>
     ),
     mergeMap(() =>
       iif(
-        () => isRoomPasswordCheckedAndValid.value === null,
+        () => isRoomPasswordCheckedAndValid$.value === null,
         of(actions.global.setIsLoading(true), actions.rooms.initRoomEnter()),
         EMPTY,
       ),
@@ -62,7 +62,7 @@ export const handleRoomRouteInstantEnterEpic: Epic = (action$, state$) =>
       .pipe(
         filter(
           ({ payload }) =>
-            isRoomPasswordCheckedAndValid.value === null &&
+            isRoomPasswordCheckedAndValid$.value === null &&
             !state$.value.global.isUserLoggedIn &&
             /^\/room\/\d+$/.test(payload.location.pathname),
         ),
