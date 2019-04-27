@@ -6,6 +6,11 @@ export const setIsLoading: ActionType = (bool: boolean) => ({
   payload: bool,
 });
 
+export const setIsFetching: ActionType = (bool: boolean) => ({
+  type: types.GLOBAL_SET_IS_FETCHING,
+  payload: bool,
+});
+
 export const initApp: ActionType = () => ({
   type: types.GLOBAL_INIT_APP,
 });

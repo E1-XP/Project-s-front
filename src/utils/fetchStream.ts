@@ -1,5 +1,8 @@
 import { from } from 'rxjs';
 
+import { store } from './../store';
+import { actions } from './../actions';
+
 interface Response {
   data: any;
   status: number;
@@ -18,6 +21,8 @@ export const fetchStream = (
     headers?: any,
   ) => {
     try {
+      store.dispatch(actions.global.setIsFetching(true));
+
       const response = await fetch(url, {
         method,
         headers: headers || {
@@ -28,6 +33,7 @@ export const fetchStream = (
       });
 
       const toJSON = await response.json();
+      store.dispatch(actions.global.setIsFetching(false));
 
       return {
         data: toJSON,
@@ -35,6 +41,8 @@ export const fetchStream = (
       };
     } catch (err) {
       console.log(err);
+      store.dispatch(actions.global.setIsFetching(false));
+
       return err;
     }
   };
