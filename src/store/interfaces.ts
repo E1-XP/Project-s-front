@@ -104,6 +104,7 @@ export interface Canvas {
 
 export interface Global {
   isLoading: boolean;
+  isFetching: boolean;
   isUserLoggedIn: boolean;
   isSocketConnected: boolean;
   formMessage: string;

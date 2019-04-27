@@ -21,7 +21,8 @@ export const canvasReducer: Reducer = (
 ) => {
   switch (action.type) {
     case types.CANVAS_SET_CURRENT_DRAWING: {
-      return { ...state, currentDrawing: Number(action.payload) };
+      const currentDrawing = action.payload === null ? null : +action.payload;
+      return { ...state, currentDrawing };
     }
     case types.CANVAS_SET_IS_MOUSE_DOWN: {
       return { ...state, isMouseDown: action.payload };
