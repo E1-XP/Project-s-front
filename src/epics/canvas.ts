@@ -2,6 +2,7 @@ import { Epic } from 'redux-observable';
 import {
   map,
   mergeMap,
+  filter,
   tap,
   ignoreElements,
   debounceTime,
@@ -9,19 +10,24 @@ import {
   takeWhile,
   mapTo,
   pluck,
+  concatMap,
+  withLatestFrom,
+  takeUntil,
   catchError,
 } from 'rxjs/operators';
-import { of } from 'rxjs';
+import { of, combineLatest, zip } from 'rxjs';
 
 import { fetchStream } from '../utils/fetchStream';
 
 import { store } from '../store';
-import { State } from '../store/interfaces';
+import { State, DrawingObject, DrawingPoint } from '../store/interfaces';
 
 import { types } from '../actions/types';
 import { actions } from '../actions';
 
 import config from './../config';
+
+import { currentDrawingOnRoomEnter } from './helpers';
 
 export const createNewDrawingEpic: Epic = (action$, state$) =>
   action$.ofType(types.CANVAS_INIT_CREATE_NEW_DRAWING).pipe(
@@ -64,21 +70,113 @@ export const selectDrawingInRoomEpic: Epic = (action$, state$) =>
     }),
   );
 
-// export const drawingTakeIntoOwnershipOnMouseDownEpic: Epic = (action$, state$) => action$
-//     .ofType(types.CANVAS_SET_DRAWING_POINT)
-//     .pipe(
-//         take(1),
-//         takeWhile(() => true),
-//         tap(v => {
-//             console.log('ADDED TO MY PROFILE');
-//         }),
-//         mergeMap(action => from(fetchStream(
-//             `${config.API_URL}/rooms/${state$.value.rooms.active}/drawing/add`,
-//             'POST',
-//             { userId: state$.value.user.userData.id }
-//         ))),
-//         ignoreElements()
-//     );
+// handle after room enter, until admin chage img
+export const drawingTakeIntoOwnershipOnMouseDownOnEnterEpic: Epic<
+  any,
+  any,
+  State
+> = (action$, state$) =>
+  action$.ofType(types.ROOMS_INIT_ENTER_SUCCESS).pipe(
+    concatMap(() =>
+      action$.ofType(types.CANVAS_SET_DRAWING_POINT).pipe(
+        take(1),
+        pluck<{}, DrawingPoint>('payload'),
+        filter(() => {
+          const isFetching = state$.value.global.isFetching;
+          const userDrawings = state$.value.user.drawings;
+          const currentDrawing = state$.value.canvas.currentDrawing;
+          const drawingIdOnRoomEnter = currentDrawingOnRoomEnter.value;
+          const hasDrawingChanged = drawingIdOnRoomEnter !== currentDrawing;
+
+          if (!userDrawings || isFetching || hasDrawingChanged) return false;
+          return (
+            userDrawings.find(itm => itm.id === currentDrawing) === undefined
+          );
+        }),
+      ),
+    ),
+    mergeMap(({ drawingId, userId }) =>
+      fetchStream(`${config.API_URL}/drawings/${drawingId}/addowner`, 'POST', {
+        userId,
+      }).pipe(
+        map(resp => actions.user.setUserDrawings(resp.data)),
+        catchError(err => of(actions.global.networkError(err))),
+      ),
+    ),
+  );
+
+export const setCurrentDrawingOnRoomEnterHelperEpic: Epic<any, any, State> = (
+  action$,
+  state$,
+) =>
+  action$.ofType(types.ROOMS_INIT_ENTER_SUCCESS).pipe(
+    concatMap(() =>
+      action$.ofType(types.CANVAS_SET_CURRENT_DRAWING).pipe(take(1)),
+    ),
+    tap(v =>
+      currentDrawingOnRoomEnter.next(state$.value.canvas.currentDrawing),
+    ),
+    ignoreElements(),
+  );
+
+export const setCurrentDrawingOnEnterrAfterChangeHelperEpic: Epic<
+  any,
+  any,
+  State
+> = (action$, state$) =>
+  action$.ofType(types.CANVAS_SET_CURRENT_DRAWING).pipe(
+    filter(
+      () =>
+        !state$.value.global.isLoading &&
+        !!state$.value.rooms.active &&
+        currentDrawingOnRoomEnter.value !== null,
+    ),
+    tap(() => currentDrawingOnRoomEnter.next(null)),
+    ignoreElements(),
+  );
+
+// handle after in room img change
+export const drawingTakeIntoOwnershipOnMouseDownEpic: Epic<any, any, State> = (
+  action$,
+  state$,
+) =>
+  action$.ofType(types.CANVAS_SET_CURRENT_DRAWING).pipe(
+    filter(({ payload: drawingId }) => {
+      const userDrawings = state$.value.user.drawings;
+
+      return (
+        !!userDrawings &&
+        userDrawings.find(itm => itm.id === drawingId) === undefined
+      );
+    }),
+    concatMap(() =>
+      action$.ofType(types.CANVAS_SET_DRAWING_POINT).pipe(
+        take(1),
+        filter(() => !state$.value.global.isFetching),
+        pluck<{}, DrawingPoint>('payload'),
+      ),
+    ),
+    filter(({ drawingId }) => {
+      const userDrawings = state$.value.user.drawings;
+      const isRoomActive = !!state$.value.rooms.active;
+      const isDrawingSame = currentDrawingOnRoomEnter.value !== null;
+
+      if (!userDrawings) return false;
+      return (
+        isRoomActive &&
+        !isDrawingSame &&
+        userDrawings.find(itm => itm.id === drawingId) === undefined
+      );
+    }),
+    mergeMap(({ drawingId, userId }) =>
+      fetchStream(`${config.API_URL}/drawings/${drawingId}/addowner`, 'POST', {
+        userId,
+      }).pipe(
+        map(resp => actions.user.setUserDrawings(resp.data)),
+        catchError(err => of(actions.global.networkError(err))),
+      ),
+    ),
+  );
 
 export const canvasImageSaveEpic: Epic<any, any, State> = (action$, state$) =>
   action$.ofType(types.CANVAS_INIT_CANVAS_TO_IMAGE).pipe(
@@ -99,9 +197,7 @@ export const canvasImageSaveEpic: Epic<any, any, State> = (action$, state$) =>
     }),
     mergeMap(image =>
       fetchStream(
-        `${config.API_URL}/drawings/${
-          state$.value.canvas.currentDrawing
-        }/save?drawingId=${state$.value.canvas.currentDrawing}`,
+        `${config.API_URL}/drawings/${state$.value.canvas.currentDrawing}/save`,
         'POST',
         { image },
       ),

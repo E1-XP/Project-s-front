@@ -171,9 +171,12 @@ export const bindRoomHandlersEpic: Epic<any, any, State> = (action$, state$) =>
       socket.on(`${roomId}/resendcorrectdrawdata`, (groupInfo: number[]) => {
         const [userId, drawingId, group] = groupInfo;
 
-        const correctGroup = state$.value.canvas.broadcastedDrawingPoints[
-          userId
-        ].find(arr => arr && !!arr.length && arr[0].group === group);
+        const userPoints = state$.value.canvas.broadcastedDrawingPoints[userId];
+        const correctGroup = userPoints
+          ? userPoints.find(
+              arr => arr && !!arr.length && arr[0].group === group,
+            )
+          : undefined;
 
         socket.emit(`${roomId}/resendcorrectdrawdata`, correctGroup);
       });
@@ -198,6 +201,7 @@ export const bindRoomHandlersEpic: Epic<any, any, State> = (action$, state$) =>
       });
 
       socket.on(`${roomId}/draw/change`, (drawingId: string) => {
+        store.dispatch(actions.canvas.clearDrawingPoints());
         store.dispatch(actions.canvas.setCurrentDrawing(drawingId));
       });
 

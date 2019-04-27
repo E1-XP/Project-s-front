@@ -14,7 +14,7 @@ import Button from '@material-ui/core/Button';
 
 import { MainContainer, HeadlineIcon } from './../../styles';
 
-import { PreloaderComponent } from './../shared/preloader';
+import { PreloaderComponent } from './../preloader';
 
 const Img = styled.img`
   width: 100%;
@@ -28,14 +28,11 @@ const PaperWithMinHeight = styled(Paper)`
 
 const NoImagesPlaceholder = styled.div`
   width: 100%;
-  height: 100%;
   display: block;
   align-items: center;
   justify-content: center;
-
-  & :first-child {
-    text-transform: uppercase;
-  }
+  height: calc(100vh / 2);
+  display: flex;
 `;
 
 export const GalleryComponent = ({
@@ -65,7 +62,9 @@ export const GalleryComponent = ({
   };
 
   const getPlaceholder = () => [
-    <NoImagesPlaceholder key={0}>No drawings found.</NoImagesPlaceholder>,
+    <NoImagesPlaceholder key={0}>
+      <Typography variant="h6">No drawings found.</Typography>
+    </NoImagesPlaceholder>,
   ];
 
   if (state.items === undefined && drawings) {
@@ -102,7 +101,7 @@ export const GalleryComponent = ({
                     Previous
                   </Button>
                   <Typography variant="h6" align="center">
-                    {drawings[state.idx].name}
+                    {drawings[state.idx] ? drawings[state.idx].name : ''}
                   </Typography>
                   <Button
                     variant="outlined"

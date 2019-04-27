@@ -17,7 +17,13 @@ const {
   rooms: { initInRoomDrawingSelect },
 } = actions;
 
-import { State, DrawingPoint } from '../../store/interfaces';
+import {
+  State,
+  DrawingPoint,
+  RoomsList,
+  Rooms,
+  UserData,
+} from '../../store/interfaces';
 
 import { withCanvasHandlers } from './../../HOCs/withCanvasHandlers';
 import { withRef } from './../../HOCs/withRef';
@@ -27,6 +33,9 @@ import { CanvasComponent } from './template';
 export interface Props {
   boardState: BoardState;
   setBoardState: (v: object) => void;
+  rooms: RoomsList;
+  activeRoom: Rooms['active'];
+  user: UserData;
   drawingPoints: DrawingPoint[][];
   fill: string;
   weight: number;
@@ -66,6 +75,18 @@ const hooks: ReactLifeCycleFunctions<Props, {}> = {
     window.addEventListener('resize', this.props.onCanvasResize);
     document.addEventListener('mouseup', this.props.onMouseUpOutsideBoard);
   },
+  componentDidUpdate(prevP) {
+    const { activeRoom, rooms, user } = this.props;
+    const adminChangedByMe =
+      prevP.activeRoom &&
+      activeRoom &&
+      prevP.rooms[prevP.activeRoom].adminId !== rooms[activeRoom].adminId &&
+      +prevP.rooms[prevP.activeRoom].adminId === user.id;
+
+    if (adminChangedByMe && prevP.boardState.isImageSelectorOpen) {
+      this.props.setIsImageSelectorOpen(false);
+    }
+  },
   componentWillUnmount() {
     window.removeEventListener('resize', this.props.onCanvasResize);
     document.removeEventListener('mouseup', this.props.onMouseUpOutsideBoard);
@@ -73,8 +94,8 @@ const hooks: ReactLifeCycleFunctions<Props, {}> = {
 };
 
 const stateHandlers = {
-  setIsImageSelectorOpen: (props: Props) => (isOpened?: boolean) => {
-    const value = isOpened || !props.boardState.isImageSelectorOpen;
+  setIsImageSelectorOpen: (props: Props) => (is?: boolean) => {
+    const value = is || !props.boardState.isImageSelectorOpen;
     const bothOpened = value && props.boardState.isColorPickerOpen;
 
     const newState = { ...props.boardState, isImageSelectorOpen: value };
@@ -92,7 +113,7 @@ const stateHandlers = {
   },
 };
 
-const handlers1 = {
+const handlers = {
   handleImageChange: (props: Props) => (e: any) => {
     props.initInRoomDrawingSelect(Number(e.target.closest('li').dataset.id));
   },
@@ -113,7 +134,13 @@ const mapDispatchToProps = {
 
 export const Canvas = compose<Props, {}>(
   connect(
-    ({ canvas }: State) => ({ fill: canvas.fill, weight: canvas.weight }),
+    ({ canvas, rooms, user }: State) => ({
+      fill: canvas.fill,
+      weight: canvas.weight,
+      rooms: rooms.list,
+      activeRoom: rooms.active,
+      user: user.userData,
+    }),
     mapDispatchToProps,
   ),
   withState('boardState', 'setBoardState', {
@@ -121,7 +148,7 @@ export const Canvas = compose<Props, {}>(
     isColorPickerOpen: false,
   }),
   withHandlers(stateHandlers),
-  withHandlers(handlers1),
+  withHandlers(handlers),
   withCanvasHandlers,
   lifecycle(hooks),
   pure,

@@ -3,7 +3,7 @@ import { Route, Switch, Redirect } from 'react-router-dom';
 
 import { withAuthentication } from './../HOCs/withAuthentication';
 
-import { Preloader } from './../components/shared/preloader';
+import { Preloader } from './../components/preloader';
 import { Navbar } from './../components/navbar';
 import { Form } from './../components/form';
 import { Dashboard } from './../components/dashboard';

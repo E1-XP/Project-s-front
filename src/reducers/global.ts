@@ -7,6 +7,7 @@ import { Global } from '../store/interfaces';
 
 const initialGlobal = {
   isLoading: true,
+  isFetching: false,
   isUserLoggedIn: false,
   isSocketConnected: false,
   formMessage: '',
@@ -19,6 +20,8 @@ export const globalReducer: Reducer = (
   switch (action.type) {
     case types.GLOBAL_SET_IS_LOADING:
       return { ...state, isLoading: action.payload };
+    case types.GLOBAL_SET_IS_FETCHING:
+      return { ...state, isFetching: action.payload };
     case types.GLOBAL_SET_IS_USER_LOGGED_IN:
       return { ...state, isUserLoggedIn: action.payload };
     case types.GLOBAL_SET_FORM_MESSAGE:

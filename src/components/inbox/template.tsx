@@ -11,7 +11,7 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import { withTheme, WithTheme } from '@material-ui/core/styles';
 
-import { PreloaderComponent } from './../shared/preloader';
+import { PreloaderComponent } from './../preloader';
 
 import {
   MainContainer,

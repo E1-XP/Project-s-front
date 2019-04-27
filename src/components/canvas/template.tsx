@@ -112,7 +112,6 @@ const hooks: ReactLifeCycleFunctions<
       Object.values(broadcastedDrawingPoints).some(v => !!v.length);
 
     if (shouldRedraw) {
-      console.log('redrawing front');
       this.props.redraw();
     }
   },
@@ -123,7 +122,6 @@ const hooks: ReactLifeCycleFunctions<
       nextP.broadcastedDrawingPoints !== broadcastedDrawingPoints;
 
     if (shouldRedraw) {
-      console.log('redrawing front');
       this.props.redraw();
     }
   },
