@@ -14,7 +14,7 @@ import {
 } from 'rxjs/operators';
 import { of } from 'rxjs';
 
-import { fetchStream } from '../utils/fetchStream';
+import { fetch$ } from '../utils/fetchStream';
 
 import { store } from '../store';
 import { State, DrawingObject, DrawingPoint } from '../store/interfaces';
@@ -32,7 +32,7 @@ export const createNewDrawingEpic: Epic = (action$, state$) =>
       console.log('CREATED NEW DRAWING');
     }),
     mergeMap(action =>
-      fetchStream(
+      fetch$(
         `${config.API_URL}/users/${state$.value.user.userData.id}/drawings/`,
         'POST',
         { name: action.payload.name, userId: state$.value.user.userData.id },
@@ -93,7 +93,7 @@ export const drawingTakeIntoOwnershipOnMouseDownOnEnterEpic: Epic<
       ),
     ),
     mergeMap(({ drawingId, userId }) =>
-      fetchStream(`${config.API_URL}/drawings/${drawingId}/addowner`, 'POST', {
+      fetch$(`${config.API_URL}/drawings/${drawingId}/addowner`, 'POST', {
         userId,
       }).pipe(
         map(resp => actions.user.setUserDrawings(resp.data)),
@@ -166,7 +166,7 @@ export const drawingTakeIntoOwnershipOnMouseDownEpic: Epic<any, any, State> = (
       );
     }),
     mergeMap(({ drawingId, userId }) =>
-      fetchStream(`${config.API_URL}/drawings/${drawingId}/addowner`, 'POST', {
+      fetch$(`${config.API_URL}/drawings/${drawingId}/addowner`, 'POST', {
         userId,
       }).pipe(
         map(resp => actions.user.setUserDrawings(resp.data)),
@@ -193,7 +193,7 @@ export const canvasImageSaveEpic: Epic<any, any, State> = (action$, state$) =>
       return combinedDrawing.toDataURL('image/jpeg', 0.5);
     }),
     mergeMap(image =>
-      fetchStream(
+      fetch$(
         `${config.API_URL}/drawings/${state$.value.canvas.currentDrawing}/save`,
         'POST',
         { image },

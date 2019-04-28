@@ -14,7 +14,7 @@ import { of, merge, from, iif, EMPTY, combineLatest } from 'rxjs';
 import { push } from 'connected-react-router';
 import queryString from 'query-string';
 
-import { fetchStream } from '../utils/fetchStream';
+import { fetch$ } from '../utils/fetchStream';
 
 import { State } from '../store/interfaces';
 
@@ -60,7 +60,7 @@ export const authEpic: Epic = (action$, state$) =>
 export const loginEpic: Epic = (action$, state$) =>
   action$.ofType(types.GLOBAL_INIT_LOGIN).pipe(
     mergeMap(action =>
-      fetchStream(`${config.API_URL}/auth/login`, 'POST', action.payload),
+      fetch$(`${config.API_URL}/auth/login`, 'POST', action.payload),
     ),
     map(resp =>
       resp.status === 200
@@ -75,7 +75,7 @@ export const getUserDataEpic: Epic = (action$, state$) =>
     mergeMap(({ payload }) =>
       merge(
         of(actions.global.setIsLoading(true)),
-        fetchStream(`${config.API_URL}/users/${payload.id}`).pipe(
+        fetch$(`${config.API_URL}/users/${payload.id}`).pipe(
           map(resp => actions.global.initAuthSuccess(resp.data)),
           catchError(err => of(actions.global.networkError(err))),
         ),
@@ -86,7 +86,7 @@ export const getUserDataEpic: Epic = (action$, state$) =>
 export const checkEmailEpic: Epic = (action$, state$) =>
   action$.ofType(types.GLOBAL_INIT_EMAIL_CHECK).pipe(
     mergeMap(action =>
-      fetchStream(`${config.API_URL}${'/auth/emailcheck'}`, 'POST', {
+      fetch$(`${config.API_URL}${'/auth/emailcheck'}`, 'POST', {
         email: action.payload,
       }),
     ),
@@ -102,7 +102,7 @@ export const signUpEpic: Epic = (action$, state$) =>
     mergeMap(({ payload }) =>
       merge(
         of(actions.global.setIsLoading(true)),
-        fetchStream(`${config.API_URL}/auth/signup`, 'POST', payload).pipe(
+        fetch$(`${config.API_URL}/auth/signup`, 'POST', payload).pipe(
           map(({ status, data }) =>
             status === 200
               ? actions.global.initAuthSuccess(data)
@@ -117,7 +117,7 @@ export const signUpEpic: Epic = (action$, state$) =>
 export const sessionAuthEpic: Epic = (action$, state$) =>
   action$.ofType(types.GLOBAL_INIT_SESSION_AUTH).pipe(
     mergeMap(action =>
-      fetchStream(`${config.API_URL}${'/auth/pagerefresh'}`, 'POST'),
+      fetch$(`${config.API_URL}${'/auth/pagerefresh'}`, 'POST'),
     ),
     map(({ status, data }) =>
       status === 200
@@ -201,7 +201,7 @@ export const logoutEpic: Epic = (action$, state$) =>
     mergeMap(() =>
       merge(
         of(actions.global.setIsLoading(true), actions.socket.closeSocket()),
-        fetchStream(`${config.API_URL}${'/auth/logout'}`, 'POST').pipe(
+        fetch$(`${config.API_URL}${'/auth/logout'}`, 'POST').pipe(
           mergeMap(resp =>
             of(
               push('/login'),

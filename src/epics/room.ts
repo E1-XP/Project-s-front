@@ -16,7 +16,7 @@ import {
 import { of, iif, EMPTY, merge } from 'rxjs';
 import { push } from 'connected-react-router';
 
-import { fetchStream } from '../utils/fetchStream';
+import { fetch$ } from '../utils/fetchStream';
 
 import { State } from '../store/interfaces';
 import { store } from '../store';
@@ -27,8 +27,8 @@ import { actions } from '../actions';
 import config from './../config';
 
 import {
-  isRoomLinkParamIncludedInLastRoute,
-  isRoomPasswordCheckedAndValid,
+  isRoomLinkParamIncludedInLastRoute$,
+  isRoomPasswordCheckedAndValid$,
 } from './helpers';
 
 export const roomJoinEpic: Epic = (action$, state$) =>
@@ -66,7 +66,7 @@ export const checkRoomPasswordEpic: Epic = (action$, state$) =>
   action$.ofType(types.ROOMS_CHECK_PASSWORD).pipe(
     pluck<any, any>('payload'),
     mergeMap(password =>
-      fetchStream(
+      fetch$(
         `${config.API_URL}/rooms/${
           state$.value.router.location.pathname.split('/')[2]
         }/checkpassword`,
@@ -74,7 +74,7 @@ export const checkRoomPasswordEpic: Epic = (action$, state$) =>
         { password },
       ).pipe(
         tap(resp =>
-          isRoomPasswordCheckedAndValid.next(
+          isRoomPasswordCheckedAndValid$.next(
             resp.status === 200 ? true : false,
           ),
         ),
@@ -98,7 +98,7 @@ export const checkRoomPasswordEpic: Epic = (action$, state$) =>
 
 export const checkRoomPasswordFailureEpic: Epic = (action$, state$) =>
   action$.ofType(types.ROOMS_CHECK_PASSWORD_FAILURE).pipe(
-    tap(v => isRoomPasswordCheckedAndValid.next(null)),
+    tap(v => isRoomPasswordCheckedAndValid$.next(null)),
     mapTo(actions.global.setFormMessage('provided password is incorrect')),
   );
 
@@ -124,10 +124,10 @@ export const concludeRoomEnterEpic: Epic = (action$, state$) =>
       v => actions.global.setIsLoading(false),
     ),
     tap(v => {
-      isRoomLinkParamIncludedInLastRoute.value &&
-        isRoomLinkParamIncludedInLastRoute.next(false);
-      typeof isRoomPasswordCheckedAndValid.value === 'boolean' &&
-        isRoomPasswordCheckedAndValid.next(null);
+      isRoomLinkParamIncludedInLastRoute$.value &&
+        isRoomLinkParamIncludedInLastRoute$.next(false);
+      typeof isRoomPasswordCheckedAndValid$.value === 'boolean' &&
+        isRoomPasswordCheckedAndValid$.next(null);
     }),
   );
 
@@ -157,7 +157,7 @@ export const handleLoadingOnRoomLeaveEpic: Epic<any, any, State> = (
     filter(
       v =>
         state$.value.global.isUserLoggedIn &&
-        !isRoomLinkParamIncludedInLastRoute.value,
+        !isRoomLinkParamIncludedInLastRoute$.value,
     ),
     delay(350),
     mapTo(actions.global.setIsLoading(false)),
@@ -212,7 +212,7 @@ export const handleRoomCreateEpic: Epic = (action$, state$) =>
 export const getUserImagesEpic: Epic = (action$, state$) =>
   action$.ofType(types.CANVAS_GET_IMAGES_FROM_SERVER).pipe(
     mergeMap(action =>
-      fetchStream(
+      fetch$(
         `${config.API_URL}/users/${state$.value.user.userData.id}/drawings/`,
       ),
     ),
