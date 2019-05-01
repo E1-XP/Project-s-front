@@ -19,7 +19,7 @@ const {
 
 import { State } from './../store/interfaces';
 
-interface Props {
+export interface Props {
   groupCount: number;
   isMouseDown: boolean;
   setIsMouseDown: (v: boolean) => Dispatch;
@@ -70,7 +70,7 @@ const handlers = () => {
     getBackCtx: (props: Props) => () => backBoardRef.getContext('2d')!,
     onMouseDown: (props: Props) => (e: MouseEvent) => {
       const { pageX, pageY } = e;
-    
+
       props.setIsMouseDown(true);
       props.createDrawingPoint({ pageX, pageY }, boardRef!, true);
     },

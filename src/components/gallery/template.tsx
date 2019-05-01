@@ -18,6 +18,7 @@ import { PreloaderComponent } from './../preloader';
 
 const Img = styled.img`
   width: 100%;
+  height: 100%;
   position: relative;
   z-index: -1;
 `;
@@ -35,6 +36,25 @@ const NoImagesPlaceholder = styled.div`
   display: flex;
 `;
 
+const NavContainer = styled.div`
+  width: 100%;
+  height: 150px;
+  position: relative;
+  & > .alice-carousel,
+  .alice-carousel__wrapper {
+    height: 150px;
+  }
+  & .alice-carousel__stage-item:not(.__cloned) {
+    max-width: 33%;
+  }
+  & figure {
+    margin: 0;
+    height: 100%;
+  }
+`;
+
+const responsive = { 0: { items: 3 } };
+
 export const GalleryComponent = ({
   setState,
   state,
@@ -44,20 +64,20 @@ export const GalleryComponent = ({
   onSlideChanged,
   slideTo,
 }: Props) => {
-  const responsive = { 0: { items: 3 } };
-
   const calcCurrThumb = () => {
+    if (drawings!.length <= 3) return 0;
+    if (state.idx >= drawings!.length - 1) return state.idx - 2;
     return state.idx === 0 ? 0 : state.idx - 1;
   };
 
-  const galleryItems = (onClick?: any) => {
+  const getGalleryItems = (onClick?: any) => {
     return drawings!.map((itm, i) => (
-      <div key={i} onClick={onClick ? () => onClick(i) : undefined}>
+      <figure onClick={onClick ? () => onClick(i) : undefined}>
         <Img
           src={`${config.API_URL}/static/images/${itm.id}.jpg`}
           alt="user drawing"
         />
-      </div>
+      </figure>
     ));
   };
 
@@ -68,7 +88,7 @@ export const GalleryComponent = ({
   ];
 
   if (state.items === undefined && drawings) {
-    setState({ ...state, items: galleryItems() });
+    setState({ ...state, items: getGalleryItems() });
   }
 
   return (
@@ -78,7 +98,7 @@ export const GalleryComponent = ({
           <PaperWithMinHeight>
             <Grid container={true} justify="center" alignItems="center">
               <HeadlineIcon>image</HeadlineIcon>
-              <Typography variant="h4">Gallery </Typography>
+              <Typography variant="h4">Gallery</Typography>
             </Grid>
             {drawings ? (
               <>
@@ -112,16 +132,20 @@ export const GalleryComponent = ({
                     Next
                   </Button>
                 </Grid>
-                <Carousel
-                  mouseDragEnabled={true}
-                  startIndex={calcCurrThumb()}
-                  dotsDisabled={true}
-                  buttonsDisabled={true}
-                  infinite={false}
-                  responsive={responsive}
-                  slideToIndex={state.idx - 1}
-                  items={galleryItems(slideTo)}
-                />
+                {!!drawings.length && (
+                  <NavContainer>
+                    <Carousel
+                      mouseDragEnabled={true}
+                      startIndex={calcCurrThumb()}
+                      dotsDisabled={true}
+                      buttonsDisabled={true}
+                      infinite={false}
+                      responsive={responsive}
+                      slideToIndex={state.idx - 1}
+                      items={getGalleryItems(slideTo)}
+                    />
+                  </NavContainer>
+                )}
               </>
             ) : (
               <PreloaderComponent />
