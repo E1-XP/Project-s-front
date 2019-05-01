@@ -31,7 +31,6 @@ const NavWrapper = styled.div`
 
 const StyledButtonBase = styled(ButtonBase)`
   height: 150px;
-  max-width: 33%;
 `;
 
 const ImageContainer = styled.div`
@@ -42,7 +41,9 @@ const ImageContainer = styled.div`
   .alice-carousel__wrapper {
     height: 150px;
   }
-
+  & .alice-carousel__stage-item:not(.__cloned) {
+    max-width: 33%;
+  }
   & ${NavWrapper}:first-of-type {
     left: 0;
   }
