@@ -24,7 +24,6 @@ export const userReducer: Reducer = (
       return { ...state, userData: action.payload };
     }
     case types.CANVAS_SET_USER_DRAWINGS: {
-      console.log(action);
       return { ...state, drawings: action.payload };
     }
     case types.USER_SET_INBOX_MESSAGES: {

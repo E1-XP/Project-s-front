@@ -23,6 +23,8 @@ export interface FormState {
 }
 
 export interface Props {
+  isUserLoggedIn: boolean;
+  isFetching: boolean;
   formState: FormState;
   currentRoute: string;
   formMessage: string;
@@ -30,7 +32,6 @@ export interface Props {
   handleSubmit: (formState: FormState, actions: any) => void;
   initAuthentication: (data: FormState) => Dispatch;
   pushRouter: (str: string) => Dispatch;
-  isUserLoggedIn: () => Dispatch;
   validateUser: (v: FormState) => ErrorMessageProps;
 }
 
@@ -62,6 +63,7 @@ const handlers = {
 const mapStateToProps = ({ global }: State) => ({
   isUserLoggedIn: global.isUserLoggedIn,
   formMessage: global.formMessage,
+  isFetching: global.isFetching,
 });
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({

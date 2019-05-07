@@ -11,7 +11,7 @@ const {
     setGroupCount,
     createDrawingPoint,
     initCanvasToImage,
-    drawCanvas,
+    initDrawCanvas,
     clearCanvas,
     resetDrawing,
   },
@@ -19,7 +19,7 @@ const {
 
 import { State } from './../store/interfaces';
 
-interface Props {
+export interface Props {
   groupCount: number;
   isMouseDown: boolean;
   setIsMouseDown: (v: boolean) => Dispatch;
@@ -33,7 +33,7 @@ interface Props {
     ref: HTMLCanvasElement,
     backRef: HTMLCanvasElement,
   ) => Dispatch;
-  drawCanvas: (
+  initDrawCanvas: (
     ctx: CanvasRenderingContext2D,
     isDrawingOnBack?: boolean,
   ) => Dispatch;
@@ -70,7 +70,7 @@ const handlers = () => {
     getBackCtx: (props: Props) => () => backBoardRef.getContext('2d')!,
     onMouseDown: (props: Props) => (e: MouseEvent) => {
       const { pageX, pageY } = e;
-    
+
       props.setIsMouseDown(true);
       props.createDrawingPoint({ pageX, pageY }, boardRef!, true);
     },
@@ -105,11 +105,11 @@ const handlers = () => {
 const handlers2 = {
   redraw: (props: Props) => () => {
     props.clearCanvas(props.getCtx());
-    props.drawCanvas(props.getCtx());
+    props.initDrawCanvas(props.getCtx());
   },
   redrawBack: (props: Props) => () => {
     props.clearCanvas(props.getBackCtx());
-    props.drawCanvas(props.getBackCtx(), true);
+    props.initDrawCanvas(props.getBackCtx(), true);
   },
   handleReset: (props: Props) => () => {
     props.clearCanvas(props.getCtx());
@@ -120,7 +120,7 @@ const handlers2 = {
   onCanvasResize: (props: Props) =>
     throttle(() => {
       props.clearCanvas(props.getCtx());
-      props.drawCanvas(props.getCtx());
+      props.initDrawCanvas(props.getCtx());
     }, 1000 / 60),
 };
 
@@ -135,7 +135,7 @@ export const withCanvasHandlers = compose(
       setGroupCount,
       createDrawingPoint,
       initCanvasToImage,
-      drawCanvas,
+      initDrawCanvas,
       clearCanvas,
       resetDrawing,
     },

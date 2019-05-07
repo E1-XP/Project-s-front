@@ -25,12 +25,15 @@ import {
   UserData,
 } from '../../store/interfaces';
 
-import { withCanvasHandlers } from './../../HOCs/withCanvasHandlers';
+import {
+  withCanvasHandlers,
+  Props as CanvasHandlersProps,
+} from './../../HOCs/withCanvasHandlers';
 import { withRef } from './../../HOCs/withRef';
 
 import { CanvasComponent } from './template';
 
-export interface Props {
+export interface Props extends CanvasHandlersProps {
   boardState: BoardState;
   setBoardState: (v: object) => void;
   rooms: RoomsList;
@@ -50,19 +53,6 @@ export interface Props {
   handleImageChange: (e: any) => void;
   initInRoomDrawingSelect: (id: number) => Dispatch;
   handleReset: () => void;
-  createBoardRef: (ref: any) => void;
-  createBackBoardRef: (ref: HTMLCanvasElement) => void;
-  getBoardRef: () => HTMLCanvasElement;
-  getBackBoardRef: () => HTMLCanvasElement;
-  getCtx: () => CanvasRenderingContext2D;
-  getBackCtx: () => CanvasRenderingContext2D;
-  onMouseDown: (e: MouseEvent) => void;
-  onMouseMove: (e: MouseEvent) => void;
-  onMouseUp: (e: MouseEvent) => void;
-  redraw: () => void;
-  redrawBack: () => void;
-  onCanvasResize: () => void;
-  onMouseUpOutsideBoard: () => void;
 }
 
 interface BoardState {
@@ -115,7 +105,9 @@ const stateHandlers = {
 
 const handlers = {
   handleImageChange: (props: Props) => (e: any) => {
-    props.initInRoomDrawingSelect(Number(e.target.closest('li').dataset.id));
+    props.initInRoomDrawingSelect(
+      Number(e.target.closest('button').dataset.id),
+    );
   },
   setSelectedColor: (props: Props) => (color: any) => {
     props.setFill(color.hex);

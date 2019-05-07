@@ -13,7 +13,7 @@ import {
 } from 'rxjs/operators';
 import { of, from, iif } from 'rxjs';
 
-import { fetchStream } from '../utils/fetchStream';
+import { fetch$ } from '../utils/fetchStream';
 
 import { types } from '../actions/types';
 import { actions } from '../actions';
@@ -60,9 +60,7 @@ export const handleMessageWriteBroadcastEpic: Epic<any, any, State> = (
 export const checkInboxEpic: Epic = (action$, state$) =>
   action$.ofType(types.USER_CHECK_INBOX).pipe(
     mergeMap(action =>
-      fetchStream(
-        `${config.API_URL}/users/${state$.value.user.userData.id}/inbox`,
-      ),
+      fetch$(`${config.API_URL}/users/${state$.value.user.userData.id}/inbox`),
     ),
     map(resp => actions.user.setInboxMessages(resp.data.messages)),
     catchError(err => of(actions.global.networkError(err))),

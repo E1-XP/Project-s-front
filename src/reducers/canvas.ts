@@ -1,10 +1,8 @@
-import { Reducer } from 'redux';
-
 import { types } from '../actions/types';
 import { PlainAction } from './index';
 import { Canvas, DrawingPoint } from '../store/interfaces';
 
-const initialCanvas = {
+const initialCanvas: Canvas = {
   isMouseDown: false,
   groupCount: 0,
   currentDrawing: null,
@@ -13,12 +11,10 @@ const initialCanvas = {
   drawingPoints: [],
   broadcastedDrawingPoints: {},
   drawingPointsCache: [],
+  latestPoint: null,
 };
 
-export const canvasReducer: Reducer = (
-  state = initialCanvas,
-  action: PlainAction,
-) => {
+export const canvasReducer = (state = initialCanvas, action: PlainAction) => {
   switch (action.type) {
     case types.CANVAS_SET_CURRENT_DRAWING: {
       const currentDrawing = action.payload === null ? null : +action.payload;
@@ -31,6 +27,8 @@ export const canvasReducer: Reducer = (
       return { ...state, groupCount: action.payload };
     }
     case types.CANVAS_SET_DRAWING_POINT: {
+      if (!action.payload) return state;
+
       const { group } = action.payload;
 
       const drawingPoints = state.drawingPoints.slice();
@@ -38,9 +36,14 @@ export const canvasReducer: Reducer = (
 
       drawingPoints[group].push(action.payload);
 
-      return { ...state, drawingPoints };
+      return { ...state, drawingPoints, latestPoint: action.payload };
+    }
+    case types.CANVAS_SET_LATEST_POINT: {
+      return { ...state, latestPoint: action.payload };
     }
     case types.CANVAS_SET_BROADCASTED_DRAWING_POINT: {
+      if (!action.payload) return state;
+
       const { group, userId } = action.payload;
 
       const broadcastedDrawingPoints = Object.assign(
@@ -55,24 +58,38 @@ export const canvasReducer: Reducer = (
       }
       broadcastedDrawingPoints[userId][group].push(action.payload);
 
-      return { ...state, broadcastedDrawingPoints };
+      return {
+        ...state,
+        broadcastedDrawingPoints,
+        latestPoint: action.payload,
+      };
     }
     case types.CANVAS_SET_BROADCASTED_DRAWING_POINTS_GROUP: {
+      if (!action.payload) return state;
+
       const { group, userId } = action.payload[0];
 
       const broadcastedDrawingPoints = Object.assign(
         {},
         state.broadcastedDrawingPoints,
       );
-      broadcastedDrawingPoints[userId][group] = action.payload;
+      broadcastedDrawingPoints[userId][group] = action.payload.filter(
+        (itm: DrawingPoint) => !!itm,
+      );
 
-      return { ...state, broadcastedDrawingPoints };
+      return {
+        ...state,
+        broadcastedDrawingPoints,
+        latestPoint: action.payload[action.payload.length - 1],
+      };
     }
     case types.CANVAS_SET_BROADCASTED_DRAWING_POINTS_BULK: {
       const { userId: currUser, data } = action.payload;
       const userPoints: DrawingPoint[][] = [];
 
       const groupByUserIdAndGroupId = (acc: any, itm: DrawingPoint) => {
+        if (!itm) return acc;
+
         const { userId, group } = itm;
 
         if (userId === currUser) {

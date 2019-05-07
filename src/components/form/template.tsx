@@ -8,6 +8,7 @@ import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import FormControl from '@material-ui/core/FormControl';
 import TextField from '@material-ui/core/TextField';
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 import { MainContainer, GradientButton } from './../../styles';
 
@@ -21,6 +22,7 @@ interface PassedToForm {
   currentRoute: string;
   formMessage: string;
   setFormMessage: Props['setFormMessage'];
+  isFetching: boolean;
 }
 
 const UsernameField = ({ values, handleChange, errors }: InputProps) => (
@@ -66,6 +68,8 @@ const PasswordField = ({ values, handleChange, errors }: InputProps) => (
   />
 );
 
+const minHeight = { minHeight: '21px' };
+
 const Form = ({
   values,
   errors,
@@ -75,6 +79,7 @@ const Form = ({
   currentRoute,
   formMessage,
   setFormMessage,
+  isFetching,
 }: FormikProps<FormState> & PassedToForm) => {
   const handleChange = (e: any) => {
     if (formMessage) setFormMessage('');
@@ -88,14 +93,24 @@ const Form = ({
         {currentRoute === 'signup' && <UsernameField {...inputProps} />}
         <EmailField {...inputProps} />
         <PasswordField {...inputProps} />
-        <Typography align="center" variant="caption" color="error">
+        <Typography
+          align="center"
+          variant="subtitle2"
+          color="error"
+          style={minHeight}
+        >
           {formMessage ||
             [...new Set([errors.username, errors.email, errors.password])].join(
               ', ',
             )}
         </Typography>
-        <GradientButton type="submit" variant="contained" color="primary">
-          Submit
+        <GradientButton
+          type="submit"
+          variant="contained"
+          color="primary"
+          disabled={isFetching}
+        >
+          {isFetching ? <CircularProgress size={24} /> : 'Submit'}
         </GradientButton>
       </FormControl>
     </form>
@@ -109,6 +124,7 @@ export const FormComponent = (props: Props) => {
     handleSubmit,
     formMessage,
     setFormMessage,
+    isFetching,
   } = props;
 
   const formHeading =
@@ -136,6 +152,7 @@ export const FormComponent = (props: Props) => {
                       currentRoute={currentRoute}
                       formMessage={formMessage}
                       setFormMessage={setFormMessage}
+                      isFetching={isFetching}
                     />
                   )}
                 />

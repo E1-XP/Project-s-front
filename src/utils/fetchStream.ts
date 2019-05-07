@@ -8,7 +8,7 @@ interface Response {
   status: number;
 }
 
-export const fetchStream = (
+export const fetch$ = (
   url: string,
   method = 'GET',
   data?: any,

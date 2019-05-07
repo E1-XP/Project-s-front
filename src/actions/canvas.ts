@@ -66,6 +66,11 @@ export const setDrawingPoint: ActionType = (data: DrawingPoint) => ({
   payload: data,
 });
 
+export const setLatestPoint: ActionType = (data: DrawingPoint | null) => ({
+  type: types.CANVAS_SET_LATEST_POINT,
+  payload: data,
+});
+
 export const clearDrawingPoints: ActionType = () => ({
   type: types.CANVAS_CLEAR_DRAWING_POINTS,
 });
@@ -79,10 +84,29 @@ export const clearCanvas: ActionType = ctx => ({
   ctx,
 });
 
-export const drawCanvas: ActionType = (ctx, isDrawingOnBack = false) => ({
-  type: types.CANVAS_DRAW,
+export const initDrawCanvas: ActionType = (
+  ctx: CanvasRenderingContext2D,
+  isDrawingOnBack = false,
+) => ({
+  type: types.CANVAS_INIT_DRAW,
   ctx,
   isDrawingOnBack,
+});
+
+export const drawCanvas: ActionType = (
+  ctx: CanvasRenderingContext2D,
+  toDraw: DrawingPoint[][],
+) => ({
+  type: types.CANVAS_DRAW,
+  ctx,
+  toDraw,
+});
+
+export const getDrawingPoints: ActionType = (
+  ctx: CanvasRenderingContext2D,
+) => ({
+  type: types.CANVAS_GET_DRAWING_POINTS,
+  ctx,
 });
 
 export const setWeight: ActionType = data => ({

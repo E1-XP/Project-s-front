@@ -83,34 +83,69 @@ export const clearCanvasEpic: Epic = (action$, state$) =>
     ignoreElements(),
   );
 
+export const initDrawCanvasEpic: Epic<any, any, State> = (action$, state$) =>
+  action$
+    .ofType(types.CANVAS_INIT_DRAW)
+    .pipe(
+      map(({ ctx, isDrawingOnBack }) =>
+        isDrawingOnBack
+          ? actions.canvas.drawCanvas(
+              ctx,
+              state$.value.canvas.drawingPointsCache,
+            )
+          : actions.canvas.getDrawingPoints(ctx),
+      ),
+    );
+
+export const getDrawingPointsEpic: Epic<any, any, State> = (action$, state$) =>
+  action$.ofType(types.CANVAS_GET_DRAWING_POINTS).pipe(
+    map(({ ctx }) => {
+      const cacheLen = state$.value.canvas.drawingPointsCache.length;
+      const combined = getCombinedDrawingPoints(state$.value);
+
+      // set cache and return points over cache length
+      const divisor = 5;
+      const isNewCacheLengthDifferent =
+        Math.floor(cacheLen / divisor) !==
+        Math.floor(combined.length / divisor);
+
+      if (isNewCacheLengthDifferent) {
+        const newCacheLen = combined.length - (combined.length % divisor);
+        const newCache = combined.slice(0, newCacheLen);
+
+        store.dispatch(actions.canvas.setDrawingPointsCache(newCache));
+
+        return [ctx, combined.slice(newCacheLen)];
+      }
+
+      return [ctx, cacheLen ? combined.slice(cacheLen - 1) : combined];
+    }),
+    map(payload => actions.canvas.drawCanvas(...payload)),
+  );
+
 export const drawCanvasEpic: Epic<any, any, State> = (action$, state$) =>
   action$.ofType(types.CANVAS_DRAW).pipe(
-    map(({ ctx, isDrawingOnBack }) => {
-      const toDraw = !isDrawingOnBack
-        ? getCombinedDrawingPoints(state$.value)
-        : state$.value.canvas.drawingPointsCache;
+    tap<{ ctx: CanvasRenderingContext2D; toDraw: DrawingPoint[][] }>(
+      ({ ctx, toDraw }) => {
+        ctx.lineJoin = 'round';
 
-      return { ctx, toDraw };
-    }),
-    tap(({ ctx, toDraw }) => {
-      ctx.lineJoin = 'round';
+        toDraw.forEach(arr =>
+          arr.forEach((point, i, arr) => {
+            const { x, y, fill, weight } = point;
 
-      toDraw.forEach(arr =>
-        arr.forEach((point, i, arr) => {
-          const { x, y, fill, weight } = point;
+            if (i) {
+              ctx.strokeStyle = fill;
+              ctx.lineWidth = weight;
 
-          if (i) {
-            ctx.strokeStyle = fill;
-            ctx.lineWidth = weight;
-
-            ctx.beginPath();
-            ctx.lineTo(arr[i - 1].x, arr[i - 1].y);
-            ctx.lineTo(x, y);
-            ctx.stroke();
-          }
-        }),
-      );
-    }),
+              ctx.beginPath();
+              ctx.lineTo(arr[i - 1].x, arr[i - 1].y);
+              ctx.lineTo(x, y);
+              ctx.stroke();
+            }
+          }),
+        );
+      },
+    ),
     ignoreElements(),
   );
 
