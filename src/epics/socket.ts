@@ -207,6 +207,7 @@ export const bindRoomHandlersEpic: Epic<any, any, State> = (action$, state$) =>
 
       socket.on(`${roomId}/draw/reset`, (userId: string) => {
         store.dispatch(actions.canvas.clearDrawingPoints());
+        store.dispatch(actions.canvas.setGroupCount(0));
       });
 
       socket.on(`${roomId}/users`, (data: any) => {
