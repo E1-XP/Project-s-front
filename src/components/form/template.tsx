@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Formik, FormikProps } from 'formik';
+import { FormikProps } from 'formik';
 
 import { Props, FormState } from './index';
 
@@ -10,7 +10,7 @@ import FormControl from '@material-ui/core/FormControl';
 import TextField from '@material-ui/core/TextField';
 import CircularProgress from '@material-ui/core/CircularProgress';
 
-import { MainContainer, GradientButton } from './../../styles';
+import { MainContainer, GradientButton, HeadlineIcon } from './../../styles';
 
 interface InputProps {
   values: FormikProps<FormState>['values'];
@@ -118,44 +118,33 @@ const Form = ({
 };
 
 export const FormComponent = (props: Props) => {
-  const {
-    currentRoute,
-    validateUser,
-    handleSubmit,
-    formMessage,
-    setFormMessage,
-    isFetching,
-  } = props;
+  const { currentRoute } = props;
 
-  const formHeading =
+  const formDescription =
     currentRoute === 'login'
-      ? 'Login to enter Project-S'
-      : 'Sign Up to enter Project-S';
+      ? 'Log in to enter Project-S'
+      : 'Sign up to enter Project-S';
+  const FormHeading = currentRoute === 'login' ? 'Login Form' : 'Register Form';
 
   return (
     <MainContainer>
       <Grid container={true} spacing={16} justify="center">
         <Grid item={true} md={7} sm={9} xs={12}>
           <Paper>
-            <Typography align="center" variant="h4" className="mbottom-2">
-              {formHeading}
-            </Typography>
+            <Grid container={true} justify="center">
+              <HeadlineIcon>exit_to_app</HeadlineIcon>
+              <Typography align="center" variant="h4">
+                {FormHeading}
+              </Typography>
+            </Grid>
+            <Grid container={true} justify="center">
+              <Typography align="center" variant="h6">
+                {formDescription}
+              </Typography>
+            </Grid>
             <Grid container={true} justify="center">
               <Grid item={true} md={6} sm={7} xs={10}>
-                <Formik
-                  initialValues={{ email: '', username: '', password: '' }}
-                  validate={validateUser}
-                  onSubmit={handleSubmit}
-                  render={(props: FormikProps<FormState>) => (
-                    <Form
-                      {...props}
-                      currentRoute={currentRoute}
-                      formMessage={formMessage}
-                      setFormMessage={setFormMessage}
-                      isFetching={isFetching}
-                    />
-                  )}
-                />
+                <Form {...props} />
               </Grid>
             </Grid>
           </Paper>

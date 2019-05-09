@@ -23,51 +23,29 @@ import { actions } from '../actions';
 
 import config from './../config';
 
-export const appStartEpic: Epic = (action$, state$) =>
+export const authEpic: Epic = (action$, state$) =>
   action$
-    .ofType(types.GLOBAL_INIT_APP)
+    .ofType(types.GLOBAL_INIT_AUTHENTICATION)
     .pipe(
-      mergeMap(() =>
-        iif(
-          () => !!localStorage.getItem('isAuth'),
-          of(actions.global.initSessionAuth()),
-          of(
-            actions.global.setIsLoading(false),
-            push(
-              ['', 'login', 'dashboard'].includes(
-                state$.value.router.location.pathname.toLowerCase().slice(1),
-              )
-                ? '/login'
-                : `/login?link=${state$.value.router.location.pathname
-                    .toLowerCase()
-                    .slice(1)}`,
-            ),
-          ),
-        ),
+      map(({ payload }) =>
+        state$.value.router.location.pathname.toLowerCase().slice(1) === 'login'
+          ? actions.global.initLogin(payload)
+          : actions.global.initSignUp(payload),
       ),
     );
-
-export const authEpic: Epic = (action$, state$) =>
-  action$.ofType(types.GLOBAL_INIT_AUTHENTICATION).pipe(
-    map(({ payload }) =>
-      state$.value.router.location.pathname.toLowerCase().slice(1) === 'login'
-        ? actions.global.initLogin(payload)
-        : actions.global.initSignUp(payload),
-    ),
-    catchError(err => of(actions.global.networkError(err))),
-  );
 
 export const loginEpic: Epic = (action$, state$) =>
   action$.ofType(types.GLOBAL_INIT_LOGIN).pipe(
     mergeMap(action =>
-      fetch$(`${config.API_URL}/auth/login`, 'POST', action.payload),
+      fetch$(`${config.API_URL}/auth/login`, 'POST', action.payload).pipe(
+        map(resp =>
+          resp.status === 200
+            ? actions.global.initGetUserData(resp.data)
+            : actions.global.setFormMessage('invalid data provided'),
+        ),
+        catchError(err => of(actions.global.networkError(err))),
+      ),
     ),
-    map(resp =>
-      resp.status === 200
-        ? actions.global.initGetUserData(resp.data)
-        : actions.global.setFormMessage('invalid data provided'),
-    ),
-    catchError(err => of(actions.global.networkError(err))),
   );
 
 export const getUserDataEpic: Epic = (action$, state$) =>
@@ -88,12 +66,14 @@ export const checkEmailEpic: Epic = (action$, state$) =>
     mergeMap(action =>
       fetch$(`${config.API_URL}${'/auth/emailcheck'}`, 'POST', {
         email: action.payload,
-      }),
-    ),
-    map(({ status }) =>
-      status === 200
-        ? actions.global.setFormMessage('')
-        : actions.global.setFormMessage('this email is already taken'),
+      }).pipe(
+        map(({ status }) =>
+          status === 200
+            ? actions.global.setFormMessage('')
+            : actions.global.setFormMessage('this email is already taken'),
+        ),
+        catchError(err => of(actions.global.networkError(err))),
+      ),
     ),
   );
 
@@ -117,14 +97,15 @@ export const signUpEpic: Epic = (action$, state$) =>
 export const sessionAuthEpic: Epic = (action$, state$) =>
   action$.ofType(types.GLOBAL_INIT_SESSION_AUTH).pipe(
     mergeMap(action =>
-      fetch$(`${config.API_URL}${'/auth/pagerefresh'}`, 'POST'),
+      fetch$(`${config.API_URL}${'/auth/pagerefresh'}`, 'POST').pipe(
+        map(({ status, data }) =>
+          status === 200
+            ? actions.global.initAuthSuccess(data)
+            : actions.global.authFailure(),
+        ),
+        catchError(err => of(actions.global.networkError(err))),
+      ),
     ),
-    map(({ status, data }) =>
-      status === 200
-        ? actions.global.initAuthSuccess(data)
-        : actions.global.authFailure(),
-    ),
-    catchError(err => of(actions.global.networkError(err))),
   );
 
 export const authSuccessEpic: Epic = (action$, state$) =>

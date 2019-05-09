@@ -33,17 +33,13 @@ export const fetch$ = (
       });
 
       const toJSON = await response.json();
-      store.dispatch(actions.global.setIsFetching(false));
 
       return {
         data: toJSON,
         status: response.status,
       };
-    } catch (err) {
-      console.log(err);
+    } finally {
       store.dispatch(actions.global.setIsFetching(false));
-
-      return err;
     }
   };
 

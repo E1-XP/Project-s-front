@@ -216,8 +216,9 @@ export const getUserImagesEpic: Epic = (action$, state$) =>
     mergeMap(action =>
       fetch$(
         `${config.API_URL}/users/${state$.value.user.userData.id}/drawings/`,
+      ).pipe(
+        map(resp => actions.user.setUserDrawings(resp.data.drawings)),
+        catchError(err => of(actions.global.networkError(err))),
       ),
     ),
-    map(resp => actions.user.setUserDrawings(resp.data.drawings)),
-    catchError(err => of(actions.global.networkError(err))),
   );

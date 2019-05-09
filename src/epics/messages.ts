@@ -60,10 +60,13 @@ export const handleMessageWriteBroadcastEpic: Epic<any, any, State> = (
 export const checkInboxEpic: Epic = (action$, state$) =>
   action$.ofType(types.USER_CHECK_INBOX).pipe(
     mergeMap(action =>
-      fetch$(`${config.API_URL}/users/${state$.value.user.userData.id}/inbox`),
+      fetch$(
+        `${config.API_URL}/users/${state$.value.user.userData.id}/inbox`,
+      ).pipe(
+        map(resp => actions.user.setInboxMessages(resp.data.messages)),
+        catchError(err => of(actions.global.networkError(err))),
+      ),
     ),
-    map(resp => actions.user.setInboxMessages(resp.data.messages)),
-    catchError(err => of(actions.global.networkError(err))),
   );
 
 export const sendRoomInvitationEpic: Epic = (action$, state$) =>

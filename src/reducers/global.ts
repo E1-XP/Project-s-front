@@ -8,6 +8,7 @@ import { Global } from '../store/interfaces';
 const initialGlobal = {
   isLoading: true,
   isFetching: false,
+  hasErrored: false,
   isUserLoggedIn: false,
   isSocketConnected: false,
   formMessage: '',
@@ -28,11 +29,9 @@ export const globalReducer: Reducer = (
       return { ...state, formMessage: action.payload };
     case types.SOCKET_SET_CONNECTION_STATUS:
       return { ...state, isSocketConnected: action.payload };
-    case types.GLOBAL_NETWORK_ERROR: {
-      console.log('ERROR: ', action.payload);
-
-      return state;
-    }
+    case types.GLOBAL_SET_HAS_ERRORED:
+      return { ...state, hasErrored: action.payload };
+    case types.GLOBAL_NETWORK_ERROR:
     default:
       return state;
   }
