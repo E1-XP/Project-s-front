@@ -36,15 +36,16 @@ export const createNewDrawingEpic: Epic = (action$, state$) =>
         `${config.API_URL}/users/${state$.value.user.userData.id}/drawings/`,
         'POST',
         { name: action.payload.name, userId: state$.value.user.userData.id },
+      ).pipe(
+        mergeMap(resp =>
+          of(
+            actions.canvas.setCurrentDrawing(resp.data.currentId),
+            actions.user.setUserDrawings(resp.data.drawings),
+          ),
+        ),
+        catchError(err => of(actions.global.networkError(err))),
       ),
     ),
-    mergeMap(resp =>
-      of(
-        actions.canvas.setCurrentDrawing(resp.data.currentId),
-        actions.user.setUserDrawings(resp.data.drawings),
-      ),
-    ),
-    catchError(err => of(actions.global.networkError(err))),
   );
 
 export const selectDrawingEpic: Epic = (action$, state$) =>
@@ -197,9 +198,8 @@ export const canvasImageSaveEpic: Epic<any, any, State> = (action$, state$) =>
         `${config.API_URL}/drawings/${state$.value.canvas.currentDrawing}/save`,
         'POST',
         { image },
-      ),
+      ).pipe(catchError(err => of(actions.global.networkError(err)))),
     ),
-    catchError(err => of(actions.global.networkError(err))),
     ignoreElements(),
   );
 
