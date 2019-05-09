@@ -1,13 +1,13 @@
 import { push } from 'connected-react-router';
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
+import { compose, lifecycle, ReactLifeCycleFunctions } from 'recompose';
 import {
-  compose,
-  withHandlers,
-  lifecycle,
-  ReactLifeCycleFunctions,
-} from 'recompose';
-import { ErrorMessageProps } from 'formik';
+  withFormik,
+  WithFormikConfig,
+  FormikProps,
+  ErrorMessageProps,
+} from 'formik';
 
 import { State } from '../../store/interfaces';
 import { actions } from '../../actions';
@@ -22,14 +22,13 @@ export interface FormState {
   password: string;
 }
 
-export interface Props {
+export interface Props extends FormikProps<FormState> {
   isUserLoggedIn: boolean;
   isFetching: boolean;
   formState: FormState;
   currentRoute: string;
   formMessage: string;
   setFormMessage: (v: string) => Dispatch;
-  handleSubmit: (formState: FormState, actions: any) => void;
   initAuthentication: (data: FormState) => Dispatch;
   pushRouter: (str: string) => Dispatch;
   validateUser: (v: FormState) => ErrorMessageProps;
@@ -38,12 +37,12 @@ export interface Props {
 const hooks: ReactLifeCycleFunctions<Props, {}> = {
   componentDidMount() {
     const { isUserLoggedIn, pushRouter } = this.props;
-
     isUserLoggedIn && pushRouter('/dashboard');
   },
   componentDidUpdate(prevP, prevS) {
     if (prevP.currentRoute !== this.props.currentRoute) {
       this.props.setFormMessage('');
+      this.props.handleReset();
     }
   },
   componentWillUnmount() {
@@ -53,9 +52,10 @@ const hooks: ReactLifeCycleFunctions<Props, {}> = {
   },
 };
 
-const handlers = {
-  handleSubmit: (props: Props) => (values: FormState, actions: any) => {
-    console.log('values', values);
+const formikConfig: WithFormikConfig<Props, FormState> = {
+  mapPropsToValues: props => ({ email: '', username: '', password: '' }),
+  validate: (values, props) => props.validateUser(values),
+  handleSubmit: (values, { props }) => {
     props.initAuthentication(values);
   },
 };
@@ -79,6 +79,6 @@ export const Form = compose<Props, {}>(
     mapDispatchToProps,
   ),
   withUserValidation,
-  withHandlers(handlers),
+  withFormik(formikConfig),
   lifecycle(hooks),
 )(FormComponent);
