@@ -15,7 +15,8 @@ import ListItemAvatar from '@material-ui/core/ListItemAvatar';
 import Avatar from '@material-ui/core/Avatar';
 import Icon from '@material-ui/core/Icon';
 
-import { GradientButton, HeadlineIcon, FullHeightPaper } from './../../styles';
+import { Heading } from './../shared/heading';
+import { GradientButton, FullHeightPaper } from './../../styles';
 
 interface Params {
   id: string;
@@ -57,12 +58,10 @@ export const RoomDashboard = compose<CombinedProps, PassedProps>(
     user,
   }: CombinedProps) => (
     <FullHeightPaper>
-      <Grid container={true} alignItems="center">
-        <HeadlineIcon>people</HeadlineIcon>
-        <Typography variant="h4">
-          Room {rooms.list[match.params.id].name}
-        </Typography>
-      </Grid>
+      <Heading
+        text={`Room ${rooms.list[match.params.id].name}`}
+        icon="people"
+      />
       <Typography variant="h5">
         Currently online: {Object.keys(users.selectedRoom).length}
       </Typography>

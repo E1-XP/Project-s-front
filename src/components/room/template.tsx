@@ -13,6 +13,7 @@ import { MainContainer, GradientButton } from './../../styles';
 import { RoomDashboard } from './dashboard';
 import { Canvas } from '../canvas';
 import { Chat } from '../chat';
+import { Heading } from './../shared/heading';
 
 const GridWithPadding = styled(Grid)`
   padding-top: 1rem;
@@ -24,11 +25,13 @@ const NoRoomPlaceholder = () => (
     <Grid container={true} spacing={16}>
       <Grid item={true} xs={12}>
         <Paper>
-          <Typography variant="h5" align="center" className="mbottom-2">
-            Room not exist
-          </Typography>
+          <Heading
+            justify="center"
+            text="Room not exist"
+            icon="remove_circle"
+          />
           <GridWithPadding container={true} justify="center">
-            <Typography variant="subtitle1">
+            <Typography variant="body1">
               Probably admin closed it or you entered incorrect url.
             </Typography>
           </GridWithPadding>

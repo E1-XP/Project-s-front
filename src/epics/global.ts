@@ -33,7 +33,7 @@ export const appStartEpic: Epic = (action$, state$) =>
         of(
           actions.global.setIsLoading(false),
           push(
-            ['', 'login', 'signup', 'dashboard'].includes(currLocation)
+            ['', 'login', 'signup', 'dashboard', '500'].includes(currLocation)
               ? currLocation === 'signup'
                 ? '/signup'
                 : '/login'
@@ -49,5 +49,13 @@ export const appStartEpic: Epic = (action$, state$) =>
 export const handleErrorsEpic: Epic<any, any, State> = (action$, state$) =>
   action$.ofType(types.GLOBAL_NETWORK_ERROR).pipe(
     tap(({ payload }) => console.log('ERROR: ', payload)),
-    mergeMap(() => of(actions.global.setHasErrored(true), push('/500'))),
+    mergeMap(() =>
+      of(
+        actions.global.setHasErrored(true),
+        push('/500'),
+        state$.value.global.isLoading
+          ? actions.global.setIsLoading(false)
+          : { type: 'NULL' },
+      ),
+    ),
   );

@@ -5,7 +5,6 @@ import { Dispatch } from 'redux';
 import { push } from 'connected-react-router';
 import styled from 'styled-components';
 
-import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
@@ -13,7 +12,8 @@ import ListItemText from '@material-ui/core/ListItemText';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import Icon from '@material-ui/core/Icon';
 
-import { FullHeightPaper, HeadlineIcon, GradientButton } from './../../styles';
+import { Heading } from './../shared/heading';
+import { FullHeightPaper, GradientButton } from './../../styles';
 
 import { State, Rooms } from './../../store/interfaces';
 
@@ -42,6 +42,11 @@ const ListWrapper = styled.div`
 
 const marginLeft = { marginLeft: '.5rem' };
 
+const TypographyWithMargin = styled(Typography)`
+  margin-top: 16px !important;
+  margin-left: 8px !important;
+`;
+
 export const RoomsList = compose<Props, {}>(
   connect(
     ({ rooms }: State) => ({ rooms }),
@@ -50,14 +55,11 @@ export const RoomsList = compose<Props, {}>(
   withHandlers(handlers),
 )(({ rooms, handleRoomClick, goToCreateRoom }: Props) => (
   <FullHeightPaper>
-    <Grid container={true} alignItems="center">
-      <HeadlineIcon>group_work</HeadlineIcon>
-      <Typography variant="h4">Available Rooms</Typography>
-    </Grid>
+    <Heading text="Available Rooms" icon="group_work" />
     <ListWrapper>
-      <List>
-        {rooms.list && Object.keys(rooms.list).length ? (
-          Object.keys(rooms.list).map(itm => (
+      {rooms.list && Object.keys(rooms.list).length ? (
+        <List>
+          {Object.keys(rooms.list).map(itm => (
             <ListItem
               key={itm}
               data-id={itm}
@@ -73,13 +75,13 @@ export const RoomsList = compose<Props, {}>(
                 secondary={rooms.list[itm].isPrivate ? 'private' : 'public'}
               />
             </ListItem>
-          ))
-        ) : (
-          <ListItem key={0}>
-            <ListItemText primary="No rooms available. Create one using button below." />
-          </ListItem>
-        )}
-      </List>
+          ))}
+        </List>
+      ) : (
+        <TypographyWithMargin variant="body1">
+          No rooms available. Create one using button below.
+        </TypographyWithMargin>
+      )}
     </ListWrapper>
     <GradientButton
       variant="contained"

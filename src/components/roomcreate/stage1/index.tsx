@@ -12,6 +12,7 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Switch from '@material-ui/core/Switch';
 
 import { MainContainer, GradientButton, ButtonIcon } from './../../../styles';
+import { Heading } from '../../shared/heading';
 
 interface Props {}
 
@@ -42,9 +43,7 @@ export const RoomCreateForm = ({
       <Grid container={true} spacing={16}>
         <Grid item={true} xs={12}>
           <Paper>
-            <Typography variant="h4" align="center">
-              Create new Room
-            </Typography>
+            <Heading justify="center" icon="create" text="Create new Room" />
             <Grid container={true} justify="center" style={height500}>
               <Grid item={true} xs={9} md={6}>
                 <FormControl fullWidth={true} margin="normal">

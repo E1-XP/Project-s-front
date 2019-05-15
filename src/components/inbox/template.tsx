@@ -11,6 +11,7 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import { withTheme, WithTheme } from '@material-ui/core/styles';
 
+import { Heading } from './../shared/heading';
 import { PreloaderComponent } from './../preloader';
 
 import {
@@ -48,10 +49,7 @@ export const InboxComponent = ({ user, users, rooms, pushRouter }: Props) => {
       <Grid container={true} spacing={16}>
         <Grid item={true} xs={12}>
           <Paper>
-            <Grid container={true} justify="center" alignItems="center">
-              <HeadlineIcon>inbox</HeadlineIcon>
-              <Typography variant="h4">Inbox</Typography>
-            </Grid>
+            <Heading justify="center" text="Inbox" icon="inbox" />
             <Grid container={true} justify="center">
               <Grid item={true} md={9}>
                 <InboxContent>
