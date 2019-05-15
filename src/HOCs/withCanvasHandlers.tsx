@@ -1,8 +1,10 @@
 import { compose, withHandlers } from 'recompose';
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
-import { MouseEvent } from 'react';
+import { MouseEvent, TouchEvent } from 'react';
 import throttle from 'lodash/throttle';
+
+import { shallowEventAdapter } from './../utils/eventAdapter';
 
 import { actions } from './../actions';
 const {
@@ -18,6 +20,10 @@ const {
 } = actions;
 
 import { State } from './../store/interfaces';
+
+type PointerEvent =
+  | MouseEvent<HTMLCanvasElement>
+  | TouchEvent<HTMLCanvasElement>;
 
 export interface Props {
   groupCount: number;
@@ -44,9 +50,9 @@ export interface Props {
   getBackBoardRef: () => HTMLCanvasElement;
   getCtx: () => CanvasRenderingContext2D;
   getBackCtx: () => CanvasRenderingContext2D;
-  onMouseDown: (e: MouseEvent) => void;
-  onMouseMove: (e: MouseEvent) => void;
-  onMouseUp: (e: MouseEvent) => void;
+  onPointerDown: (e: PointerEvent) => void;
+  onPointerMove: (e: PointerEvent) => void;
+  onPointerUp: (e: PointerEvent) => void;
   onMouseUpOutsideBoard: () => void;
   onCanvasResize: () => void;
   redraw: () => void;
@@ -68,19 +74,22 @@ const handlers = () => {
     getBackBoardRef: (props: Props) => () => backBoardRef,
     getCtx: (props: Props) => () => boardRef.getContext('2d')!,
     getBackCtx: (props: Props) => () => backBoardRef.getContext('2d')!,
-    onMouseDown: (props: Props) => (e: MouseEvent) => {
-      const { pageX, pageY } = e;
+    onPointerDown: (props: Props) =>
+      shallowEventAdapter(e => {
+        e.preventDefault && e.preventDefault();
 
-      props.setIsMouseDown(true);
-      props.createDrawingPoint({ pageX, pageY }, boardRef!, true);
-    },
-    onMouseMove: (props: Props) => (e: MouseEvent) => {
-      if (!props.isMouseDown) return;
+        props.setIsMouseDown(true);
+        props.createDrawingPoint(e, boardRef!, true);
+      }),
+    onPointerMove: (props: Props) =>
+      shallowEventAdapter(e => {
+        e.preventDefault && e.preventDefault();
 
-      const { pageX, pageY } = e;
-      props.createDrawingPoint({ pageX, pageY }, boardRef!);
-    },
-    onMouseUp: (props: Props) => (e: MouseEvent) => {
+        if (!props.isMouseDown) return;
+
+        props.createDrawingPoint(e, boardRef!);
+      }),
+    onPointerUp: (props: Props) => (e: PointerEvent) => {
       const { groupCount } = props;
 
       props.setIsMouseDown(false);
@@ -103,10 +112,13 @@ const handlers = () => {
 };
 
 const handlers2 = {
-  redraw: (props: Props) => () => {
-    props.clearCanvas(props.getCtx());
-    props.initDrawCanvas(props.getCtx());
-  },
+  redraw: throttle(
+    (props: Props) => () => {
+      props.clearCanvas(props.getCtx());
+      props.initDrawCanvas(props.getCtx());
+    },
+    5000,
+  ),
   redrawBack: (props: Props) => () => {
     props.clearCanvas(props.getBackCtx());
     props.initDrawCanvas(props.getBackCtx(), true);
@@ -117,11 +129,13 @@ const handlers2 = {
 
     props.initCanvasToImage(props.getBoardRef(), props.getBackBoardRef());
   },
-  onCanvasResize: (props: Props) =>
-    throttle(() => {
+  onCanvasResize: throttle(
+    (props: Props) => () => {
       props.clearCanvas(props.getCtx());
       props.initDrawCanvas(props.getCtx());
-    }, 1000 / 60),
+    },
+    1000 / 60,
+  ),
 };
 
 export const withCanvasHandlers = compose(
