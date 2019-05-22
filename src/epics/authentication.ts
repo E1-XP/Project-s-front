@@ -169,12 +169,11 @@ export const logoutEpic: Epic = (action$, state$) =>
       const pathName = state$.value.router.location.pathname;
       const isOnRoomRoute = /^\/room\/\d+(\/)?$/.test(pathName);
 
-      let shouldLeave = true;
       if (isOnRoomRoute) {
-        shouldLeave = confirm('Are you sure? This will close your room.');
+        return confirm('Are you sure? This will close your room.');
       }
 
-      return shouldLeave;
+      return true;
     }),
     tap(() => {
       localStorage.removeItem('isAuth');

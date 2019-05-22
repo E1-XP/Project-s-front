@@ -29,10 +29,12 @@ export const FullHeightPaper = styled(Paper)`
 export const GradientButton = styled(Button)`
   background: ${({ disabled }) =>
     disabled ? 'inherit' : 'linear-gradient(to right, #ff00cc, #333399)'};
+  color: #fff !important;
 `;
 
 export const ButtonIcon = styled(Icon)`
   margin-left: 0.5rem;
+  color: #fff;
 `;
 
 export const HeadingSection = styled(Grid)`

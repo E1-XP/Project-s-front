@@ -55,10 +55,10 @@ const handlers = {
     props.setIsImageSelectorOpen();
   },
   sendInvitationLink: (props: Props) => (e: any) => {
-    const roomId = Number(props.match.params.id);
+    const roomId = +props.match.params.id;
     const senderId = props.user.id;
     const senderName = props.user.username;
-    const receiverId = e.target.closest('li').dataset.id;
+    const receiverId = +e.target.closest('li').dataset.id;
 
     if (senderId === null) throw new Error('senderId is not a value');
 
