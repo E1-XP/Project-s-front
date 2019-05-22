@@ -1,9 +1,8 @@
-import { compose, lifecycle, ReactLifeCycleFunctions } from 'recompose';
+import { compose, withHandlers } from 'recompose';
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
 import { push } from 'connected-react-router';
 
-import { actions } from '../../actions';
 import { State, User, Users, RoomsList } from '../../store/interfaces';
 
 import { InboxComponent } from './template';
@@ -12,17 +11,10 @@ export interface Props {
   user: User;
   users: Users;
   rooms: RoomsList;
+  pushToRoom: (e: any) => void;
   pushRouter: (s: string) => Dispatch;
-  initCheckInbox: () => Dispatch;
-  setInboxCount: (v?: number) => Dispatch;
+  getDateFormat: (d: Date) => string;
 }
-
-const hooks: ReactLifeCycleFunctions<Props, {}> = {
-  componentDidMount() {
-    this.props.initCheckInbox();
-    this.props.setInboxCount(0);
-  },
-};
 
 const mapStateToProps = ({ user, users, rooms }: State) => ({
   user,
@@ -31,8 +23,6 @@ const mapStateToProps = ({ user, users, rooms }: State) => ({
 });
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({
-  initCheckInbox: () => dispatch(actions.user.initCheckInbox()),
-  setInboxCount: (v?: number) => dispatch(actions.user.setInboxCount(v)),
   pushRouter: (s: string) => dispatch(push(s)),
 });
 
@@ -41,5 +31,15 @@ export const Inbox = compose<Props, {}>(
     mapStateToProps,
     mapDispatchToProps,
   ),
-  lifecycle<Props, {}>(hooks),
+  withHandlers({
+    pushToRoom: ({ pushRouter }: Props) => (e: any) => {
+      pushRouter(`/room/${e.target.closest('button').dataset.id}`);
+    },
+    getDateFormat: ({  }: Props) => (d: Date) => {
+      const addZero = (num: number) => (num < 10 ? `0${num}` : num);
+      return `${d.getFullYear()}.${addZero(d.getMonth() + 1)}.${addZero(
+        d.getDate(),
+      )}`;
+    },
+  }),
 )(InboxComponent);

@@ -4,6 +4,7 @@ import {
   filter,
   mergeMap,
   tap,
+  take,
   ignoreElements,
   mapTo,
   pluck,
@@ -11,7 +12,8 @@ import {
   debounceTime,
   throttleTime,
 } from 'rxjs/operators';
-import { of, from, iif } from 'rxjs';
+import { of, from, iif, combineLatest } from 'rxjs';
+import { LOCATION_CHANGE } from 'connected-react-router';
 
 import { fetch$ } from '../utils/fetchStream';
 
@@ -54,6 +56,40 @@ export const handleMessageWriteBroadcastEpic: Epic<any, any, State> = (
     debounceTime(1500),
     map(({ writerId }: any) =>
       actions.chats.handleWriteMessageBroadcastClear(writerId),
+    ),
+  );
+
+export const fetchOnInboxRouteEpic: Epic = (action$, state$) =>
+  action$.ofType(LOCATION_CHANGE).pipe(
+    pluck<any, any>('payload'),
+    filter(payload =>
+      payload.location.pathname.toLowerCase().startsWith('/inbox'),
+    ),
+    mergeMap(() =>
+      of(actions.user.setInboxCount(0), actions.user.initCheckInbox()),
+    ),
+  );
+
+export const fetchOnInboxRouteInstantEpic: Epic<any, any, State> = (
+  action$,
+  state$,
+) =>
+  combineLatest([
+    action$
+      .ofType(LOCATION_CHANGE)
+      .pipe(
+        filter(
+          ({ payload }) =>
+            payload.location.pathname.toLowerCase().startsWith('/inbox') &&
+            !state$.value.global.isUserLoggedIn,
+        ),
+      ),
+    action$.ofType(types.USER_SET_USER_DATA).pipe(take(1)),
+    action$.ofType(types.ROOMS_SET).pipe(take(1)),
+    action$.ofType(types.GLOBAL_SET_IS_USER_LOGGED_IN).pipe(take(1)),
+  ]).pipe(
+    mergeMap(() =>
+      of(actions.user.setInboxCount(0), actions.user.initCheckInbox()),
     ),
   );
 
