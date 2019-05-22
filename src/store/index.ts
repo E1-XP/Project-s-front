@@ -37,7 +37,7 @@ const composeEnhancers = composeWithDevTools({
   },
 });
 
-export const store = createStore(
+export const store = createStore<State, any, {}, {}>(
   createRootReducer(history),
   composeEnhancers(applyMiddleware(...middlewares)),
 );

@@ -12,8 +12,9 @@ import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 
-import { MainContainer, HeadlineIcon } from './../../styles';
+import { MainContainer } from './../../styles';
 
+import { Heading } from './../shared/heading';
 import { PreloaderComponent } from './../preloader';
 
 const Img = styled.img`
@@ -45,7 +46,10 @@ const NavContainer = styled.div`
     height: 150px;
   }
   & .alice-carousel__stage-item:not(.__cloned) {
-    max-width: 33%;
+    max-width: 50%;
+    @media only screen and (min-width: 445px) {
+      max-width: 33%;
+    }
   }
   & figure {
     margin: 0;
@@ -53,7 +57,7 @@ const NavContainer = styled.div`
   }
 `;
 
-const responsive = { 0: { items: 3 } };
+const responsive = { 0: { items: 2 }, 445: { items: 3 } };
 
 export const GalleryComponent = ({
   setState,
@@ -65,8 +69,12 @@ export const GalleryComponent = ({
   slideTo,
 }: Props) => {
   const calcCurrThumb = () => {
-    if (drawings!.length <= 3) return 0;
-    if (state.idx >= drawings!.length - 1) return state.idx - 2;
+    const itmLen = window.innerWidth >= 445 ? 3 : 2;
+
+    if (drawings!.length <= itmLen) return 0;
+    if (state.idx >= drawings!.length - 1) {
+      return state.idx - (itmLen === 3 ? 2 : 1);
+    }
     return state.idx === 0 ? 0 : state.idx - 1;
   };
 
@@ -96,10 +104,7 @@ export const GalleryComponent = ({
       <Grid container={true} spacing={16}>
         <Grid item={true} xs={12}>
           <PaperWithMinHeight>
-            <Grid container={true} justify="center" alignItems="center">
-              <HeadlineIcon>image</HeadlineIcon>
-              <Typography variant="h4">Gallery</Typography>
-            </Grid>
+            <Heading text="Gallery" icon="image" justify="center" />
             {drawings ? (
               <>
                 <Carousel
@@ -138,9 +143,9 @@ export const GalleryComponent = ({
                       mouseDragEnabled={true}
                       startIndex={calcCurrThumb()}
                       dotsDisabled={true}
+                      responsive={responsive}
                       buttonsDisabled={true}
                       infinite={false}
-                      responsive={responsive}
                       slideToIndex={state.idx - 1}
                       items={getGalleryItems(slideTo)}
                     />

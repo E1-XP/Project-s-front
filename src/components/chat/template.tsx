@@ -18,7 +18,7 @@ import Popover, { PopoverOrigin } from '@material-ui/core/Popover';
 
 import { CombinedProps } from './index';
 
-import { HeadlineIcon } from './../../styles';
+import { Heading } from './../shared/heading';
 
 const Wrapper = styled.div`
   position: relative;
@@ -159,10 +159,7 @@ export const ChatComponent = ({
 
   return (
     <Paper>
-      <Grid container={true} alignItems="center">
-        <HeadlineIcon>chat</HeadlineIcon>
-        <Typography variant="h4">{heading}</Typography>
-      </Grid>
+      <Heading text={heading} icon="chat" />
       <ChatListWrapper chatHeight={chatHeight}>
         <RootRef rootRef={onListRef}>
           <List>{getMessages(messages, user)}</List>

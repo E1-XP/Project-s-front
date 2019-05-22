@@ -42,7 +42,10 @@ const ImageContainer = styled.div`
     height: 150px;
   }
   & .alice-carousel__stage-item:not(.__cloned) {
-    max-width: 33%;
+    max-width: 50%;
+    @media only screen and (min-width: 445px) {
+      max-width: 33%;
+    }
   }
   & ${NavWrapper}:first-of-type {
     left: 0;
@@ -63,7 +66,7 @@ const GridListTileBarWithCurrent = styled(GridListTileBar)<{ color?: string }>`
   }
 `;
 
-const responsive = { 0: { items: 3 } };
+const responsive = { 0: { items: 2 }, 445: { items: 3 } };
 
 export const ImageSelectorComponent = ({
   isOpen,
@@ -101,11 +104,11 @@ export const ImageSelectorComponent = ({
           {drawings.length ? (
             <>
               <Carousel
-                responsive={responsive}
                 infinite={false}
                 dotsDisabled={true}
                 mouseDragEnabled={true}
                 buttonsDisabled={true}
+                responsive={responsive}
                 items={getItems()}
                 slideToIndex={state.idx}
                 startIndex={state.idx}

@@ -87,14 +87,11 @@ export const bindSocketHandlersEpic: Epic<any, any, State> = (
       });
 
       socket.on('inbox/get', (data: any) => {
-        console.log('fetched inbox');
         store.dispatch(actions.user.setInboxMessages(data));
       });
 
       socket.on('inbox/new', (data: any) => {
         store.dispatch(actions.user.setInboxMessages(data));
-        console.log('received data inbox ', data);
-
         store.dispatch(actions.user.initReceiveInboxMessage());
       });
 
@@ -103,7 +100,6 @@ export const bindSocketHandlersEpic: Epic<any, any, State> = (
       });
 
       socket.on('room/create', (id: string) => {
-        console.log('ROOM CREATE GET');
         store.dispatch(actions.rooms.initHandleRoomCreate(id));
       });
     }),
@@ -182,8 +178,6 @@ export const bindRoomHandlersEpic: Epic<any, any, State> = (action$, state$) =>
       });
 
       socket.on(`${roomId}/draw/getexisting`, (data: DrawingPoint[]) => {
-        console.log(data, 'check');
-
         const drawingGroupCount = data
           .slice()
           .reverse()

@@ -31,11 +31,13 @@ export type CombinedProps = Props & PassedProps;
 
 const handlers = {
   onPrev: ({ setState, state, drawings }: Props) => () => {
-    const idx = state.idx === 0 ? drawings.length - 3 : state.idx - 1;
+    const itmLen = window.innerWidth >= 445 ? 3 : 2;
+    const idx = state.idx === 0 ? drawings.length - itmLen : state.idx - 1;
     setState({ ...state, idx });
   },
   onNext: ({ setState, state, drawings }: Props) => () => {
-    const idx = state.idx === drawings.length - 3 ? 0 : state.idx + 1;
+    const itmLen = window.innerWidth >= 445 ? 3 : 2;
+    const idx = state.idx === drawings.length - itmLen ? 0 : state.idx + 1;
     setState({ ...state, idx });
   },
 };

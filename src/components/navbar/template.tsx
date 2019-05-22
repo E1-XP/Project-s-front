@@ -20,6 +20,10 @@ const UserWelcomeTxt = styled(Typography)`
   && {
     display: inline-block;
     padding-right: 0.5rem;
+
+    @media only screen and (max-width: 460px) {
+      display: none;
+    }
   }
 `;
 

@@ -10,7 +10,13 @@ import FormControl from '@material-ui/core/FormControl';
 import TextField from '@material-ui/core/TextField';
 import CircularProgress from '@material-ui/core/CircularProgress';
 
-import { MainContainer, GradientButton, HeadlineIcon } from './../../styles';
+import { Heading } from './../shared/heading';
+import {
+  MainContainer,
+  GradientButton,
+  HeadlineIcon,
+  HeadingSection,
+} from './../../styles';
 
 interface InputProps {
   values: FormikProps<FormState>['values'];
@@ -131,12 +137,7 @@ export const FormComponent = (props: Props) => {
       <Grid container={true} spacing={16} justify="center">
         <Grid item={true} md={7} sm={9} xs={12}>
           <Paper>
-            <Grid container={true} justify="center">
-              <HeadlineIcon>exit_to_app</HeadlineIcon>
-              <Typography align="center" variant="h4">
-                {FormHeading}
-              </Typography>
-            </Grid>
+            <Heading icon="exit_to_app" text={FormHeading} justify="center" />
             <Grid container={true} justify="center">
               <Typography align="center" variant="h6">
                 {formDescription}

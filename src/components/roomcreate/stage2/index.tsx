@@ -1,13 +1,14 @@
 import { compose, lifecycle, ReactLifeCycleFunctions } from 'recompose';
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
+import withWidth, { WithWidth } from '@material-ui/core/withWidth';
 
 import { State, DrawingObject } from './../../../store/interfaces';
 import { actions } from '../../../actions';
 
 import { ImageSelectorComponent } from './template';
 
-export interface Props {
+export interface Props extends WithWidth {
   drawings: DrawingObject[];
   initGetImagesFromTheServer: () => Dispatch;
 }
@@ -41,5 +42,6 @@ export const ImageSelector = compose<CombinedProps, PassedProps>(
     mapStateToProps,
     mapDispatchToProps,
   ),
+  withWidth(),
   lifecycle(hooks),
 )(ImageSelectorComponent);

@@ -14,6 +14,7 @@ import FormControl from '@material-ui/core/FormControl';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 
+import { MainContainer } from './../../styles';
 interface Props {
   handleSubmit: (e: any) => void;
   initCheckRoomPassword: (v: string) => Dispatch;
@@ -34,6 +35,8 @@ const mDTP = (dispatch: Dispatch) => ({
     dispatch(actions.rooms.initCheckRoomPassword(data)),
   setFormMessage: (v: string) => dispatch(actions.global.setFormMessage(v)),
 });
+
+const minHeight = { minHeight: '21px' };
 
 export const RoomPasswordScreen = compose<Props, {}>(
   withRouter,
@@ -58,7 +61,7 @@ export const RoomPasswordScreen = compose<Props, {}>(
     },
   }),
 )(({ handleSubmit, password, onPasswordChange, formMessage }: Props) => (
-  <main className="container">
+  <MainContainer>
     <Grid container={true} justify="center" alignItems="center">
       <Grid item={true} xs={6}>
         <Paper>
@@ -79,7 +82,12 @@ export const RoomPasswordScreen = compose<Props, {}>(
                     value={password}
                     onChange={onPasswordChange}
                   />
-                  <Typography align="center" variant="overline" color="error">
+                  <Typography
+                    align="center"
+                    style={minHeight}
+                    variant="subtitle2"
+                    color="error"
+                  >
                     {formMessage}
                   </Typography>
                   <Button
@@ -98,5 +106,5 @@ export const RoomPasswordScreen = compose<Props, {}>(
         </Paper>
       </Grid>
     </Grid>
-  </main>
+  </MainContainer>
 ));

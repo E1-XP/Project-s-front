@@ -11,14 +11,10 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import { withTheme, WithTheme } from '@material-ui/core/styles';
 
+import { Heading } from './../shared/heading';
 import { PreloaderComponent } from './../preloader';
 
-import {
-  MainContainer,
-  HeadlineIcon,
-  GradientButton,
-  ButtonIcon,
-} from './../../styles';
+import { MainContainer, GradientButton, ButtonIcon } from './../../styles';
 
 const InboxContent = styled.div`
   text-align: center;
@@ -35,36 +31,33 @@ const RoomSpan = styled.span`
   font-weight: 600;
 `;
 
-export const InboxComponent = ({ user, users, rooms, pushRouter }: Props) => {
-  const addZero = (num: number) => (num < 10 ? `0${num}` : num);
-  const dateFormat = (d: Date) =>
-    `${d.getFullYear()}.${addZero(d.getMonth() + 1)}.${addZero(d.getDate())}`;
-
-  const pushToRoom = (e: any) =>
-    pushRouter(`/room/${e.target.closest('button').dataset.id}`);
-
-  return (
-    <MainContainer>
-      <Grid container={true} spacing={16}>
-        <Grid item={true} xs={12}>
-          <Paper>
-            <Grid container={true} justify="center" alignItems="center">
-              <HeadlineIcon>inbox</HeadlineIcon>
-              <Typography variant="h4">Inbox</Typography>
-            </Grid>
-            <Grid container={true} justify="center">
-              <Grid item={true} md={9}>
-                <InboxContent>
-                  {user.inboxMessages ? (
-                    user.inboxMessages.length ? (
-                      <List>
-                        {user.inboxMessages.map((itm, i) => (
+export const InboxComponent = ({
+  user,
+  users,
+  rooms,
+  pushToRoom,
+  getDateFormat,
+}: Props) => (
+  <MainContainer>
+    <Grid container={true} spacing={16}>
+      <Grid item={true} xs={12}>
+        <Paper>
+          <Heading justify="center" text="Inbox" icon="inbox" />
+          <Grid container={true} justify="center">
+            <Grid item={true} md={9}>
+              <InboxContent>
+                {user.inboxMessages ? (
+                  user.inboxMessages.length ? (
+                    <List>
+                      {user.inboxMessages
+                        .sort((a, b) => b.id - a.id)
+                        .map((itm, i) => (
                           <ListItem key={i}>
                             <ListItemText
                               disableTypography={true}
                               primary={
                                 <Typography variant="body1">
-                                  {`${dateFormat(new Date(itm.updatedAt))}
+                                  {`${getDateFormat(new Date(itm.updatedAt))}
                                  : user `}
                                   <UserSpan>{itm.senderName}</UserSpan>
                                   {` send you invitation link to enter room `}
@@ -87,22 +80,21 @@ export const InboxComponent = ({ user, users, rooms, pushRouter }: Props) => {
                             </GradientButton>
                           </ListItem>
                         ))}
-                      </List>
-                    ) : (
-                      <Typography
-                        variant="subtitle1"
-                        align="center"
-                      >{`You don't received any messages yet.`}</Typography>
-                    )
+                    </List>
                   ) : (
-                    <PreloaderComponent />
-                  )}
-                </InboxContent>
-              </Grid>
+                    <Typography
+                      variant="subtitle1"
+                      align="center"
+                    >{`You don't received any messages yet.`}</Typography>
+                  )
+                ) : (
+                  <PreloaderComponent />
+                )}
+              </InboxContent>
             </Grid>
-          </Paper>
-        </Grid>
+          </Grid>
+        </Paper>
       </Grid>
-    </MainContainer>
-  );
-};
+    </Grid>
+  </MainContainer>
+);

@@ -1,37 +1,15 @@
 import React from 'react';
-import { connect } from 'react-redux';
-import {
-  compose,
-  shouldUpdate,
-  lifecycle,
-  ReactLifeCycleFunctions,
-} from 'recompose';
 import styled from 'styled-components';
-
-import {
-  State,
-  DrawingPoint,
-  BroadcastedDrawingPoints,
-} from './../../store/interfaces';
 
 import { Props } from './index';
 
 import { CanvasNavbar } from './toolbar';
 import { ImageSelector } from './imageselector';
+import { MainCanvas } from './canvases/main';
+import { BackCanvas } from './canvases/back';
 
 const CanvasWrapper = styled.div`
   position: relative;
-`;
-
-const MainCanvasElem = styled.canvas`
-  position: absolute;
-  border: 1px solid #999;
-  width: 100%;
-`;
-
-const BackCanvasElem = styled.canvas`
-  border: 1px solid #999;
-  width: 100%;
 `;
 
 export const CanvasComponent = ({
@@ -46,9 +24,9 @@ export const CanvasComponent = ({
   handleImageChange,
   setIsColorPickerOpen,
   handleSetWeight,
-  onMouseDown,
-  onMouseMove,
-  onMouseUp,
+  onPointerDown,
+  onPointerMove,
+  onPointerUp,
   redraw,
   redrawBack,
   weight,
@@ -71,9 +49,9 @@ export const CanvasComponent = ({
       <MainCanvas
         createBoardRef={createBoardRef}
         getCtx={getCtx}
-        onMouseDown={onMouseDown}
-        onMouseMove={onMouseMove}
-        onMouseUp={onMouseUp}
+        onPointerDown={onPointerDown}
+        onPointerMove={onPointerMove}
+        onPointerUp={onPointerUp}
         redraw={redraw}
       />
       <BackCanvas
@@ -84,100 +62,3 @@ export const CanvasComponent = ({
     </CanvasWrapper>
   </>
 );
-
-interface PassedMainCanvasProps {
-  createBoardRef: Props['createBoardRef'];
-  getCtx: Props['getCtx'];
-  onMouseDown: Props['onMouseDown'];
-  onMouseMove: Props['onMouseMove'] | undefined;
-  onMouseUp: Props['onMouseUp'];
-  redraw: Props['redraw'];
-}
-
-interface MainCanvasProps {
-  drawingPoints: DrawingPoint[][];
-  broadcastedDrawingPoints: BroadcastedDrawingPoints;
-}
-
-type CombinedMainCanvasProps = MainCanvasProps & PassedMainCanvasProps;
-
-const hooks: ReactLifeCycleFunctions<
-  CombinedMainCanvasProps,
-  PassedMainCanvasProps
-> = {
-  componentDidMount() {
-    const { drawingPoints, broadcastedDrawingPoints } = this.props;
-    const shouldRedraw =
-      drawingPoints.length ||
-      Object.values(broadcastedDrawingPoints).some(v => !!v.length);
-
-    if (shouldRedraw) {
-      this.props.redraw();
-    }
-  },
-  componentWillReceiveProps(nextP) {
-    const { drawingPoints, broadcastedDrawingPoints } = this.props;
-    const shouldRedraw =
-      nextP.drawingPoints !== drawingPoints ||
-      nextP.broadcastedDrawingPoints !== broadcastedDrawingPoints;
-
-    if (shouldRedraw) {
-      this.props.redraw();
-    }
-  },
-};
-
-const MainCanvas = compose<CombinedMainCanvasProps, PassedMainCanvasProps>(
-  connect(({ canvas }: State) => ({
-    drawingPoints: canvas.drawingPoints,
-    broadcastedDrawingPoints: canvas.broadcastedDrawingPoints,
-  })),
-  lifecycle(hooks),
-)(
-  ({
-    createBoardRef,
-    onMouseDown,
-    onMouseMove,
-    onMouseUp,
-    drawingPoints,
-  }: CombinedMainCanvasProps) => (
-    <MainCanvasElem
-      ref={createBoardRef}
-      width={1280}
-      height={720}
-      onMouseDown={onMouseDown}
-      onMouseMove={onMouseMove}
-      onMouseUp={onMouseUp}
-    />
-  ),
-);
-
-interface BackCanvasProps {
-  drawingPointsCache: DrawingPoint[][];
-}
-
-interface BackCanvasPassedProps {
-  createBackBoardRef: Props['createBackBoardRef'];
-  getCtx: Props['getBackCtx'];
-  redrawBack: Props['redrawBack'];
-}
-
-type CombinedBackCanvasProps = BackCanvasProps & BackCanvasPassedProps;
-
-const BackCanvas = compose<CombinedBackCanvasProps, BackCanvasPassedProps>(
-  connect(({ canvas }: State) => ({
-    drawingPointsCache: canvas.drawingPointsCache,
-  })),
-  lifecycle<CombinedBackCanvasProps, BackCanvasPassedProps>({
-    componentWillReceiveProps(nextP) {
-      const shouldRedraw =
-        nextP.drawingPointsCache !== this.props.drawingPointsCache;
-
-      if (shouldRedraw) {
-        this.props.redrawBack();
-      }
-    },
-  }),
-)(({ createBackBoardRef }: CombinedBackCanvasProps) => (
-  <BackCanvasElem ref={createBackBoardRef} width={1280} height={720} />
-));

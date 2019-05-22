@@ -10,7 +10,8 @@ import ListItemAvatar from '@material-ui/core/ListItemAvatar';
 import Avatar from '@material-ui/core/Avatar';
 import Icon from '@material-ui/core/Icon';
 
-import { HeadlineIcon, FullHeightPaper } from './../../styles';
+import { Heading } from './../shared/heading';
+import { FullHeightPaper } from './../../styles';
 
 import { AllUsers, UserData } from './../../store/interfaces';
 
@@ -26,12 +27,10 @@ const ListWrapper = styled.div`
 
 export const UsersList = ({ users, user }: Props) => (
   <FullHeightPaper>
-    <Grid container={true} alignItems="center">
-      <HeadlineIcon>people</HeadlineIcon>
-      <Typography variant="h4">
-        {`Currently online: ${Object.keys(users).length}`}
-      </Typography>
-    </Grid>
+    <Heading
+      text={`Currently online: ${Object.keys(users).length}`}
+      icon="people"
+    />
     <ListWrapper>
       <List>
         {Object.keys(users).map((id: string) => (

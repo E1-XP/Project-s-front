@@ -13,7 +13,8 @@ import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import Icon from '@material-ui/core/Icon';
 
-import { MainContainer, HeadlineIcon } from './../../styles';
+import { Heading } from './../shared/heading';
+import { MainContainer } from './../../styles';
 
 interface Props {
   hasErrored: boolean;
@@ -49,10 +50,7 @@ export const ErrorPage = compose<Props, {}>(
       <Grid container={true} spacing={16}>
         <Grid item={true} xs={12}>
           <Paper>
-            <Grid container={true} justify="center">
-              <HeadlineIcon>remove_circle</HeadlineIcon>
-              <Typography variant="h4">Error page</Typography>
-            </Grid>
+            <Heading icon="remove_circle" text="Error page" justify="center" />
             <Grid container={true} justify="center">
               <BigIcon>error_outline</BigIcon>
             </Grid>
