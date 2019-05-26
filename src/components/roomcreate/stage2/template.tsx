@@ -48,55 +48,64 @@ export const ImageSelectorComponent = ({
   return (
     <MainContainer>
       <Grid container={true} spacing={16}>
-        <Paper>
-          <Heading text="Select drawing" icon="collections" justify="center" />
-          <Typography variant="subtitle1" align="center">
-            Select existing image or create new one
-          </Typography>
-          <DrawingsContainer item={true} xs={12}>
-            {drawings ? (
-              <GridList cellHeight={160} cols={getCols()}>
-                {[
-                  <GridListTile key="new-drawing" onClick={handleDrawingCreate}>
-                    <CreateNewDrawingTile>
-                      <Icon>add</Icon>
-                    </CreateNewDrawingTile>
-                    ,
-                    <GridListTileBar title="new drawing" />
-                  </GridListTile>,
-                ].concat(
-                  drawings.map(itm => (
+        <Grid item={true} xs={12}>
+          <Paper>
+            <Heading
+              text="Select drawing"
+              icon="collections"
+              justify="center"
+            />
+            <Typography variant="subtitle1" align="center">
+              Select existing image or create new one
+            </Typography>
+            <DrawingsContainer item={true} xs={12}>
+              {drawings ? (
+                <GridList cellHeight={160} cols={getCols()}>
+                  {[
                     <GridListTile
-                      data-id={itm.id}
-                      key={itm.id}
-                      onClick={handleDrawingSelect}
+                      key="new-drawing"
+                      onClick={handleDrawingCreate}
                     >
-                      <img
-                        src={`${config.API_URL}/static/images/${itm.id}.jpg`}
-                        alt="user drawing"
-                      />
-                      {itm.id}
-                      <GridListTileBar title={itm.name} />
-                    </GridListTile>
-                  )),
-                )}
-              </GridList>
-            ) : (
-              <PreloaderComponent />
-            )}
-          </DrawingsContainer>
-          <Grid container={true} justify="flex-end">
-            <GradientButton
-              variant="contained"
-              color="primary"
-              disabled={!currentDrawing}
-              onClick={handleSubmit}
-            >
-              Create Room
-              <ButtonIcon>done</ButtonIcon>
-            </GradientButton>
-          </Grid>
-        </Paper>
+                      <CreateNewDrawingTile>
+                        <Icon>add</Icon>
+                      </CreateNewDrawingTile>
+                      ,
+                      <GridListTileBar title="new drawing" />
+                    </GridListTile>,
+                  ].concat(
+                    drawings.map(itm => (
+                      <GridListTile
+                        data-id={itm.id}
+                        key={itm.id}
+                        onClick={handleDrawingSelect}
+                      >
+                        <img
+                          src={`${config.API_URL}/static/images/${itm.id}.jpg`}
+                          alt="user drawing"
+                        />
+                        {itm.id}
+                        <GridListTileBar title={itm.name} />
+                      </GridListTile>
+                    )),
+                  )}
+                </GridList>
+              ) : (
+                <PreloaderComponent />
+              )}
+            </DrawingsContainer>
+            <Grid container={true} justify="flex-end">
+              <GradientButton
+                variant="contained"
+                color="primary"
+                disabled={!currentDrawing}
+                onClick={handleSubmit}
+              >
+                Create Room
+                <ButtonIcon>done</ButtonIcon>
+              </GradientButton>
+            </Grid>
+          </Paper>
+        </Grid>
       </Grid>
     </MainContainer>
   );

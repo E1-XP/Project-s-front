@@ -11,12 +11,7 @@ import TextField from '@material-ui/core/TextField';
 import CircularProgress from '@material-ui/core/CircularProgress';
 
 import { Heading } from './../shared/heading';
-import {
-  MainContainer,
-  GradientButton,
-  HeadlineIcon,
-  HeadingSection,
-} from './../../styles';
+import { MainContainer, GradientButton } from './../../styles';
 
 interface InputProps {
   values: FormikProps<FormState>['values'];
