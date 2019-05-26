@@ -19,7 +19,13 @@ import { MainContainer, GradientButton, ButtonIcon } from './../../styles';
 const InboxContent = styled.div`
   text-align: center;
   height: 500px;
-  overflow-x: scroll;
+  overflow-y: auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  & > h5 {
+    margin-top: -7rem;
+  }
 `;
 
 const UserSpan = withTheme()(styled.span<WithTheme>`
@@ -83,7 +89,7 @@ export const InboxComponent = ({
                     </List>
                   ) : (
                     <Typography
-                      variant="subtitle1"
+                      variant="h5"
                       align="center"
                     >{`You don't received any messages yet.`}</Typography>
                   )

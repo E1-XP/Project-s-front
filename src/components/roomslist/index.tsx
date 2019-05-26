@@ -42,11 +42,6 @@ const ListWrapper = styled.div`
 
 const marginLeft = { marginLeft: '.5rem' };
 
-const TypographyWithMargin = styled(Typography)`
-  margin-top: 16px !important;
-  margin-left: 8px !important;
-`;
-
 export const RoomsList = compose<Props, {}>(
   connect(
     ({ rooms }: State) => ({ rooms }),
@@ -57,9 +52,9 @@ export const RoomsList = compose<Props, {}>(
   <FullHeightPaper>
     <Heading text="Available Rooms" icon="group_work" />
     <ListWrapper>
-      {rooms.list && Object.keys(rooms.list).length ? (
-        <List>
-          {Object.keys(rooms.list).map(itm => (
+      <List>
+        {rooms.list && Object.keys(rooms.list).length ? (
+          Object.keys(rooms.list).map(itm => (
             <ListItem
               key={itm}
               data-id={itm}
@@ -75,13 +70,13 @@ export const RoomsList = compose<Props, {}>(
                 secondary={rooms.list[itm].isPrivate ? 'private' : 'public'}
               />
             </ListItem>
-          ))}
-        </List>
-      ) : (
-        <TypographyWithMargin variant="body1">
-          No rooms available. Create one using button below.
-        </TypographyWithMargin>
-      )}
+          ))
+        ) : (
+          <ListItem>
+            No rooms available. Create one using button below.
+          </ListItem>
+        )}
+      </List>
     </ListWrapper>
     <GradientButton
       variant="contained"

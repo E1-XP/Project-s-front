@@ -91,7 +91,7 @@ export const GalleryComponent = ({
 
   const getPlaceholder = () => [
     <NoImagesPlaceholder key={0}>
-      <Typography variant="h6">No drawings found.</Typography>
+      <Typography variant="h5">No drawings found.</Typography>
     </NoImagesPlaceholder>,
   ];
 
