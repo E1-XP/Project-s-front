@@ -3,6 +3,11 @@ const htmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
   entry: './src/index.tsx',
+  output: {
+    path: __dirname + '/public',
+    publicPath: '/',
+    filename: 'bundle.js',
+  },
   module: {
     rules: [
       {
@@ -23,11 +28,6 @@ module.exports = {
   },
   resolve: {
     extensions: ['*', '.js', '.jsx', '.ts', '.tsx'],
-  },
-  output: {
-    path: __dirname + '/public',
-    publicPath: '/',
-    filename: 'bundle.js',
   },
   plugins: [
     new htmlWebpackPlugin({
