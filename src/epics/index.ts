@@ -15,7 +15,7 @@ const isEpic = (itm: string) => itm.endsWith('Epic');
 
 const mapObjectToArray = (obj: any): any[] =>
   Object.keys(obj)
-    .filter(key => isEpic(key))
+    .filter(isEpic)
     .map(key => obj[key]);
 
 export const rootEpic = combineEpics(

@@ -1,5 +1,4 @@
 import React from 'react';
-import styled, { keyframes } from 'styled-components';
 import EmojiPicker from 'emoji-picker-react';
 
 import Grid from '@material-ui/core/Grid';
@@ -9,9 +8,7 @@ import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import Avatar from '@material-ui/core/Avatar';
-import TextField from '@material-ui/core/TextField';
 import Icon from '@material-ui/core/Icon';
-import IconButton from '@material-ui/core/IconButton';
 import RootRef from '@material-ui/core/RootRef';
 import Chip from '@material-ui/core/Chip';
 import Popover, { PopoverOrigin } from '@material-ui/core/Popover';
@@ -20,38 +17,13 @@ import { CombinedProps } from './index';
 
 import { Heading } from './../shared/heading';
 
-const Wrapper = styled.div`
-  position: relative;
-  text-align: center;
-  margin-left: 8px;
-
-  & :nth-child(2) {
-    animation-delay: -1.1s;
-  }
-
-  & :nth-child(3) {
-    animation-delay: -0.9s;
-  }
-`;
-
-const anim = keyframes`
-	0%, 60%, 100% {
-		transform: initial;
-	}
-
-	30% {
-		transform: translateY(-12px);
-	}`;
-
-const Dot = styled.span`
-  background: white;
-  display: inline-block;
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  margin-right: 3px;
-  animation: ${anim} 1.3s linear infinite;
-`;
+import {
+  Wrapper,
+  Dot,
+  ChatListWrapper,
+  PositionedIconButton,
+  TextFieldWithPadding,
+} from './style';
 
 const BouncingDots = () => (
   <Wrapper>
@@ -63,30 +35,7 @@ const BouncingDots = () => (
   </Wrapper>
 );
 
-const ChatListWrapper = styled.div<{ chatHeight: string | undefined }>`
-  height: ${({ chatHeight }) => chatHeight || '600px'};
-  overflow: auto;
-`;
-
 const posRelative = { position: 'relative' as 'relative' };
-
-const PositionedIconButton = styled(IconButton)`
-  position: absolute !important;
-  right: 0;
-  top: 0;
-
-  & :hover {
-    background-color: transparent;
-  }
-`;
-
-const TextFieldWithPadding = styled(TextField)`
-  margin-top: 0 !important;
-
-  & :first-child {
-    padding-top: 1.3rem;
-  }
-`;
 
 const wordBreakStyle = {
   wordBreak: 'break-all' as 'break-all',
