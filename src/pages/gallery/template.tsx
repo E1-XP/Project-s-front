@@ -1,5 +1,4 @@
 import React from 'react';
-import styled from 'styled-components';
 
 import { Props } from './index';
 import config from '../../config';
@@ -16,46 +15,12 @@ import { MainContainer } from '../../styles';
 
 import { Heading } from '../../components/shared/heading';
 import { PreloaderComponent } from '../../components/preloader';
-
-const Img = styled.img`
-  width: 100%;
-  height: 100%;
-  position: relative;
-  z-index: -1;
-`;
-
-const PaperWithMinHeight = styled(Paper)`
-  /* min-height: 1020px; */
-`;
-
-const NoImagesPlaceholder = styled.div`
-  width: 100%;
-  display: block;
-  align-items: center;
-  justify-content: center;
-  height: calc(100vh / 2);
-  display: flex;
-`;
-
-const NavContainer = styled.div`
-  width: 100%;
-  height: 150px;
-  position: relative;
-  & > .alice-carousel,
-  .alice-carousel__wrapper {
-    height: 150px;
-  }
-  & .alice-carousel__stage-item:not(.__cloned) {
-    max-width: 50%;
-    @media only screen and (min-width: 445px) {
-      max-width: 33%;
-    }
-  }
-  & figure {
-    margin: 0;
-    height: 100%;
-  }
-`;
+import {
+  Img,
+  NoImagesPlaceholder,
+  NavContainer,
+  PaperWithMinHeight,
+} from './style';
 
 const responsive = { 0: { items: 2 }, 445: { items: 3 } };
 
@@ -113,7 +78,7 @@ export const GalleryComponent = ({
                   items={drawings.length ? state.items : getPlaceholder()}
                   slideToIndex={state.idx}
                   onSlideChanged={onSlideChanged}
-                  mouseDragEnabled={true}
+                  mouseTrackingEnabled={true}
                   infinite={false}
                 />
                 <Grid container={true} direction="row" justify="space-between">
@@ -140,7 +105,7 @@ export const GalleryComponent = ({
                 {!!drawings.length && (
                   <NavContainer>
                     <Carousel
-                      mouseDragEnabled={true}
+                      mouseTrackingEnabled={true}
                       startIndex={calcCurrThumb()}
                       dotsDisabled={true}
                       responsive={responsive}

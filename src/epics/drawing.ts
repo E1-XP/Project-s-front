@@ -10,7 +10,7 @@ import {
   take,
 } from 'rxjs/operators';
 import { of } from 'rxjs';
-import flatMap from 'lodash/flatmap';
+import flatMap from 'lodash/flatMap';
 
 import { DrawingPoint, State } from './../store/interfaces';
 import { store } from '../store';

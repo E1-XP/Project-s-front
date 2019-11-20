@@ -1,10 +1,7 @@
 import * as React from 'react';
-import styled from 'styled-components';
 
 import ExpansionPanel from '@material-ui/core/ExpansionPanel';
 import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
-import GridListTileBar from '@material-ui/core/GridListTileBar';
-import ButtonBase from '@material-ui/core/ButtonBase';
 import Icon from '@material-ui/core/Icon';
 import Carousel from 'react-alice-carousel';
 
@@ -12,59 +9,12 @@ import { CombinedProps } from './index';
 
 import config from './../../../config';
 
-const NavWrapper = styled.div`
-  position: absolute;
-  top: 0;
-  display: flex;
-  align-items: center;
-  height: 100%;
-  height: 150px;
-  border: none;
-  color: #555;
-  background-color: transparent;
-  padding: 0.5rem;
-  & > span {
-    font-size: 2rem;
-    cursor: pointer;
-  }
-`;
-
-const StyledButtonBase = styled(ButtonBase)`
-  height: 150px;
-`;
-
-const ImageContainer = styled.div`
-  width: 100%;
-  height: 150px;
-  position: relative;
-  & > .alice-carousel,
-  .alice-carousel__wrapper {
-    height: 150px;
-  }
-  & .alice-carousel__stage-item:not(.__cloned) {
-    max-width: 50%;
-    @media only screen and (min-width: 445px) {
-      max-width: 33%;
-    }
-  }
-  & ${NavWrapper}:first-of-type {
-    left: 0;
-  }
-
-  & ${NavWrapper}:last-of-type {
-    right: 0 !important;
-  }
-  & img {
-    height: 100%;
-    width: 100%;
-  }
-`;
-
-const GridListTileBarWithCurrent = styled(GridListTileBar)<{ color?: string }>`
-  & > div {
-    color: ${({ color }) => color || '#fff'};
-  }
-`;
+import {
+  NavWrapper,
+  StyledButtonBase,
+  ImageContainer,
+  GridListTileBarWithCurrent,
+} from './style';
 
 const responsive = { 0: { items: 2 }, 445: { items: 3 } };
 
@@ -106,7 +56,7 @@ export const ImageSelectorComponent = ({
               <Carousel
                 infinite={false}
                 dotsDisabled={true}
-                mouseDragEnabled={true}
+                mouseTrackingEnabled={true}
                 buttonsDisabled={true}
                 responsive={responsive}
                 items={getItems()}
