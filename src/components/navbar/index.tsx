@@ -24,9 +24,6 @@ const mapDispatchToProps = {
 };
 
 export const Navbar = compose<Props, {}>(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps,
-  ),
-  onlyUpdateForKeys(['inboxCount']),
+  connect(mapStateToProps, mapDispatchToProps),
+  onlyUpdateForKeys(['inboxCount', 'isUserLoggedIn']),
 )(NavbarComponent);

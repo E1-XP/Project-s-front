@@ -3,13 +3,15 @@ import { compose, withState, withHandlers } from 'recompose';
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
 
-import { actions } from './../../actions';
+import { actions } from '../../actions';
 const {
   canvas: { initGetImagesFromServer },
 } = actions;
-import { State, DrawingObject } from './../../store/interfaces';
+import { State, DrawingObject } from '../../store/interfaces';
 
 import { GalleryComponent } from './template';
+
+import { withAuthentication } from '../../HOCs/withAuthentication';
 
 export interface Props {
   drawings: DrawingObject[] | null;
@@ -58,4 +60,7 @@ export const Gallery = compose<Props, {}>(
     items: undefined,
   }),
   withHandlers(handlers),
+  withAuthentication,
 )(GalleryComponent);
+
+export default Gallery;

@@ -29,11 +29,8 @@ const mapDispatchToProps = (dispatch: Dispatch) => ({
   pushRouter: (str: string) => dispatch(push(str)),
 });
 
-export const withAuthentication = compose(
+export const withAuthentication = compose<{}, Props>(
   withRouter,
-  connect(
-    mapStateToProps,
-    mapDispatchToProps,
-  ),
+  connect(mapStateToProps, mapDispatchToProps),
   lifecycle(hooks),
 );

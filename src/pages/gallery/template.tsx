@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 
 import { Props } from './index';
-import config from './../../config';
+import config from '../../config';
 
 import Carousel from 'react-alice-carousel';
 import 'react-alice-carousel/lib/alice-carousel.css';
@@ -12,10 +12,10 @@ import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 
-import { MainContainer } from './../../styles';
+import { MainContainer } from '../../styles';
 
-import { Heading } from './../shared/heading';
-import { PreloaderComponent } from './../preloader';
+import { Heading } from '../../components/shared/heading';
+import { PreloaderComponent } from '../../components/preloader';
 
 const Img = styled.img`
   width: 100%;

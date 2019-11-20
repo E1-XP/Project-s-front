@@ -5,16 +5,16 @@ import { Dispatch } from 'redux';
 import { Redirect } from 'react-router-dom';
 import styled from 'styled-components';
 
-import { setHasErrored } from './../../actions/global';
-import { State } from './../../store/interfaces';
+import { setHasErrored } from '../../actions/global';
+import { State } from '../../store/interfaces';
 
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import Icon from '@material-ui/core/Icon';
 
-import { Heading } from './../shared/heading';
-import { MainContainer } from './../../styles';
+import { Heading } from '../../components/shared/heading';
+import { MainContainer } from '../../styles';
 
 interface Props {
   hasErrored: boolean;
@@ -37,10 +37,7 @@ const hooks: ReactLifeCycleFunctions<Props, {}> = {
 };
 
 export const ErrorPage = compose<Props, {}>(
-  connect(
-    mSTP,
-    { setHasErrored },
-  ),
+  connect(mSTP, { setHasErrored }),
   lifecycle(hooks),
 )(({ hasErrored }: Props) =>
   !hasErrored ? (
@@ -65,3 +62,5 @@ export const ErrorPage = compose<Props, {}>(
     </MainContainer>
   ),
 );
+
+export default ErrorPage;

@@ -3,13 +3,13 @@ import styled from 'styled-components';
 
 import Grid from '@material-ui/core/Grid';
 
-import { Chat } from '../chat';
-import { UsersList } from '../userslist';
-import { RoomsList } from '../roomslist';
+import { Chat } from '../../components/chat';
+import { UsersList } from '../../components/userslist';
+import { RoomsList } from '../../components/roomslist';
 
 import { Props } from './index';
 
-import { MainContainer } from './../../styles';
+import { MainContainer } from '../../styles';
 
 const OuterGrid = styled(Grid)`
   min-height: 650px;

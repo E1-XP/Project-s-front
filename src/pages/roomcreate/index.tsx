@@ -8,6 +8,8 @@ import { actions } from '../../actions';
 
 import { RoomCreateComponent } from './template';
 
+import { withAuthentication } from '../../HOCs/withAuthentication';
+
 interface NewDrawingData {
   name: string;
 }
@@ -82,10 +84,7 @@ const mapDispatchToProps = (dispatch: Dispatch) => ({
 });
 
 export const RoomCreate = compose<Props, {}>(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps,
-  ),
+  connect(mapStateToProps, mapDispatchToProps),
   withState('state', 'setState', {
     isPrivate: false,
     name: '',
@@ -93,4 +92,7 @@ export const RoomCreate = compose<Props, {}>(
     formStage: 1,
   }),
   withHandlers(handlers),
+  withAuthentication,
 )(RoomCreateComponent);
+
+export default RoomCreate;
