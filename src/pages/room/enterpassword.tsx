@@ -4,7 +4,7 @@ import { withRouter } from 'react-router';
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
 
-import { actions } from './../../actions';
+import { actions } from '../../actions';
 import { State } from '../../store/interfaces';
 
 import Grid from '@material-ui/core/Grid';
@@ -14,7 +14,10 @@ import FormControl from '@material-ui/core/FormControl';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 
-import { MainContainer } from './../../styles';
+import { MainContainer } from '../../styles';
+
+import { withAuthentication } from '../../HOCs/withAuthentication';
+
 interface Props {
   handleSubmit: (e: any) => void;
   initCheckRoomPassword: (v: string) => Dispatch;
@@ -40,10 +43,7 @@ const minHeight = { minHeight: '21px' };
 
 export const RoomPasswordScreen = compose<Props, {}>(
   withRouter,
-  connect(
-    mSTP,
-    mDTP,
-  ),
+  connect(mSTP, mDTP),
   withState('password', 'setPassword', ''),
   withHandlers({
     handleSubmit: (props: Props) => (e: any) => {
@@ -60,6 +60,7 @@ export const RoomPasswordScreen = compose<Props, {}>(
       this.props.setFormMessage('');
     },
   }),
+  withAuthentication,
 )(({ handleSubmit, password, onPasswordChange, formMessage }: Props) => (
   <MainContainer>
     <Grid container={true} justify="center" alignItems="center">
@@ -108,3 +109,5 @@ export const RoomPasswordScreen = compose<Props, {}>(
     </Grid>
   </MainContainer>
 ));
+
+export default RoomPasswordScreen;

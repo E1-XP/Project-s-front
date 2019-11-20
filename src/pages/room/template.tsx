@@ -8,12 +8,12 @@ import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 
-import { MainContainer, GradientButton } from './../../styles';
+import { MainContainer, GradientButton } from '../../styles';
 
 import { RoomDashboard } from './dashboard';
-import { Canvas } from '../canvas';
-import { Chat } from '../chat';
-import { Heading } from './../shared/heading';
+import { Canvas } from '../../components/canvas';
+import { Chat } from '../../components/chat';
+import { Heading } from '../../components/shared/heading';
 
 const GridWithPadding = styled(Grid)`
   padding-top: 1rem;

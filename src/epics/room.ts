@@ -73,11 +73,7 @@ export const checkRoomPasswordEpic: Epic = (action$, state$) =>
         'POST',
         { password },
       ).pipe(
-        tap(resp =>
-          isRoomPasswordCheckedAndValid$.next(
-            resp.status === 200 ? true : false,
-          ),
-        ),
+        tap(resp => isRoomPasswordCheckedAndValid$.next(resp.status === 200)),
         mergeMap(resp =>
           iif(
             () => resp.status === 200,

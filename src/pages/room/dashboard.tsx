@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { match } from 'react-router-dom';
 import styled from 'styled-components';
 
-import { State, Rooms, Users, UserData } from './../../store/interfaces';
+import { State, Rooms, Users, UserData } from '../../store/interfaces';
 
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
@@ -15,8 +15,8 @@ import ListItemAvatar from '@material-ui/core/ListItemAvatar';
 import Avatar from '@material-ui/core/Avatar';
 import Icon from '@material-ui/core/Icon';
 
-import { Heading } from './../shared/heading';
-import { GradientButton, FullHeightPaper } from './../../styles';
+import { Heading } from '../../components/shared/heading';
+import { GradientButton, FullHeightPaper } from '../../styles';
 
 interface Params {
   id: string;

@@ -15,6 +15,8 @@ import { actions } from '../../actions';
 
 import { RoomComponent } from './template';
 
+import { withAuthentication } from '../../HOCs/withAuthentication';
+
 interface Params {
   id: string;
 }
@@ -149,12 +151,11 @@ const mapDispatchToProps = {
 };
 
 export const Room = compose<Props, {}>(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps,
-  ),
+  connect(mapStateToProps, mapDispatchToProps),
   withState('message', 'setState', ''),
   withHandlers(handlers),
   lifecycle<Props, {}>(hooks),
-  // onlyUpdateForKeys(['message']),
+  withAuthentication,
 )(RoomComponent);
+
+export default Room;

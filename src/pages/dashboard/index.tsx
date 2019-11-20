@@ -26,7 +26,7 @@ const handlers = {
   },
 };
 
-const mapStateToProps = ({ user, users, chats, rooms }: State) => ({
+const mapStateToProps = ({ user, users, chats }: State) => ({
   users,
   user: user.userData,
   messages: chats.general,
@@ -38,9 +38,8 @@ const mapDispatchToProps = {
 };
 
 export const Dashboard = compose<Props, {}>(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps,
-  ),
+  connect(mapStateToProps, mapDispatchToProps),
   withHandlers(handlers),
 )(DashboardComponent);
+
+export default Dashboard;

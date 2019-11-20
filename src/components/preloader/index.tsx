@@ -44,6 +44,10 @@ const mapStateToProps = ({ global }: State) => ({
   isLoading: global.isLoading,
 });
 
+export const PreloaderFallback = () => (
+  <PreloaderComponent fullHeight={true} isLoading={true} />
+);
+
 export const Preloader = compose(connect(mapStateToProps))(props => (
   <PreloaderComponent {...props} fullHeight={true} />
 ));

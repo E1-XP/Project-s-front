@@ -1,28 +1,13 @@
 import { State, DrawingPoint } from './../store/interfaces';
 import { store } from './../store';
 
+import { createSelectorWithExposedCache as createSelector } from './../utils/createSelector';
+
 const getCache = (state: State) => state.canvas.drawingPointsCache;
 const getDrawingPoints = (state: State) => state.canvas.drawingPoints;
 const getBroadcastedDrawingPoints = (state: State) =>
   state.canvas.broadcastedDrawingPoints;
 const getCurrentDrawing = (state: State) => state.canvas.currentDrawing;
-
-const createSelector = (args: any[], resultFn: (...args: any) => any) => {
-  let cachedArgs: any[] = [];
-  let cache: any;
-  const isEqual = (args: any[]) =>
-    args.every((itm, i) => itm === cachedArgs[i]);
-
-  return (state: State) => {
-    if (cache !== undefined && isEqual(args.map(fn => fn(state)))) return cache;
-
-    cachedArgs = args.map(fn => fn(state));
-    const result = resultFn(...cachedArgs, cache);
-    cache = result;
-
-    return result;
-  };
-};
 
 export const getCombinedDrawingPoints = createSelector(
   [getDrawingPoints, getBroadcastedDrawingPoints, getCache, getCurrentDrawing],

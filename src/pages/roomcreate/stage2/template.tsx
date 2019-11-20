@@ -11,12 +11,12 @@ import GridList from '@material-ui/core/GridList';
 import GridListTile from '@material-ui/core/GridListTile';
 import GridListTileBar from '@material-ui/core/GridListTileBar';
 
-import { PreloaderComponent } from './../../preloader';
-import { Heading } from '../../shared/heading';
+import { PreloaderComponent } from '../../../components/preloader';
+import { Heading } from '../../../components/shared/heading';
 
-import { MainContainer, GradientButton, ButtonIcon } from './../../../styles';
+import { MainContainer, GradientButton, ButtonIcon } from '../../../styles';
 
-import config from './../../../config';
+import config from '../../../config';
 
 const DrawingsContainer = styled(Grid)`
   height: 600px;

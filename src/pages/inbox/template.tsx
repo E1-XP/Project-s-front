@@ -11,10 +11,10 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import { withTheme, WithTheme } from '@material-ui/core/styles';
 
-import { Heading } from './../shared/heading';
-import { PreloaderComponent } from './../preloader';
+import { Heading } from '../../components/shared/heading';
+import { PreloaderComponent } from '../../components/preloader';
 
-import { MainContainer, GradientButton, ButtonIcon } from './../../styles';
+import { MainContainer, GradientButton, ButtonIcon } from '../../styles';
 
 const InboxContent = styled.div`
   text-align: center;

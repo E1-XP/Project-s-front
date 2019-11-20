@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { IState } from './../index';
+import { IState } from '../index';
 
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
@@ -11,8 +11,8 @@ import FormControl from '@material-ui/core/FormControl';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Switch from '@material-ui/core/Switch';
 
-import { MainContainer, GradientButton, ButtonIcon } from './../../../styles';
-import { Heading } from '../../shared/heading';
+import { MainContainer, GradientButton, ButtonIcon } from '../../../styles';
+import { Heading } from '../../../components/shared/heading';
 
 interface Props {}
 
