@@ -100,6 +100,8 @@ export const ChatComponent = ({
     } others are writing...`;
   };
 
+  const shouldAutofocus = window.innerWidth > 1280;
+
   return (
     <Paper>
       <Heading text={heading} icon="chat" />
@@ -134,7 +136,7 @@ export const ChatComponent = ({
           value={state.message}
           onChange={onMessageWrite}
           onKeyDown={handleMessageSubmit}
-          autoFocus={true}
+          autoFocus={shouldAutofocus}
           fullWidth={true}
         />
         <PositionedIconButton

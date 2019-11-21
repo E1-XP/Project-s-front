@@ -53,11 +53,11 @@ const hooks: ReactLifeCycleFunctions<
       this.props.redraw();
     }
   },
-  componentWillReceiveProps(nextP) {
+  componentDidUpdate(prevP) {
     const { drawingPoints, broadcastedDrawingPoints } = this.props;
     const shouldRedraw =
-      nextP.drawingPoints !== drawingPoints ||
-      nextP.broadcastedDrawingPoints !== broadcastedDrawingPoints;
+      prevP.drawingPoints !== drawingPoints ||
+      prevP.broadcastedDrawingPoints !== broadcastedDrawingPoints;
 
     if (shouldRedraw) {
       this.props.redraw();

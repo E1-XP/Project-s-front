@@ -41,6 +41,10 @@ export const Dot = styled.span`
 export const ChatListWrapper = styled.div<{ chatHeight: string | undefined }>`
   height: ${({ chatHeight }) => chatHeight || '600px'};
   overflow: auto;
+
+  @media only screen and (max-width: 960px) {
+    height: ${({ chatHeight }) => chatHeight || '350px'};
+  }
 `;
 
 export const PositionedIconButton = styled(IconButton)`

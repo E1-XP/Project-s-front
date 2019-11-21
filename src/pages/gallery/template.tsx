@@ -24,6 +24,8 @@ import {
 
 const responsive = { 0: { items: 2 }, 445: { items: 3 } };
 
+const figureStyle = { cursor: 'grab', userSelect: 'none' };
+
 export const GalleryComponent = ({
   setState,
   state,
@@ -45,8 +47,12 @@ export const GalleryComponent = ({
 
   const getGalleryItems = (onClick?: any) => {
     return drawings!.map((itm, i) => (
-      <figure onClick={onClick ? () => onClick(i) : undefined}>
+      <figure
+        style={figureStyle}
+        onClick={onClick ? () => onClick(i) : undefined}
+      >
         <Img
+          isCurrent={onClick && i === state.idx}
           src={`${config.API_URL}/static/images/${itm.id}-v${itm.version}.jpg`}
           alt="user drawing"
         />

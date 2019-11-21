@@ -28,9 +28,6 @@ import { currentDrawingOnRoomEnter$ } from './helpers';
 
 export const createNewDrawingEpic: Epic = (action$, state$) =>
   action$.ofType(types.CANVAS_INIT_CREATE_NEW_DRAWING).pipe(
-    tap(v => {
-      console.log('CREATED NEW DRAWING');
-    }),
     mergeMap(action =>
       fetch$(
         `${config.API_URL}/users/${state$.value.user.userData.id}/drawings/`,
