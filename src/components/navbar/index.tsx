@@ -5,8 +5,9 @@ import { actions } from '../../actions';
 import { State, UserData } from '../../store/interfaces';
 
 import { NavbarComponent } from './template';
+import { withRouter, RouteComponentProps } from 'react-router-dom';
 
-export interface Props {
+export interface Props extends RouteComponentProps<{}> {
   isUserLoggedIn: boolean;
   userData: UserData;
   inboxCount: number;
@@ -25,5 +26,6 @@ const mapDispatchToProps = {
 
 export const Navbar = compose<Props, {}>(
   connect(mapStateToProps, mapDispatchToProps),
-  onlyUpdateForKeys(['inboxCount', 'isUserLoggedIn']),
+  withRouter,
+  onlyUpdateForKeys(['inboxCount', 'isUserLoggedIn', 'location']),
 )(NavbarComponent);

@@ -1,6 +1,9 @@
+import * as React from 'react';
 import styled, { keyframes } from 'styled-components';
+
 import IconButton from '@material-ui/core/IconButton';
 import TextField from '@material-ui/core/TextField';
+import Chip, { ChipProps } from '@material-ui/core/Chip';
 
 export const Wrapper = styled.div`
   position: relative;
@@ -56,4 +59,10 @@ export const TextFieldWithPadding = styled(TextField)`
   & :first-child {
     padding-top: 1.3rem;
   }
+`;
+
+export const ChipWithOpacity = styled(({ isWriting, ...props }) => (
+  <Chip {...props} />
+))<{ isWriting: boolean }>`
+  opacity: ${props => (props.isWriting ? 1 : 0)};
 `;

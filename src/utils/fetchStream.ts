@@ -1,4 +1,4 @@
-import { from } from 'rxjs';
+import { from, ObservableInput } from 'rxjs';
 
 import { store } from './../store';
 import { actions } from './../actions';
@@ -48,5 +48,5 @@ export const fetch$ = (
     }
   };
 
-  return from<Response>(promise(url, method, data, headers));
+  return from<ObservableInput<Response>>(promise(url, method, data, headers));
 };
