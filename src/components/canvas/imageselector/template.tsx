@@ -34,7 +34,7 @@ export const ImageSelectorComponent = ({
     drawings.map(itm => (
       <StyledButtonBase onClick={handleImageChange} data-id={itm.id}>
         <img
-          src={`${config.API_URL}/static/images/${itm.id}-${itm.version}.jpg`}
+          src={`${config.API_URL}/static/images/${itm.id}-v${itm.version}.jpg`}
           alt="user drawing"
           draggable={false}
         />

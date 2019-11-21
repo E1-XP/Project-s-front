@@ -35,6 +35,10 @@ const CreateNewDrawingTile = styled.div`
   }
 `;
 
+const GridListTileWithPointer = styled(GridListTile)`
+  cursor: pointer;
+`;
+
 export const ImageSelectorComponent = ({
   handleSubmit,
   handleDrawingCreate,
@@ -62,7 +66,7 @@ export const ImageSelectorComponent = ({
               {drawings ? (
                 <GridList cellHeight={160} cols={getCols()}>
                   {[
-                    <GridListTile
+                    <GridListTileWithPointer
                       key="new-drawing"
                       onClick={handleDrawingCreate}
                     >
@@ -71,21 +75,21 @@ export const ImageSelectorComponent = ({
                       </CreateNewDrawingTile>
                       ,
                       <GridListTileBar title="new drawing" />
-                    </GridListTile>,
+                    </GridListTileWithPointer>,
                   ].concat(
                     drawings.map(itm => (
-                      <GridListTile
+                      <GridListTileWithPointer
                         data-id={itm.id}
                         key={itm.id}
                         onClick={handleDrawingSelect}
                       >
                         <img
-                          src={`${config.API_URL}/static/images/${itm.id}.jpg`}
+                          src={`${config.API_URL}/static/images/${itm.id}-v${itm.version}.jpg`}
                           alt="user drawing"
                         />
                         {itm.id}
                         <GridListTileBar title={itm.name} />
-                      </GridListTile>
+                      </GridListTileWithPointer>
                     )),
                   )}
                 </GridList>
