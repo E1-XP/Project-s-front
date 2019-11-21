@@ -76,3 +76,7 @@ export const networkError: ActionType = (err: any) => ({
   type: types.GLOBAL_NETWORK_ERROR,
   payload: err,
 });
+
+export const authorizationError: ActionType = () => ({
+  type: types.GLOBAL_AUTHORIZATION_ERROR,
+});

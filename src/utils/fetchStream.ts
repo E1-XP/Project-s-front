@@ -35,8 +35,7 @@ export const fetch$ = (
       const toJSON = await response.json();
 
       if (response.status === 401) {
-        const { isUserLoggedIn } = store.getState().global;
-        isUserLoggedIn && store.dispatch(actions.global.initLogout());
+        store.dispatch(actions.global.authorizationError());
       }
 
       return {
