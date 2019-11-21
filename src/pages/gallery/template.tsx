@@ -47,7 +47,7 @@ export const GalleryComponent = ({
     return drawings!.map((itm, i) => (
       <figure onClick={onClick ? () => onClick(i) : undefined}>
         <Img
-          src={`${config.API_URL}/static/images/${itm.id}.jpg`}
+          src={`${config.API_URL}/static/images/${itm.id}-${itm.version}.jpg`}
           alt="user drawing"
         />
       </figure>

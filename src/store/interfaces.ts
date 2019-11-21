@@ -29,6 +29,7 @@ export interface InboxMessage extends DBItem {
 export interface DrawingObject {
   id: number;
   name: string;
+  version: number;
   creatorId: number;
 }
 
