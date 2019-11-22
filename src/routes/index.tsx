@@ -4,7 +4,7 @@ import { Route, Switch, Redirect } from 'react-router-dom';
 
 import { Preloader, PreloaderFallback } from './../components/preloader';
 import { Navbar } from './../components/navbar';
-import { Form } from './../components/form';
+import { Form } from './../pages/forms';
 import { NotFound } from '../pages/404';
 
 const Dashboard = lazy(() => import('../pages/dashboard'));

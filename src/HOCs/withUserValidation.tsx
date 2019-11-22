@@ -38,12 +38,19 @@ const handlers = () => {
     validateUser: (props: Props) => (values: RequestBody) => {
       const errors: FormikErrors<RequestBody> = {};
 
+      const emptyFieldsErr = `all fields must be filled`;
+      const usernameErr = `username must be between 2 and 32 alphanumeric, '_' or '-' characters long`;
+      const emailErr = 'email adress is not valid';
+      const passwordErr =
+        'password must contain at least 8 characters, one upper and lowercase letter and one number';
+
       if (props.currentRoute !== 'signup') return errors;
 
       if (!values.email) {
-        errors.email = `fields can't be empty`;
+        errors.email = emptyFieldsErr;
       } else if (!regExp.email.test(values.email)) {
-        errors.email = 'email adress is not valid';
+        errors.email = emailErr;
+        emailCache = values.email;
       } else if (
         props.currentRoute === 'signup' &&
         emailCache !== values.email
@@ -51,16 +58,17 @@ const handlers = () => {
         props.initEmailCheck(values.email);
         emailCache = values.email;
       }
+
       if (!values.username) {
-        errors.username = `fields can't be empty`;
+        errors.username = emptyFieldsErr;
       } else if (!regExp.username.test(values.username)) {
-        errors.username = `username must be between 2 and 32 alphanumeric or '_' and '-' characters long`;
+        errors.username = usernameErr;
       }
+
       if (!values.password) {
-        errors.password = `fields can't be empty`;
+        errors.password = emptyFieldsErr;
       } else if (!regExp.password.test(values.password)) {
-        errors.password =
-          'password must contain at least 8 characters, one upper and lowercase letters and one number';
+        errors.password = passwordErr;
       }
 
       return errors;
@@ -81,9 +89,6 @@ const mapDispatchToProps = (dispatch: Dispatch) => ({
 });
 
 export const withUserValidation = compose(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps,
-  ),
+  connect(mapStateToProps, mapDispatchToProps),
   withHandlers(handlers),
 );

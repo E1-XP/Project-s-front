@@ -23,7 +23,7 @@ import { actions } from '../actions';
 
 import config from './../config';
 
-export const authEpic: Epic = (action$, state$) =>
+export const authEpic: Epic<any, any, State> = (action$, state$) =>
   action$
     .ofType(types.GLOBAL_INIT_AUTHENTICATION)
     .pipe(
@@ -34,7 +34,7 @@ export const authEpic: Epic = (action$, state$) =>
       ),
     );
 
-export const loginEpic: Epic = (action$, state$) =>
+export const loginEpic: Epic<any, any, State> = (action$, state$) =>
   action$.ofType(types.GLOBAL_INIT_LOGIN).pipe(
     mergeMap(action =>
       fetch$(`${config.API_URL}/auth/login`, 'POST', action.payload).pipe(
@@ -48,7 +48,7 @@ export const loginEpic: Epic = (action$, state$) =>
     ),
   );
 
-export const getUserDataEpic: Epic = (action$, state$) =>
+export const getUserDataEpic: Epic<any, any, State> = (action$, state$) =>
   action$.ofType(types.USER_GET_USER_DATA).pipe(
     mergeMap(({ payload }) =>
       merge(
@@ -61,12 +61,18 @@ export const getUserDataEpic: Epic = (action$, state$) =>
     ),
   );
 
-export const checkEmailEpic: Epic = (action$, state$) =>
+export const checkEmailEpic: Epic<any, any, State> = (action$, state$) =>
   action$.ofType(types.GLOBAL_INIT_EMAIL_CHECK).pipe(
     mergeMap(action =>
-      fetch$(`${config.API_URL}${'/auth/emailcheck'}`, 'POST', {
-        email: action.payload,
-      }).pipe(
+      fetch$(
+        `${config.API_URL}${'/auth/emailcheck'}`,
+        'POST',
+        {
+          email: action.payload,
+        },
+        undefined,
+        { setIsFetching: false },
+      ).pipe(
         map(({ status }) =>
           status === 200
             ? actions.global.setFormMessage('')
@@ -77,8 +83,9 @@ export const checkEmailEpic: Epic = (action$, state$) =>
     ),
   );
 
-export const signUpEpic: Epic = (action$, state$) =>
+export const signUpEpic: Epic<any, any, State> = (action$, state$) =>
   action$.ofType(types.GLOBAL_INIT_SIGNUP).pipe(
+    filter(() => !state$.value.global.formMessage),
     mergeMap(({ payload }) =>
       merge(
         of(actions.global.setIsLoading(true)),
@@ -94,7 +101,7 @@ export const signUpEpic: Epic = (action$, state$) =>
     ),
   );
 
-export const sessionAuthEpic: Epic = (action$, state$) =>
+export const sessionAuthEpic: Epic<any, any, State> = (action$, state$) =>
   action$.ofType(types.GLOBAL_INIT_SESSION_AUTH).pipe(
     mergeMap(action =>
       fetch$(`${config.API_URL}${'/auth/pagerefresh'}`, 'POST').pipe(
@@ -108,7 +115,7 @@ export const sessionAuthEpic: Epic = (action$, state$) =>
     ),
   );
 
-export const authSuccessEpic: Epic = (action$, state$) =>
+export const authSuccessEpic: Epic<any, any, State> = (action$, state$) =>
   action$.ofType(types.GLOBAL_INIT_AUTH_SUCCESS).pipe(
     pluck('payload'),
     tap(() => {
@@ -156,14 +163,14 @@ export const authSuccessHandleLoadEpic: Epic<any, any, State> = (
     action$.ofType(types.GLOBAL_SET_IS_USER_LOGGED_IN).pipe(take(1)),
   ]).pipe(mapTo(actions.global.setIsLoading(false)));
 
-export const authFailureEpic: Epic = (action$, state$) =>
+export const authFailureEpic: Epic<any, any, State> = (action$, state$) =>
   action$
     .ofType(types.GLOBAL_INIT_AUTH_FAILURE)
     .pipe(
       mergeMap(resp => of(push('/login'), actions.global.setIsLoading(false))),
     );
 
-export const logoutEpic: Epic = (action$, state$) =>
+export const logoutEpic: Epic<any, any, State> = (action$, state$) =>
   action$.ofType(types.GLOBAL_INIT_LOGOUT).pipe(
     filter(() => {
       const pathName = state$.value.router.location.pathname;

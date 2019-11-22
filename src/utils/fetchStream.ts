@@ -8,11 +8,20 @@ interface Response {
   status: number;
 }
 
+interface FetchConfig {
+  setIsFetching?: boolean;
+}
+
+const defaultConfig: FetchConfig = {
+  setIsFetching: true,
+};
+
 export const fetch$ = (
   url: string,
   method = 'GET',
   data?: any,
   headers?: any,
+  config = defaultConfig,
 ) => {
   const promise = async (
     url: string,
@@ -21,7 +30,9 @@ export const fetch$ = (
     headers?: any,
   ) => {
     try {
-      store.dispatch(actions.global.setIsFetching(true));
+      if (config.setIsFetching) {
+        store.dispatch(actions.global.setIsFetching(true));
+      }
 
       const response = await fetch(url, {
         method,
@@ -43,7 +54,9 @@ export const fetch$ = (
         status: response.status,
       };
     } finally {
-      store.dispatch(actions.global.setIsFetching(false));
+      if (config.setIsFetching) {
+        store.dispatch(actions.global.setIsFetching(false));
+      }
     }
   };
 
