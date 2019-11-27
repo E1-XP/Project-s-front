@@ -28,9 +28,6 @@ import { currentDrawingOnRoomEnter$ } from './helpers';
 
 export const createNewDrawingEpic: Epic = (action$, state$) =>
   action$.ofType(types.CANVAS_INIT_CREATE_NEW_DRAWING).pipe(
-    tap(v => {
-      console.log('CREATED NEW DRAWING');
-    }),
     mergeMap(action =>
       fetch$(
         `${config.API_URL}/users/${state$.value.user.userData.id}/drawings/`,
@@ -198,9 +195,22 @@ export const canvasImageSaveEpic: Epic<any, any, State> = (action$, state$) =>
         `${config.API_URL}/drawings/${state$.value.canvas.currentDrawing}/save`,
         'POST',
         { image },
-      ).pipe(catchError(err => of(actions.global.networkError(err)))),
+      ).pipe(
+        map(() => {
+          const { currentDrawing } = state$.value.canvas;
+
+          const incrVersion = (itm: DrawingObject) =>
+            itm.id === currentDrawing!
+              ? { ...itm, version: itm.version + 1 }
+              : itm;
+
+          const data = state$.value.user.drawings!.map(incrVersion);
+
+          return actions.user.setUserDrawings(data);
+        }),
+        catchError(err => of(actions.global.networkError(err))),
+      ),
     ),
-    ignoreElements(),
   );
 
 export const drawingResetEpic: Epic = (action$, state$) =>

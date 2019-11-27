@@ -40,6 +40,7 @@ const mDTP = (dispatch: Dispatch) => ({
 });
 
 const minHeight = { minHeight: '21px' };
+const marginTop = { marginTop: '1rem' };
 
 export const RoomPasswordScreen = compose<Props, {}>(
   withRouter,
@@ -64,12 +65,17 @@ export const RoomPasswordScreen = compose<Props, {}>(
 )(({ handleSubmit, password, onPasswordChange, formMessage }: Props) => (
   <MainContainer>
     <Grid container={true} justify="center" alignItems="center">
-      <Grid item={true} xs={6}>
+      <Grid item={true} sm={6} xs={12}>
         <Paper>
           <Typography align="center" variant="h4">
             Enter password
           </Typography>
-          <Grid container={true} spacing={16} justify="center">
+          <Grid
+            style={marginTop}
+            container={true}
+            spacing={16}
+            justify="center"
+          >
             <Grid item={true} md={6} sm={7} xs={10}>
               <form onSubmit={handleSubmit}>
                 <FormControl fullWidth={true}>

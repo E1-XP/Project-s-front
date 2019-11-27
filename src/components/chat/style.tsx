@@ -1,6 +1,9 @@
+import * as React from 'react';
 import styled, { keyframes } from 'styled-components';
+
 import IconButton from '@material-ui/core/IconButton';
 import TextField from '@material-ui/core/TextField';
+import Chip, { ChipProps } from '@material-ui/core/Chip';
 
 export const Wrapper = styled.div`
   position: relative;
@@ -38,6 +41,10 @@ export const Dot = styled.span`
 export const ChatListWrapper = styled.div<{ chatHeight: string | undefined }>`
   height: ${({ chatHeight }) => chatHeight || '600px'};
   overflow: auto;
+
+  @media only screen and (max-width: 960px) {
+    height: ${({ chatHeight }) => chatHeight || '350px'};
+  }
 `;
 
 export const PositionedIconButton = styled(IconButton)`
@@ -56,4 +63,10 @@ export const TextFieldWithPadding = styled(TextField)`
   & :first-child {
     padding-top: 1.3rem;
   }
+`;
+
+export const ChipWithOpacity = styled(({ isWriting, ...props }) => (
+  <Chip {...props} />
+))<{ isWriting: boolean }>`
+  opacity: ${props => (props.isWriting ? 1 : 0)};
 `;

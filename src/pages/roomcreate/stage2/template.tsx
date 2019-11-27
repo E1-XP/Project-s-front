@@ -22,6 +22,7 @@ const DrawingsContainer = styled(Grid)`
   height: 600px;
   overflow-y: auto;
   overflow-x: hidden;
+  padding-top: 1rem;
 `;
 
 const CreateNewDrawingTile = styled.div`
@@ -33,6 +34,11 @@ const CreateNewDrawingTile = styled.div`
   & :first-child {
     font-size: 56px;
   }
+`;
+
+const GridListTileWithPointer = styled(GridListTile)`
+  cursor: pointer;
+  border: 1px solid #ccc;
 `;
 
 export const ImageSelectorComponent = ({
@@ -62,7 +68,7 @@ export const ImageSelectorComponent = ({
               {drawings ? (
                 <GridList cellHeight={160} cols={getCols()}>
                   {[
-                    <GridListTile
+                    <GridListTileWithPointer
                       key="new-drawing"
                       onClick={handleDrawingCreate}
                     >
@@ -71,21 +77,24 @@ export const ImageSelectorComponent = ({
                       </CreateNewDrawingTile>
                       ,
                       <GridListTileBar title="new drawing" />
-                    </GridListTile>,
+                    </GridListTileWithPointer>,
                   ].concat(
                     drawings.map(itm => (
-                      <GridListTile
+                      <GridListTileWithPointer
+                        className={
+                          currentDrawing === itm.id ? 'img-active' : undefined
+                        }
                         data-id={itm.id}
                         key={itm.id}
                         onClick={handleDrawingSelect}
                       >
                         <img
-                          src={`${config.API_URL}/static/images/${itm.id}.jpg`}
+                          src={`${config.API_URL}/static/images/${itm.id}-v${itm.version}.jpg`}
                           alt="user drawing"
                         />
                         {itm.id}
                         <GridListTileBar title={itm.name} />
-                      </GridListTile>
+                      </GridListTileWithPointer>
                     )),
                   )}
                 </GridList>

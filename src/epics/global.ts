@@ -59,3 +59,17 @@ export const handleErrorsEpic: Epic<any, any, State> = (action$, state$) =>
       ),
     ),
   );
+
+export const handle401Epic: Epic<any, any, State> = (action$, state$) =>
+  action$.ofType(types.GLOBAL_AUTHORIZATION_ERROR).pipe(
+    filter(() => {
+      const { isUserLoggedIn } = state$.value.global;
+      const { location } = state$.value.router;
+
+      const routeCheck = /^\/room\/\d+\/password$/;
+      const onRoomPasswordCheckRoute = routeCheck.test(location.pathname);
+
+      return isUserLoggedIn && !onRoomPasswordCheckRoute;
+    }),
+    mapTo(actions.global.initLogout()),
+  );

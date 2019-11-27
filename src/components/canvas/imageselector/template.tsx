@@ -1,7 +1,7 @@
 import * as React from 'react';
 
 import ExpansionPanel from '@material-ui/core/ExpansionPanel';
-import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
+import GridListTileBar from '@material-ui/core/GridListTileBar';
 import Icon from '@material-ui/core/Icon';
 import Carousel from 'react-alice-carousel';
 
@@ -13,7 +13,7 @@ import {
   NavWrapper,
   StyledButtonBase,
   ImageContainer,
-  GridListTileBarWithCurrent,
+  StyledExpansionPanelDetails,
 } from './style';
 
 const responsive = { 0: { items: 2 }, 445: { items: 3 } };
@@ -22,59 +22,67 @@ export const ImageSelectorComponent = ({
   isOpen,
   drawings,
   handleImageChange,
-  currentDrawing,
-  theme,
   state,
+  setState,
   onPrev,
   onNext,
+  createSliderRef,
+  calcCurrThumb,
 }: CombinedProps) => {
-  if (!drawings) return null;
-
   const getItems = () =>
-    drawings.map(itm => (
-      <StyledButtonBase onClick={handleImageChange} data-id={itm.id}>
+    drawings.map((itm, i) => (
+      <StyledButtonBase
+        className={state.idx === i ? 'img-active' : undefined}
+        onClick={handleImageChange}
+        data-id={itm.id}
+        key={itm.id}
+      >
         <img
-          src={`${config.API_URL}/static/images/${itm.id}.jpg`}
+          src={`${config.API_URL}/static/images/${itm.id}-v${itm.version}.jpg`}
           alt="user drawing"
           draggable={false}
+          data-idx={itm.id}
         />
-        <GridListTileBarWithCurrent
-          title={itm.name}
-          color={
-            currentDrawing === itm.id ? theme.palette.primary.main : undefined
-          }
-        />
+        <GridListTileBar title={itm.name} />
       </StyledButtonBase>
     ));
 
+  if (!state.items) {
+    setState({
+      ...state,
+      items: getItems(),
+    });
+  }
+
   return (
     <ExpansionPanel expanded={isOpen}>
-      <ExpansionPanelDetails>
+      <StyledExpansionPanelDetails>
         <ImageContainer>
+          <NavWrapper onClick={onPrev}>
+            <Icon>keyboard_arrow_left</Icon>
+          </NavWrapper>
           {drawings.length ? (
             <>
               <Carousel
+                ref={createSliderRef}
                 infinite={false}
                 dotsDisabled={true}
                 mouseTrackingEnabled={true}
                 buttonsDisabled={true}
                 responsive={responsive}
-                items={getItems()}
-                slideToIndex={state.idx}
+                items={state.items}
+                slideToIndex={calcCurrThumb()}
                 startIndex={state.idx}
               />
-              <NavWrapper>
-                <Icon onClick={onPrev}>keyboard_arrow_left</Icon>
-              </NavWrapper>
-              <NavWrapper>
-                <Icon onClick={onNext}>keyboard_arrow_right</Icon>
+              <NavWrapper onClick={onNext}>
+                <Icon>keyboard_arrow_right</Icon>
               </NavWrapper>
             </>
           ) : (
             'no images found'
           )}
         </ImageContainer>
-      </ExpansionPanelDetails>
+      </StyledExpansionPanelDetails>
     </ExpansionPanel>
   );
 };

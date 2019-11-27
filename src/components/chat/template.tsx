@@ -10,7 +10,6 @@ import ListItemText from '@material-ui/core/ListItemText';
 import Avatar from '@material-ui/core/Avatar';
 import Icon from '@material-ui/core/Icon';
 import RootRef from '@material-ui/core/RootRef';
-import Chip from '@material-ui/core/Chip';
 import Popover, { PopoverOrigin } from '@material-ui/core/Popover';
 
 import { CombinedProps } from './index';
@@ -23,6 +22,7 @@ import {
   ChatListWrapper,
   PositionedIconButton,
   TextFieldWithPadding,
+  ChipWithOpacity,
 } from './style';
 
 const BouncingDots = () => (
@@ -68,12 +68,6 @@ const getMessages = (
     <ListItem>No Messages found. Write the first one!</ListItem>
   );
 
-const ChipWithOpacity = styled(({ isWriting, ...props }) => (
-  <Chip {...props} />
-))<{ isWriting: boolean }>`
-  opacity: ${props => (props.isWriting ? 1 : 0)};
-`;
-
 const popoverPlacement: PopoverOrigin = {
   vertical: 'top',
   horizontal: 'right',
@@ -105,6 +99,8 @@ export const ChatComponent = ({
       writers.slice(2).length
     } others are writing...`;
   };
+
+  const shouldAutofocus = window.innerWidth > 1280;
 
   return (
     <Paper>
@@ -140,7 +136,7 @@ export const ChatComponent = ({
           value={state.message}
           onChange={onMessageWrite}
           onKeyDown={handleMessageSubmit}
-          autoFocus={true}
+          autoFocus={shouldAutofocus}
           fullWidth={true}
         />
         <PositionedIconButton

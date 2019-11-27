@@ -33,9 +33,9 @@ const backHooks: ReactLifeCycleFunctions<
   CombinedBackCanvasProps,
   BackCanvasPassedProps
 > = {
-  componentWillReceiveProps(nextP) {
+  componentDidUpdate(prevP) {
     const shouldRedraw =
-      nextP.drawingPointsCache !== this.props.drawingPointsCache;
+      prevP.drawingPointsCache !== this.props.drawingPointsCache;
 
     if (shouldRedraw) {
       this.props.redrawBack();

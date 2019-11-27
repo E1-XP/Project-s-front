@@ -1,4 +1,4 @@
-import { from } from 'rxjs';
+import { from, ObservableInput } from 'rxjs';
 
 import { store } from './../store';
 import { actions } from './../actions';
@@ -8,11 +8,20 @@ interface Response {
   status: number;
 }
 
+interface FetchConfig {
+  setIsFetching?: boolean;
+}
+
+const defaultConfig: FetchConfig = {
+  setIsFetching: true,
+};
+
 export const fetch$ = (
   url: string,
   method = 'GET',
   data?: any,
   headers?: any,
+  config = defaultConfig,
 ) => {
   const promise = async (
     url: string,
@@ -21,7 +30,9 @@ export const fetch$ = (
     headers?: any,
   ) => {
     try {
-      store.dispatch(actions.global.setIsFetching(true));
+      if (config.setIsFetching) {
+        store.dispatch(actions.global.setIsFetching(true));
+      }
 
       const response = await fetch(url, {
         method,
@@ -35,8 +46,7 @@ export const fetch$ = (
       const toJSON = await response.json();
 
       if (response.status === 401) {
-        const { isUserLoggedIn } = store.getState().global;
-        isUserLoggedIn && store.dispatch(actions.global.initLogout());
+        store.dispatch(actions.global.authorizationError());
       }
 
       return {
@@ -44,9 +54,11 @@ export const fetch$ = (
         status: response.status,
       };
     } finally {
-      store.dispatch(actions.global.setIsFetching(false));
+      if (config.setIsFetching) {
+        store.dispatch(actions.global.setIsFetching(false));
+      }
     }
   };
 
-  return from<Response>(promise(url, method, data, headers));
+  return from<ObservableInput<Response>>(promise(url, method, data, headers));
 };

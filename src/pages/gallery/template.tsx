@@ -1,28 +1,27 @@
 import React from 'react';
-
-import { Props } from './index';
-import config from '../../config';
-
 import Carousel from 'react-alice-carousel';
-import 'react-alice-carousel/lib/alice-carousel.css';
 
 import Grid from '@material-ui/core/Grid';
-import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
+
+import { Props } from './index';
+
+import { GalleryItem } from './galleryItem';
 
 import { MainContainer } from '../../styles';
 
 import { Heading } from '../../components/shared/heading';
 import { PreloaderComponent } from '../../components/preloader';
-import {
-  Img,
-  NoImagesPlaceholder,
-  NavContainer,
-  PaperWithMinHeight,
-} from './style';
+import { NoImagesPlaceholder, NavContainer, PaperWithMinHeight } from './style';
 
 const responsive = { 0: { items: 2 }, 445: { items: 3 } };
+
+const getPlaceholder = () => [
+  <NoImagesPlaceholder key={0}>
+    <Typography variant="h5">No drawings found.</Typography>
+  </NoImagesPlaceholder>,
+];
 
 export const GalleryComponent = ({
   setState,
@@ -32,36 +31,29 @@ export const GalleryComponent = ({
   slideNext,
   onSlideChanged,
   slideTo,
+  createThumbSliderRef,
 }: Props) => {
   const calcCurrThumb = () => {
-    const itmLen = window.innerWidth >= 445 ? 3 : 2;
+    const stageLen = window.innerWidth >= 445 ? 3 : 2;
 
-    if (drawings!.length <= itmLen) return 0;
+    if (drawings!.length <= stageLen) return 0;
     if (state.idx >= drawings!.length - 1) {
-      return state.idx - (itmLen === 3 ? 2 : 1);
+      return state.idx - (stageLen === 3 ? 2 : 1);
     }
     return state.idx === 0 ? 0 : state.idx - 1;
   };
 
-  const getGalleryItems = (onClick?: any) => {
-    return drawings!.map((itm, i) => (
-      <figure onClick={onClick ? () => onClick(i) : undefined}>
-        <Img
-          src={`${config.API_URL}/static/images/${itm.id}.jpg`}
-          alt="user drawing"
-        />
-      </figure>
+  const getGalleryItems = (onClick?: any) =>
+    drawings!.map((itm, i) => (
+      <GalleryItem activeIdx={state.idx} data={itm} i={i} onClick={onClick} />
     ));
-  };
-
-  const getPlaceholder = () => [
-    <NoImagesPlaceholder key={0}>
-      <Typography variant="h5">No drawings found.</Typography>
-    </NoImagesPlaceholder>,
-  ];
 
   if (state.items === undefined && drawings) {
-    setState({ ...state, items: getGalleryItems() });
+    setState({
+      ...state,
+      items: getGalleryItems(),
+      thumbItems: getGalleryItems(slideTo),
+    });
   }
 
   return (
@@ -105,6 +97,7 @@ export const GalleryComponent = ({
                 {!!drawings.length && (
                   <NavContainer>
                     <Carousel
+                      ref={createThumbSliderRef}
                       mouseTrackingEnabled={true}
                       startIndex={calcCurrThumb()}
                       dotsDisabled={true}
@@ -112,7 +105,7 @@ export const GalleryComponent = ({
                       buttonsDisabled={true}
                       infinite={false}
                       slideToIndex={state.idx - 1}
-                      items={getGalleryItems(slideTo)}
+                      items={state.thumbItems}
                     />
                   </NavContainer>
                 )}

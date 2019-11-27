@@ -39,10 +39,11 @@ export const NavbarComponent = ({
   userData,
   inboxCount,
   handleLogout,
+  location,
 }: Props) => (
   <AppBarWithGradient position="static" color="primary">
     <CustomToolbar>
-      <NavLink to="/dashboard">
+      <NavLink to={isUserLoggedIn ? '/dashboard' : location.pathname}>
         <Typography variant="h6" color="inherit">
           Project-S
         </Typography>

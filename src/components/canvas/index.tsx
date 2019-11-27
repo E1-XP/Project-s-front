@@ -105,9 +105,7 @@ const stateHandlers = {
 
 const handlers = {
   handleImageChange: (props: Props) => (e: any) => {
-    props.initInRoomDrawingSelect(
-      Number(e.target.closest('button').dataset.id),
-    );
+    props.initInRoomDrawingSelect(Number(e.currentTarget.dataset.id));
   },
   setSelectedColor: (props: Props) => (color: any) => {
     props.setFill(color.hex);

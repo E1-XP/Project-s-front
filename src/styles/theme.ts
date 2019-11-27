@@ -1,6 +1,9 @@
 import { createMuiTheme } from '@material-ui/core/styles';
 
 export const theme = createMuiTheme({
+  typography: {
+    useNextVariants: true,
+  },
   palette: {
     primary: { main: `#ff00cc` },
     secondary: { main: `#333399` },
@@ -19,6 +22,9 @@ export const theme = createMuiTheme({
     MuiPaper: {
       root: {
         padding: '1rem',
+        '@media (max-width: 445px)': {
+          padding: '8px',
+        },
       },
     },
   },
