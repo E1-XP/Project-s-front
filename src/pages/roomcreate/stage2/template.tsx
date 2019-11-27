@@ -22,6 +22,7 @@ const DrawingsContainer = styled(Grid)`
   height: 600px;
   overflow-y: auto;
   overflow-x: hidden;
+  padding-top: 1rem;
 `;
 
 const CreateNewDrawingTile = styled.div`
@@ -37,6 +38,7 @@ const CreateNewDrawingTile = styled.div`
 
 const GridListTileWithPointer = styled(GridListTile)`
   cursor: pointer;
+  border: 1px solid #ccc;
 `;
 
 export const ImageSelectorComponent = ({
@@ -79,6 +81,9 @@ export const ImageSelectorComponent = ({
                   ].concat(
                     drawings.map(itm => (
                       <GridListTileWithPointer
+                        className={
+                          currentDrawing === itm.id ? 'img-active' : undefined
+                        }
                         data-id={itm.id}
                         key={itm.id}
                         onClick={handleDrawingSelect}
