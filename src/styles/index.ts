@@ -1,8 +1,11 @@
 import styled, { createGlobalStyle } from 'styled-components';
+
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
 import Button from '@material-ui/core/Button';
 import Icon from '@material-ui/core/Icon';
+
+import 'react-alice-carousel/lib/alice-carousel.css';
 
 export const GlobalStyle = createGlobalStyle`
 body {
@@ -14,12 +17,25 @@ body {
 a {
     text-decoration: none;
     color: inherit;
-}`;
+}
+
+.img-active {
+  border: 1px solid #ff00cc !important;
+
+  & > img + div[class^="MuiGridListTileBar"] > div{
+    color: #ff00cc;
+  }
+}
+`;
 
 export const MainContainer = styled.main`
   margin: 0 auto;
   max-width: 1200px;
   padding: 16px;
+
+  @media only screen and (max-width: 445px) {
+    padding: 8px;
+  }
 `;
 
 export const FullHeightPaper = styled(Paper)`

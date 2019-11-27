@@ -114,11 +114,11 @@ export interface Global {
 }
 
 export interface State {
-  global: Global;
-  user: User;
-  users: Users;
-  rooms: Rooms;
-  chats: Chats;
-  canvas: Canvas;
-  router: RouterState;
+  global: Readonly<Global>;
+  user: Readonly<User>;
+  users: Readonly<Users>;
+  rooms: Readonly<Rooms>;
+  chats: Readonly<Chats>;
+  canvas: Readonly<Canvas>;
+  router: Readonly<RouterState>;
 }
