@@ -1,12 +1,12 @@
 import styled from 'styled-components';
 import Paper from '@material-ui/core/Paper';
 
-export const Img = styled.img<{ isCurrent?: boolean }>`
+export const Img = styled.img`
   width: 100%;
   height: 100%;
   position: relative;
   z-index: -1;
-  border: 1px solid ${props => (props.isCurrent ? '#ff00cc' : '#ccc')};
+  border: 1px solid #ccc;
 `;
 
 export const PaperWithMinHeight = styled(Paper)`
