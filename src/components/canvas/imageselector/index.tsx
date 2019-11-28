@@ -147,7 +147,7 @@ const handlers = () => {
     },
     onPrev: () => () => sliderRef.slidePrev(),
     onNext: () => () => sliderRef.slideNext(),
-    slideTo: () => (idx: number) => sliderRef.slideTo(idx),
+    slideTo: () => (idx: number) => sliderRef && sliderRef.slideTo(idx),
   };
 };
 
