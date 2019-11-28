@@ -11,6 +11,11 @@ export const setUserDrawings: ActionType = (data: string[]) => ({
   payload: data,
 });
 
+export const incrDrawingVersion: ActionType = (drawingId: number) => ({
+  type: types.CANVAS_INCR_DRAWING_VERSION,
+  payload: drawingId,
+});
+
 export const initCreateNewDrawing: ActionType = (data: any) => ({
   type: types.CANVAS_INIT_CREATE_NEW_DRAWING,
   payload: data,
