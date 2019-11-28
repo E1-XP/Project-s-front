@@ -14,6 +14,7 @@ import {
   StyledButtonBase,
   ImageContainer,
   StyledExpansionPanelDetails,
+  CarouselPlaceholder
 } from './style';
 
 const responsive = { 0: { items: 2 }, 445: { items: 3 } };
@@ -72,13 +73,13 @@ export const ImageSelectorComponent = ({
                 slideToIndex={calcCurrThumb()}
                 startIndex={state.idx}
               />
-              <NavWrapper onClick={onNext}>
-                <Icon>keyboard_arrow_right</Icon>
-              </NavWrapper>
             </>
           ) : (
-            'no images found'
+           <CarouselPlaceholder>no images found</CarouselPlaceholder>
           )}
+          <NavWrapper onClick={onNext}>
+            <Icon>keyboard_arrow_right</Icon>
+          </NavWrapper>
         </ImageContainer>
       </StyledExpansionPanelDetails>
     </ExpansionPanel>

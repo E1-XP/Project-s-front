@@ -22,7 +22,7 @@ const DrawingsContainer = styled(Grid)`
   height: 600px;
   overflow-y: auto;
   overflow-x: hidden;
-  padding-top: 1rem;
+  padding: 1rem 0.15rem;
 `;
 
 const CreateNewDrawingTile = styled.div`
