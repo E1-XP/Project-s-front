@@ -1,6 +1,10 @@
 import { types } from '../actions/types';
 import { PlainAction } from './index';
-import { Canvas, DrawingPoint } from '../store/interfaces';
+import {
+  Canvas,
+  DrawingPoint,
+  BroadcastedDrawingPoints,
+} from '../store/interfaces';
 
 const initialCanvas: Canvas = {
   isMouseDown: false,
@@ -106,10 +110,27 @@ export const canvasReducer = (state = initialCanvas, action: PlainAction) => {
         return acc;
       };
 
-      const broadcastedDrawingPoints = data.reduce(groupByUserIdAndGroupId, {});
-      const drawingPoints = userPoints.concat(state.drawingPoints);
+      const notEmpty = (itm: DrawingPoint[]) => !!itm.length;
 
-      return { ...state, drawingPoints, broadcastedDrawingPoints };
+      const broadcastedDPRaw: BroadcastedDrawingPoints = data.reduce(
+        groupByUserIdAndGroupId,
+        {},
+      );
+
+      Object.entries(broadcastedDPRaw).forEach(
+        ([key, arr]) => (broadcastedDPRaw[key] = arr.filter(notEmpty)),
+      );
+
+      const broadcastedDrawingPoints = broadcastedDPRaw;
+      const drawingPoints = userPoints
+        .concat(state.drawingPoints)
+        .filter(notEmpty);
+
+      return {
+        ...state,
+        drawingPoints,
+        broadcastedDrawingPoints,
+      };
     }
     case types.CANVAS_CLEAR_DRAWING_POINTS: {
       return {
