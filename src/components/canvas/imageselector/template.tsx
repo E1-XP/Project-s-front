@@ -5,7 +5,7 @@ import GridListTileBar from '@material-ui/core/GridListTileBar';
 import Icon from '@material-ui/core/Icon';
 import Carousel from 'react-alice-carousel';
 
-import { CombinedProps } from './index';
+import { CombinedProps as Props } from './index';
 
 import config from './../../../config';
 
@@ -18,43 +18,41 @@ import {
 
 const responsive = { 0: { items: 2 }, 445: { items: 3 } };
 
+type GetItemProps = Pick<Props, 'state' | 'drawings' | 'handleImageChange'>;
+
+export const getItems = ({
+  drawings,
+  state,
+  handleImageChange,
+}: GetItemProps) =>
+  drawings.map((itm, i) => (
+    <StyledButtonBase
+      className={state.idx === i ? 'img-active' : undefined}
+      onClick={handleImageChange}
+      data-id={itm.id}
+      key={itm.id}
+    >
+      <img
+        src={`${config.API_URL}/static/images/${itm.id}-v${itm.version}.jpg`}
+        alt="user drawing"
+        draggable={false}
+        data-idx={itm.id}
+        data-v={itm.version}
+      />
+      <GridListTileBar title={itm.name} />
+    </StyledButtonBase>
+  ));
+
 export const ImageSelectorComponent = ({
   isOpen,
   drawings,
-  handleImageChange,
   state,
-  setState,
   onPrev,
   onNext,
   createSliderRef,
   calcCurrThumb,
-}: CombinedProps) => {
-  const getItems = () =>
-    drawings.map((itm, i) => (
-      <StyledButtonBase
-        className={state.idx === i ? 'img-active' : undefined}
-        onClick={handleImageChange}
-        data-id={itm.id}
-        key={itm.id}
-      >
-        <img
-          src={`${config.API_URL}/static/images/${itm.id}-v${itm.version}.jpg`}
-          alt="user drawing"
-          draggable={false}
-          data-idx={itm.id}
-        />
-        <GridListTileBar title={itm.name} />
-      </StyledButtonBase>
-    ));
-
-  if (!state.items) {
-    setState({
-      ...state,
-      items: getItems(),
-    });
-  }
-
-  return (
+}: Props) =>
+  !state.items ? null : (
     <ExpansionPanel expanded={isOpen}>
       <StyledExpansionPanelDetails>
         <ImageContainer>
@@ -85,4 +83,3 @@ export const ImageSelectorComponent = ({
       </StyledExpansionPanelDetails>
     </ExpansionPanel>
   );
-};
