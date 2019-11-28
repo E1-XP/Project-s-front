@@ -76,7 +76,7 @@ const handlers = () => {
       const invalidKey = e.keyCode !== 13;
       const emptyText = !state.message.length || !/\S/i.test(state.message);
       if (invalidKey || emptyText) return;
-      console.log(state.message);
+
       handleSubmit(state.message);
       setState({ ...state, message: '' });
     },

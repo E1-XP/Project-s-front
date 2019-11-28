@@ -54,14 +54,15 @@ export const selectDrawingEpic: Epic = (action$, state$) =>
 export const selectDrawingInRoomEpic: Epic = (action$, state$) =>
   action$.ofType(types.CANVAS_INIT_IN_ROOM_DRAWING_SELECT).pipe(
     pluck('payload'),
-    map(drawingId => Number(drawingId)),
-    map(drawingId => {
+    map(Number),
+    mergeMap(drawingId => {
       const roomId = state$.value.rooms.active;
 
-      store.dispatch(actions.canvas.clearDrawingPoints());
-      store.dispatch(actions.canvas.setCurrentDrawing(drawingId));
-
-      return actions.socket.emitRoomDrawChange({ drawingId, roomId });
+      return of(
+        actions.canvas.clearDrawingPoints(),
+        actions.canvas.setCurrentDrawing(drawingId),
+        actions.socket.emitRoomDrawChange({ drawingId, roomId }),
+      );
     }),
   );
 
@@ -196,21 +197,29 @@ export const canvasImageSaveEpic: Epic<any, any, State> = (action$, state$) =>
         'POST',
         { image },
       ).pipe(
-        map(() => {
-          const { currentDrawing } = state$.value.canvas;
-
-          const incrVersion = (itm: DrawingObject) =>
-            itm.id === currentDrawing!
-              ? { ...itm, version: itm.version + 1 }
-              : itm;
-
-          const data = state$.value.user.drawings!.map(incrVersion);
-
-          return actions.user.setUserDrawings(data);
-        }),
+        mapTo(
+          actions.user.incrDrawingVersion(state$.value.canvas.currentDrawing),
+        ),
         catchError(err => of(actions.global.networkError(err))),
       ),
     ),
+  );
+
+export const incrDrawingVersionEpic: Epic<any, any, State> = (
+  action$,
+  state$,
+) =>
+  action$.ofType(types.CANVAS_INCR_DRAWING_VERSION).pipe(
+    pluck('payload'),
+    map(currentDrawing => {
+      const incrVersion = (itm: DrawingObject) =>
+        itm.id === currentDrawing!
+          ? { ...itm, version: itm.version + 1 }
+          : { ...itm };
+
+      const data = state$.value.user.drawings!.map(incrVersion);
+      return actions.user.setUserDrawings(data);
+    }),
   );
 
 export const drawingResetEpic: Epic = (action$, state$) =>

@@ -24,6 +24,18 @@ export const ImageContainer = styled.div`
     height: 150px;
   }
 
+  .alice-carousel__wrapper {
+    border: 1px solid #333;
+  }
+
+  .alice-carousel__stage-item:not(.__cloned) {
+    width: calc(100% / 3) !important;
+
+    @media only screen and (max-width: 445px) {
+      width: 50% !important;
+    }
+  }
+
   & img {
     height: 100%;
     width: 100%;
@@ -45,7 +57,7 @@ export const NavWrapper = styled.div`
   height: 100%;
   height: 150px;
   border: none;
-  color: #555;
+  color: #ccc;
   background-color: #333;
   padding: 0.5rem;
   cursor: pointer;

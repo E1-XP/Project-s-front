@@ -19,10 +19,7 @@ export const startSocketEpic: Epic = (action$, state$) =>
     tap(data => {
       const { username, id, email } = data;
 
-      socket = connect(
-        config.API_URL,
-        { query: `user=${username}&id=${id}` },
-      );
+      socket = connect(config.API_URL, { query: `user=${username}&id=${id}` });
 
       socket.on('connect', () => {
         store.dispatch(actions.socket.setSocketConnectionStatus(true));
@@ -142,6 +139,11 @@ export const bindRoomHandlersEpic: Epic<any, any, State> = (action$, state$) =>
         store.dispatch(actions.canvas.setBroadcastedDrawingPoint(data));
       });
 
+      socket.on(`${roomId}/mouseup`, (userId: number) => {
+        const drawingId = store.getState().canvas.currentDrawing;
+        store.dispatch(actions.user.incrDrawingVersion(drawingId));
+      });
+
       socket.on(`${roomId}/drawgroupcheck`, (data: string) => {
         const [userIdStr, drawingIdStr, groupStr, tstamps] = data.split('|');
         const test = tstamps.split('.').map(str => Number(str));
@@ -215,18 +217,24 @@ export const bindRoomHandlersEpic: Epic<any, any, State> = (action$, state$) =>
     ignoreElements(),
   );
 
-export const unbindSocketHandlersEpic: Epic = (action$, state$) =>
+export const unbindSocketRoomHandlersEpic: Epic = (action$, state$) =>
   action$.ofType(types.SOCKET_UNBIND_ROOM_HANDLERS).pipe(
     tap(() => {
       const roomId = state$.value.rooms.active;
 
       socket.emit('room/leave', roomId);
+      socket.off(`${roomId}/setdrawing`);
       socket.off(`${roomId}/messages`);
       socket.off(`${roomId}/messages/write`);
       socket.off(`${roomId}/draw`);
+      socket.off(`${roomId}/mouseup`);
+      socket.off(`${roomId}/drawgroupcheck`);
+      socket.off(`${roomId}/sendcorrectgroup`);
+      socket.off(`${roomId}/resendcorrectdrawdata`);
       socket.off(`${roomId}/draw/getexisting`);
-      socket.off(`${roomId}/draw/newgroup`);
+      socket.off(`${roomId}/draw/change`);
       socket.off(`${roomId}/draw/reset`);
+      socket.off(`${roomId}/users`);
       socket.off(`${roomId}/adminleaving`);
     }),
     ignoreElements(),
