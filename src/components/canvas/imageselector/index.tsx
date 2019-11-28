@@ -24,6 +24,11 @@ interface Props extends HandlersProps, WithTheme {
 
 interface HandlersProps {
   createSliderRef: (ref: any) => void;
+  setItems: (
+    drawings: CombinedProps['drawings'],
+    state: CombinedProps['state'],
+    handleImageChange: CombinedProps['handleImageChange'],
+  ) => void;
   onSlideChange: () => void;
   replaceImage: () => void;
   calcCurrThumb: (idx?: number) => number;
@@ -46,28 +51,37 @@ export type CombinedProps = Props & PassedProps;
 
 const hooks: ReactLifeCycleFunctions<CombinedProps, {}, {}> = {
   componentDidMount() {
-    const { state, setState, drawings, handleImageChange } = this.props;
-
-    const items = getItems({
-      drawings,
+    const {
       state,
+      drawings,
       handleImageChange,
-    });
+      currentDrawing,
+      calcCurrThumb,
+    } = this.props;
 
-    setState({ ...state, items });
+    this.props.setItems(drawings, state, handleImageChange);
+
+    const idx = drawings.findIndex(itm => itm.id === currentDrawing!);
 
     requestAnimationFrame(() => {
-      const { currentDrawing, state, calcCurrThumb } = this.props;
-      const idx = state.items!.findIndex(itm => +itm.key! === currentDrawing!);
-
       this.props.onSlideChange();
       this.props.slideTo(calcCurrThumb(idx));
     });
   },
   UNSAFE_componentWillReceiveProps(nextP) {
-    const { drawings, isMouseDown } = this.props;
+    const { drawings, state, handleImageChange, currentDrawing } = nextP;
 
-    if (drawings !== nextP.drawings && !isMouseDown) {
+    const diffLength = drawings.length !== this.props.drawings.length;
+    if (diffLength) {
+      const idx = drawings.findIndex(itm => itm.id === currentDrawing!);
+
+      nextP.setItems(drawings, state, handleImageChange);
+
+      requestAnimationFrame(() => {
+        nextP.slideTo(nextP.calcCurrThumb(idx));
+        nextP.onSlideChange();
+      });
+    } else if (this.props.drawings !== drawings && !this.props.isMouseDown) {
       requestAnimationFrame(this.props.replaceImage);
     }
   },
@@ -88,6 +102,19 @@ const handlers = () => {
 
   return {
     createSliderRef: () => (ref: any) => (sliderRef = ref),
+    setItems: ({ setState }: CombinedProps) => (
+      drawings: CombinedProps['drawings'],
+      state: CombinedProps['state'],
+      handleImageChange: CombinedProps['handleImageChange'],
+    ) => {
+      const items = getItems({
+        drawings,
+        state,
+        handleImageChange,
+      });
+
+      setState({ ...state, items });
+    },
     onSlideChange: ({ currentDrawing }: Props) => () => {
       if (!sliderRef) return;
 
