@@ -81,7 +81,7 @@ export const CanvasNavbarComponent = ({
             <Slider
               value={weight}
               min={1}
-              max={8}
+              max={12}
               step={1}
               onChange={setWeight}
               vertical={true}

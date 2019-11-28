@@ -139,6 +139,8 @@ export const roomLeaveEpic: Epic = (action$, state$) =>
         actions.canvas.setCurrentDrawing(null),
         actions.canvas.setLatestPoint(null),
         actions.canvas.setGroupCount(0),
+        actions.canvas.setFill('#000000'),
+        actions.canvas.setWeight(2),
         actions.chats.setMessages({
           channel: 'selectedRoom',
           data: {},
