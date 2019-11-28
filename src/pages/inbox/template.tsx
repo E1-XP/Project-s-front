@@ -22,7 +22,7 @@ const InboxContent = styled.div`
   overflow-y: auto;
   display: flex;
   justify-content: center;
-  align-items: center;
+
   & > h5 {
     margin-top: -7rem;
   }
