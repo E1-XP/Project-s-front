@@ -37,7 +37,9 @@ const GridWithPadding = styled(Grid)`
 `;
 
 const ListWithWidth = styled(List)`
-  width: 85%;
+  @media only screen and (min-width: 445px) {
+    width: 85%;
+  }
 `;
 
 export const CanvasNavbarComponent = ({

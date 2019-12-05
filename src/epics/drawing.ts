@@ -8,9 +8,9 @@ import {
   ignoreElements,
   pluck,
   take,
+  throttleTime,
 } from 'rxjs/operators';
-import { of } from 'rxjs';
-import flatMap from 'lodash/flatMap';
+import { of, animationFrameScheduler } from 'rxjs';
 
 import { DrawingPoint, State } from './../store/interfaces';
 import { store } from '../store';
@@ -25,10 +25,10 @@ export const createDrawingPointEpic: Epic<any, any, State> = (
   state$,
 ) =>
   action$.ofType(types.CANVAS_CREATE_DRAWING_POINT).pipe(
-    map(({ event, boardRef, onMouseDownMode }) => {
-      const { id } = state$.value.user.userData;
+    map(({ event, boardRef }) => {
+      const { id: userId } = state$.value.user.userData;
       const {
-        groupCount,
+        groupCount: group,
         fill,
         weight,
         currentDrawing: drawingId,
@@ -39,36 +39,24 @@ export const createDrawingPointEpic: Epic<any, any, State> = (
 
       const { top, left, width, height } = boardRef.getBoundingClientRect();
 
-      const xPos = ((pageX - left - scrollX) / width) * boardRef.width;
-      const yPos = ((pageY - top - scrollY) / height) * boardRef.height;
+      const x = ((pageX - left - scrollX) / width) * boardRef.width;
+      const y = ((pageY - top - scrollY) / height) * boardRef.height;
 
-      const pointFactory = (opts: Partial<DrawingPoint> = {}) => ({
-        x: opts.x !== undefined ? opts.x : xPos,
-        y: opts.y !== undefined ? opts.y : yPos,
-        fill: opts.fill || fill,
-        weight: opts.weight || weight,
-        date: opts.date || Date.now(),
-        group: opts.group !== undefined ? opts.group : groupCount,
-        userId: opts.userId !== undefined ? opts.userId : id,
-        drawingId:
-          opts.drawingId !== undefined ? opts.drawingId : Number(drawingId),
-      });
-
-      if (onMouseDownMode) {
-        return [
-          pointFactory(),
-          pointFactory({ x: xPos + weight, y: yPos + weight }),
-        ];
-      }
-
-      return [pointFactory()];
+      return {
+        x,
+        y,
+        fill,
+        weight,
+        date: Date.now(),
+        group,
+        userId,
+        drawingId: Number(drawingId),
+      };
     }),
-    mergeMap(data =>
+    mergeMap(point =>
       of(
-        ...flatMap(data, p => [
-          actions.canvas.setDrawingPoint(p),
-          actions.socket.emitRoomDraw(p),
-        ]),
+        actions.canvas.setDrawingPoint(point),
+        actions.socket.emitRoomDraw(point),
       ),
     ),
   );
@@ -81,6 +69,29 @@ export const clearCanvasEpic: Epic = (action$, state$) =>
       ctx.clearRect(0, 0, width, height);
     }),
     ignoreElements(),
+  );
+
+export const initRedrawCanvasEpic: Epic<any, any, State> = (action$, state$) =>
+  action$.ofType(types.CANVAS_REDRAW).pipe(
+    throttleTime(0, animationFrameScheduler, { trailing: true }),
+    pluck('ctx'),
+    mergeMap(ctx =>
+      of(actions.canvas.clearCanvas(ctx), actions.canvas.initDrawCanvas(ctx)),
+    ),
+  );
+
+export const initRedrawBackCanvasEpic: Epic<any, any, State> = (
+  action$,
+  state$,
+) =>
+  action$.ofType(types.CANVAS_REDRAW_BACK).pipe(
+    pluck('ctx'),
+    mergeMap(ctx =>
+      of(
+        actions.canvas.clearCanvas(ctx),
+        actions.canvas.initDrawCanvas(ctx, true),
+      ),
+    ),
   );
 
 export const initDrawCanvasEpic: Epic<any, any, State> = (action$, state$) =>
@@ -104,13 +115,15 @@ export const getDrawingPointsEpic: Epic<any, any, State> = (action$, state$) =>
       const combined = getCombinedDrawingPoints(state$.value);
 
       // set cache and return points over cache length
-      const divisor = 5;
+      const maxMainCanvasGroups = 3;
+      const divide = (val: number) => Math.floor(val / maxMainCanvasGroups);
+
       const isNewCacheLengthDifferent =
-        Math.floor(cacheLen / divisor) !==
-        Math.floor(combined.length / divisor);
+        divide(cacheLen) !== divide(combined.length);
 
       if (isNewCacheLengthDifferent) {
-        const newCacheLen = combined.length - (combined.length % divisor);
+        const newCacheLen =
+          combined.length - (combined.length % maxMainCanvasGroups);
         const newCache = combined.slice(0, newCacheLen);
 
         store.dispatch(actions.canvas.setDrawingPointsCache(newCache));
@@ -128,22 +141,40 @@ export const drawCanvasEpic: Epic<any, any, State> = (action$, state$) =>
     tap<{ ctx: CanvasRenderingContext2D; toDraw: DrawingPoint[][] }>(
       ({ ctx, toDraw }) => {
         ctx.lineJoin = 'round';
+        ctx.lineCap = 'round';
 
-        toDraw.forEach(arr =>
-          arr.forEach((point, i, arr) => {
+        toDraw.forEach(group => {
+          group.forEach((point, i) => {
             const { x, y, fill, weight } = point;
 
-            if (i) {
-              ctx.strokeStyle = fill;
-              ctx.lineWidth = weight;
+            ctx.strokeStyle = fill;
+            ctx.lineWidth = weight;
 
+            if (group.length === 1) {
               ctx.beginPath();
-              ctx.lineTo(arr[i - 1].x, arr[i - 1].y);
-              ctx.lineTo(x, y);
-              ctx.stroke();
-            }
-          }),
-        );
+              ctx.arc(x, y, weight / 2, 0, 2 * Math.PI);
+              ctx.fill();
+              ctx.closePath();
+            } else if (i < group.length - 1) {
+              if (i === 0) {
+                ctx.beginPath();
+                ctx.moveTo(x, y);
+              }
+
+              const prevP = i > 0 ? group[i - 1] : group[0];
+              const nextP = group[i + 1];
+              const next2P = i !== group.length - 2 ? group[i + 2] : nextP;
+
+              const cp1x = x + (nextP.x - prevP.x) / 6;
+              const cp1y = y + (nextP.y - prevP.y) / 6;
+
+              const cp2x = nextP.x - (next2P.x - x) / 6;
+              const cp2y = nextP.y - (next2P.y - y) / 6;
+
+              ctx.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, nextP.x, nextP.y);
+            } else if (i === group.length - 1) ctx.stroke();
+          });
+        });
       },
     ),
     ignoreElements(),
@@ -168,5 +199,5 @@ export const drawMouseUpEpic: Epic<any, any, State> = (action$, state$) =>
 
       return [userId, drawingId, group, tstamps].join('|');
     }),
-    map(data => actions.socket.emitRoomDrawMouseup(data)),
+    map(actions.socket.emitRoomDrawMouseup),
   );

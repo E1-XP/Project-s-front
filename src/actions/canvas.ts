@@ -53,12 +53,10 @@ export const setDrawingPointsCache: ActionType = data => ({
 export const createDrawingPoint = (
   event: MouseEvent,
   boardRef: HTMLCanvasElement,
-  onMouseDownMode = false,
 ) => ({
   type: types.CANVAS_CREATE_DRAWING_POINT,
   event,
   boardRef,
-  onMouseDownMode,
 });
 
 export const setDrawingPoint: ActionType = (data: DrawingPoint) => ({
@@ -77,6 +75,18 @@ export const clearDrawingPoints: ActionType = () => ({
 
 export const resetDrawing: ActionType = () => ({
   type: types.CANVAS_RESET_DRAWING,
+});
+
+export const redrawCanvas: ActionType = (ctx: CanvasRenderingContext2D) => ({
+  type: types.CANVAS_REDRAW,
+  ctx,
+});
+
+export const redrawBackCanvas: ActionType = (
+  ctx: CanvasRenderingContext2D,
+) => ({
+  type: types.CANVAS_REDRAW_BACK,
+  ctx,
 });
 
 export const clearCanvas: ActionType = ctx => ({

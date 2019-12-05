@@ -2,7 +2,6 @@ import React from 'react';
 import { connect } from 'react-redux';
 import {
   compose,
-  shouldUpdate,
   lifecycle,
   ReactLifeCycleFunctions,
 } from 'recompose';
@@ -29,13 +28,13 @@ interface BackCanvasPassedProps {
 
 type CombinedBackCanvasProps = BackCanvasProps & BackCanvasPassedProps;
 
-const backHooks: ReactLifeCycleFunctions<
+const hooks: ReactLifeCycleFunctions<
   CombinedBackCanvasProps,
   BackCanvasPassedProps
 > = {
-  componentDidUpdate(prevP) {
+  UNSAFE_componentWillReceiveProps(nextP) {
     const shouldRedraw =
-      prevP.drawingPointsCache !== this.props.drawingPointsCache;
+      nextP.drawingPointsCache !== this.props.drawingPointsCache;
 
     if (shouldRedraw) {
       this.props.redrawBack();
@@ -50,7 +49,7 @@ export const BackCanvas = compose<
   connect(({ canvas }: State) => ({
     drawingPointsCache: canvas.drawingPointsCache,
   })),
-  lifecycle(backHooks),
+  lifecycle(hooks),
 )(({ createBackBoardRef }: CombinedBackCanvasProps) => (
   <BackCanvasElem ref={createBackBoardRef} width={1280} height={720} />
 ));

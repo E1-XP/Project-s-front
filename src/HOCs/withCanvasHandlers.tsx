@@ -16,6 +16,8 @@ const {
     initDrawCanvas,
     clearCanvas,
     resetDrawing,
+    redrawCanvas,
+    redrawBackCanvas,
   },
 } = actions;
 
@@ -30,11 +32,7 @@ export interface Props {
   isMouseDown: boolean;
   setIsMouseDown: (v: boolean) => Dispatch;
   setGroupCount: (v: number) => Dispatch;
-  createDrawingPoint: (
-    e: object,
-    ref: HTMLCanvasElement,
-    onMouseDown?: boolean,
-  ) => Dispatch;
+  createDrawingPoint: (e: object, ref: HTMLCanvasElement) => Dispatch;
   initCanvasToImage: (
     ref: HTMLCanvasElement,
     backRef: HTMLCanvasElement,
@@ -56,6 +54,8 @@ export interface Props {
   onMouseUpOutsideBoard: () => void;
   onCanvasResize: () => void;
   redraw: () => void;
+  redrawCanvas: (ctx: CanvasRenderingContext2D) => Dispatch;
+  redrawBackCanvas: (ctx: CanvasRenderingContext2D) => Dispatch;
   redrawBack: () => void;
   handleReset: () => void;
   resetDrawing: () => Dispatch;
@@ -79,7 +79,7 @@ const handlers = () => {
         e.preventDefault && e.preventDefault();
 
         props.setIsMouseDown(true);
-        props.createDrawingPoint(e, boardRef!, true);
+        props.createDrawingPoint(e, boardRef!);
       }),
     onPointerMove: (props: Props) =>
       shallowEventAdapter(e => {
@@ -112,17 +112,9 @@ const handlers = () => {
 };
 
 const handlers2 = {
-  redraw: throttle(
-    (props: Props) => () => {
-      props.clearCanvas(props.getCtx());
-      props.initDrawCanvas(props.getCtx());
-    },
-    5000,
-  ),
-  redrawBack: (props: Props) => () => {
-    props.clearCanvas(props.getBackCtx());
-    props.initDrawCanvas(props.getBackCtx(), true);
-  },
+  redraw: (props: Props) => () => props.redrawCanvas(props.getCtx()),
+  redrawBack: (props: Props) => () =>
+    props.redrawBackCanvas(props.getBackCtx()),
   handleReset: (props: Props) => () => {
     props.clearCanvas(props.getCtx());
     props.resetDrawing();
@@ -152,6 +144,8 @@ export const withCanvasHandlers = compose(
       initDrawCanvas,
       clearCanvas,
       resetDrawing,
+      redrawCanvas,
+      redrawBackCanvas,
     },
   ),
   withHandlers(handlers()),
