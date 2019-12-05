@@ -47,12 +47,14 @@ module.exports = {
     new CopyPlugin([{ from: './_redirects', to: './' }]),
     new webpackCleanPlugin(['./public/main.css', './public/bundle.js']),
   ],
+  devtool: 'source-map',
   optimization: {
     minimizer: [
       new terserWebpackPlugin({
         terserOptions: {
           output: {
             comments: false,
+            source_map: true,
           },
         },
         extractComments: false,
