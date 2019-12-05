@@ -77,9 +77,7 @@ export const canvasReducer = (state = initialCanvas, action: PlainAction) => {
         {},
         state.broadcastedDrawingPoints,
       );
-      broadcastedDrawingPoints[userId][group] = action.payload.filter(
-        (itm: DrawingPoint) => !!itm,
-      );
+      broadcastedDrawingPoints[userId][group] = action.payload.filter(Boolean);
 
       return {
         ...state,
@@ -112,16 +110,15 @@ export const canvasReducer = (state = initialCanvas, action: PlainAction) => {
 
       const notEmpty = (itm: DrawingPoint[]) => !!itm.length;
 
-      const broadcastedDPRaw: BroadcastedDrawingPoints = data.reduce(
+      const broadcastedDrawingPoints: BroadcastedDrawingPoints = data.reduce(
         groupByUserIdAndGroupId,
         {},
       );
 
-      Object.entries(broadcastedDPRaw).forEach(
-        ([key, arr]) => (broadcastedDPRaw[key] = arr.filter(notEmpty)),
+      Object.entries(broadcastedDrawingPoints).forEach(
+        ([key, arr]) => (broadcastedDrawingPoints[key] = arr.filter(notEmpty)),
       );
 
-      const broadcastedDrawingPoints = broadcastedDPRaw;
       const drawingPoints = userPoints
         .concat(state.drawingPoints)
         .filter(notEmpty);
