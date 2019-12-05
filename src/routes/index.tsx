@@ -4,8 +4,10 @@ import { Route, Switch, Redirect } from 'react-router-dom';
 
 import { Preloader, PreloaderFallback } from './../components/preloader';
 import { Navbar } from './../components/navbar';
+
 import { Form } from './../pages/forms';
 import { NotFound } from '../pages/404';
+import { ErrorPage } from '../pages/500';
 
 const Dashboard = lazy(() => import('../pages/dashboard'));
 const Inbox = lazy(() => import('../pages/inbox'));
@@ -13,7 +15,6 @@ const Gallery = lazy(() => import('../pages/gallery'));
 const RoomCreate = lazy(() => import('../pages/roomcreate'));
 const RoomPasswordScreen = lazy(() => import('../pages/room/enterpassword'));
 const Room = lazy(() => import('../pages/room'));
-const ErrorPage = lazy(() => import('../pages/500'));
 
 export const routes = (
   <Preloader>

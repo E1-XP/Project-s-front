@@ -46,16 +46,18 @@ export const appStartEpic: Epic = (action$, state$) =>
     }),
   );
 
-export const handleErrorsEpic: Epic<any, any, State> = (action$, state$) =>
+export const handleNetworkErrorsEpic: Epic<any, any, State> = (
+  action$,
+  state$,
+) =>
   action$.ofType(types.GLOBAL_NETWORK_ERROR).pipe(
-    tap(({ payload }) => console.log('ERROR: ', payload)),
+    tap(({ payload }) => console.log('NETWORK ERROR: ', payload)),
+    filter(() => state$.value.global.isLoading),
     mergeMap(() =>
       of(
         actions.global.setHasErrored(true),
         push('/500'),
-        state$.value.global.isLoading
-          ? actions.global.setIsLoading(false)
-          : { type: 'NULL' },
+        actions.global.setIsLoading(false),
       ),
     ),
   );
