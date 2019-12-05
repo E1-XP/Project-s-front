@@ -115,7 +115,7 @@ export const setCurrentDrawingOnRoomEnterHelperEpic: Epic<any, any, State> = (
     ignoreElements(),
   );
 
-export const setCurrentDrawingOnEnterrAfterChangeHelperEpic: Epic<
+export const setCurrentDrawingOnEnterAfterChangeHelperEpic: Epic<
   any,
   any,
   State
@@ -131,7 +131,7 @@ export const setCurrentDrawingOnEnterrAfterChangeHelperEpic: Epic<
     ignoreElements(),
   );
 
-// handle after in room img change
+//  handle image change in room
 export const drawingTakeIntoOwnershipOnMouseDownEpic: Epic<any, any, State> = (
   action$,
   state$,

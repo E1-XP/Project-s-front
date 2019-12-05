@@ -1,6 +1,6 @@
 import { connect } from 'socket.io-client';
 import { Epic } from 'redux-observable';
-import { tap, ignoreElements, pluck } from 'rxjs/operators';
+import { tap, ignoreElements, pluck, map, mapTo } from 'rxjs/operators';
 import { of } from 'rxjs';
 
 import { State, UserData, DrawingPoint } from '../store/interfaces';
@@ -13,7 +13,7 @@ import config from './../config';
 
 export let socket: SocketIOClient.Socket;
 
-export const startSocketEpic: Epic = (action$, state$) =>
+export const startSocketEpic: Epic<any, any, State> = (action$, state$) =>
   action$.ofType(types.GLOBAL_INIT_AUTH_SUCCESS).pipe(
     pluck<{}, UserData>('payload'),
     tap(data => {
@@ -24,6 +24,11 @@ export const startSocketEpic: Epic = (action$, state$) =>
       socket.on('connect', () => {
         store.dispatch(actions.socket.setSocketConnectionStatus(true));
         store.dispatch(actions.socket.bindHandlers());
+
+        const { pathname } = state$.value.router.location;
+        const isOnRoomRoute = /^\/room\/\d+$/.test(pathname);
+
+        isOnRoomRoute && store.dispatch(actions.socket.reconnectInRoom());
       });
     }),
     ignoreElements(),
@@ -238,4 +243,10 @@ export const unbindSocketRoomHandlersEpic: Epic = (action$, state$) =>
       socket.off(`${roomId}/adminleaving`);
     }),
     ignoreElements(),
+  );
+
+export const reconnectInRoomEpic: Epic<any, any, State> = (action$, state$) =>
+  action$.ofType(types.SOCKET_RECONNECT_IN_ROOM).pipe(
+    tap(() => console.log('reconnecting')),
+    map(() => actions.rooms.initRoomEnterSuccess()),
   );

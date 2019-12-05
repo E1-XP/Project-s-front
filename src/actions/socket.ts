@@ -21,6 +21,10 @@ export const closeSocket = () => ({
   type: types.SOCKET_CLOSE,
 });
 
+export const reconnectInRoom = () => ({
+  type: types.SOCKET_RECONNECT_IN_ROOM,
+});
+
 export const emitRoomDraw = (data: any) => ({
   type: types.SOCKET_EMIT_ROOM_DRAW,
   payload: data,
