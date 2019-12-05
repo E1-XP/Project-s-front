@@ -5,6 +5,7 @@ const miniCssExtractPlugin = require('mini-css-extract-plugin');
 const htmlWebpackInlineSourcePlugin = require('html-webpack-inline-source-plugin');
 const webpackCleanPlugin = require('webpack-clean');
 const optimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
+const CopyPlugin = require('copy-webpack-plugin');
 const cleanCSS = require('clean-css');
 
 module.exports = {
@@ -43,6 +44,7 @@ module.exports = {
       minify: { collapseWhitespace: true },
     }),
     new htmlWebpackInlineSourcePlugin(),
+    new CopyPlugin([{ from: './_redirects', to: './' }]),
     new webpackCleanPlugin(['./public/main.css', './public/bundle.js']),
   ],
   optimization: {

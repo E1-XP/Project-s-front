@@ -30,6 +30,7 @@
     "@types/webpack-env": "^1.14.1",
     "babel-loader": "^8.0.6",
     "clean-css": "^4.2.1",
+    "copy-webpack-plugin": "^5.0.5",
     "css-loader": "^1.0.1",
     "enzyme": "^3.10.0",
     "html-webpack-inline-source-plugin": "0.0.10",
