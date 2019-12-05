@@ -24,7 +24,7 @@ const InboxContent = styled.div`
   justify-content: center;
 
   & > h5 {
-    margin-top: -7rem;
+    margin-top: 7rem;
   }
 `;
 
