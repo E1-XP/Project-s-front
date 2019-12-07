@@ -85,6 +85,7 @@ export const initRedrawBackCanvasEpic: Epic<any, any, State> = (
   state$,
 ) =>
   action$.ofType(types.CANVAS_REDRAW_BACK).pipe(
+    throttleTime(0, animationFrameScheduler, { trailing: true }),
     pluck('ctx'),
     mergeMap(ctx =>
       of(

@@ -175,8 +175,9 @@ export const logoutEpic: Epic<any, any, State> = (action$, state$) =>
     filter(() => {
       const pathName = state$.value.router.location.pathname;
       const isOnRoomRoute = /^\/room\/\d+(\/)?$/.test(pathName);
+      const errorHappened = state$.value.global.hasErrored;
 
-      if (isOnRoomRoute) {
+      if (!errorHappened && isOnRoomRoute) {
         return confirm('Are you sure? This will close your room.');
       }
 
