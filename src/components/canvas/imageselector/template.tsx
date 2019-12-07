@@ -14,7 +14,7 @@ import {
   StyledButtonBase,
   ImageContainer,
   StyledExpansionPanelDetails,
-  CarouselPlaceholder
+  CarouselPlaceholder,
 } from './style';
 
 const responsive = { 0: { items: 2 }, 445: { items: 3 } };
@@ -26,7 +26,7 @@ export const getItems = ({
   state,
   handleImageChange,
 }: GetItemProps) =>
-  drawings.map((itm, i) => (
+  (drawings || []).map((itm, i) => (
     <StyledButtonBase
       className={state.idx === i ? 'img-active' : undefined}
       onClick={handleImageChange}
@@ -75,7 +75,7 @@ export const ImageSelectorComponent = ({
               />
             </>
           ) : (
-           <CarouselPlaceholder>no images found</CarouselPlaceholder>
+            <CarouselPlaceholder>no images found</CarouselPlaceholder>
           )}
           <NavWrapper onClick={onNext}>
             <Icon>keyboard_arrow_right</Icon>
