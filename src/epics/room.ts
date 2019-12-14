@@ -137,6 +137,7 @@ export const roomLeaveEpic: Epic = (action$, state$) =>
         actions.users.setRoomUsers({}),
         actions.canvas.clearDrawingPoints(),
         actions.canvas.setCurrentDrawing(null),
+        actions.canvas.setCurrentThumbnail(null),
         actions.canvas.setLatestPoint(null),
         actions.canvas.setGroupCount(0),
         actions.canvas.setFill('#000000'),

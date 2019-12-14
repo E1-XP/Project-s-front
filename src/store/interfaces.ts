@@ -102,6 +102,7 @@ export interface Canvas {
   broadcastedDrawingPoints: BroadcastedDrawingPoints;
   drawingPointsCache: DrawingPoint[][];
   latestPoint: DrawingPoint | null;
+  cachedCurrDrawingThumb: null | string;
 }
 
 export interface Global {

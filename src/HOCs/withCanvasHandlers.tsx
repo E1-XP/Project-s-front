@@ -36,6 +36,7 @@ export interface Props {
   initCanvasToImage: (
     ref: HTMLCanvasElement,
     backRef: HTMLCanvasElement,
+    shouldSentImgToServer?: boolean,
   ) => Dispatch;
   initDrawCanvas: (
     ctx: CanvasRenderingContext2D,

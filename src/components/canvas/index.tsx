@@ -23,6 +23,7 @@ import {
   RoomsList,
   Rooms,
   UserData,
+  BroadcastedDrawingPoints,
 } from '../../store/interfaces';
 
 import {
@@ -40,6 +41,7 @@ export interface Props extends CanvasHandlersProps {
   activeRoom: Rooms['active'];
   user: UserData;
   drawingPoints: DrawingPoint[][];
+  broadcastedDrawingPoints: BroadcastedDrawingPoints;
   fill: string;
   weight: number;
   setWeight: (v: number) => Dispatch;
@@ -48,7 +50,6 @@ export interface Props extends CanvasHandlersProps {
   setIsColorPickerOpen: (val: boolean) => void;
   setIsImageSelectorOpen: (val?: boolean) => void;
   clearDrawingPoints: () => Dispatch;
-  initCanvasToImage: (v: any) => Dispatch;
   setSelectedColor: (e: any) => void;
   handleImageChange: (e: any) => void;
   initInRoomDrawingSelect: (id: number) => Dispatch;
@@ -66,7 +67,8 @@ const hooks: ReactLifeCycleFunctions<Props, {}> = {
     document.addEventListener('mouseup', this.props.onMouseUpOutsideBoard);
   },
   componentDidUpdate(prevP) {
-    const { activeRoom, rooms, user } = this.props;
+    const { activeRoom, rooms, user, initCanvasToImage } = this.props;
+
     const adminChangedByMe =
       prevP.activeRoom &&
       activeRoom &&
@@ -75,6 +77,19 @@ const hooks: ReactLifeCycleFunctions<Props, {}> = {
 
     if (adminChangedByMe && prevP.boardState.isImageSelectorOpen) {
       this.props.setIsImageSelectorOpen(false);
+    }
+
+    const otherUserSendDrawEvt =
+      prevP.broadcastedDrawingPoints !== this.props.broadcastedDrawingPoints;
+    const shouldGenerateThumb = !this.props.isMouseDown && otherUserSendDrawEvt;
+
+    if (shouldGenerateThumb) {
+      const ref = this.props.getBoardRef();
+      const backRef = this.props.getBackBoardRef();
+
+      requestAnimationFrame(
+        () => ref && backRef && initCanvasToImage(ref, backRef, false),
+      );
     }
   },
   componentWillUnmount() {
@@ -125,6 +140,7 @@ const mapDispatchToProps = {
 export const Canvas = compose<Props, {}>(
   connect(
     ({ canvas, rooms, user }: State) => ({
+      broadcastedDrawingPoints: canvas.broadcastedDrawingPoints,
       fill: canvas.fill,
       weight: canvas.weight,
       rooms: rooms.list,

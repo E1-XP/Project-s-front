@@ -39,6 +39,17 @@ const CreateNewDrawingTile = styled.div`
 const GridListTileWithPointer = styled(GridListTile)`
   cursor: pointer;
   border: 1px solid #ccc;
+
+  & img::before {
+    content: ' ';
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    background-image: url(${config.API_URL}/static/default.jpg);
+  }
 `;
 
 export const ImageSelectorComponent = ({

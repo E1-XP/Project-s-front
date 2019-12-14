@@ -5,10 +5,12 @@ import { DrawingPoint } from '../store/interfaces';
 export const initCanvasToImage: ActionType = (
   boardRef: HTMLCanvasElement,
   backBoardRef: HTMLCanvasElement,
+  shouldSentImgToServer = true,
 ) => ({
   type: types.CANVAS_INIT_CANVAS_TO_IMAGE,
   boardRef,
   backBoardRef,
+  shouldSentImgToServer,
 });
 
 export const initGetImagesFromServer: ActionType = () => ({
@@ -126,5 +128,10 @@ export const setWeight: ActionType = data => ({
 
 export const setFill: ActionType = data => ({
   type: types.CANVAS_SET_FILL,
+  payload: data,
+});
+
+export const setCurrentThumbnail: ActionType = data => ({
+  type: types.CANVAS_SET_CURRENT_THUMBNAIL,
   payload: data,
 });

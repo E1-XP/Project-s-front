@@ -38,7 +38,6 @@ export const getItems = ({
         alt="user drawing"
         draggable={false}
         data-idx={itm.id}
-        data-v={itm.version}
       />
       <GridListTileBar title={itm.name} />
     </StyledButtonBase>
@@ -61,19 +60,17 @@ export const ImageSelectorComponent = ({
             <Icon>keyboard_arrow_left</Icon>
           </NavWrapper>
           {drawings.length ? (
-            <>
-              <Carousel
-                ref={createSliderRef}
-                infinite={false}
-                dotsDisabled={true}
-                mouseTrackingEnabled={true}
-                buttonsDisabled={true}
-                responsive={responsive}
-                items={state.items}
-                slideToIndex={calcCurrThumb()}
-                startIndex={state.idx}
-              />
-            </>
+            <Carousel
+              ref={createSliderRef}
+              infinite={false}
+              dotsDisabled={true}
+              mouseTrackingEnabled={true}
+              buttonsDisabled={true}
+              responsive={responsive}
+              items={state.items}
+              slideToIndex={calcCurrThumb()}
+              startIndex={state.idx}
+            />
           ) : (
             <CarouselPlaceholder>no images found</CarouselPlaceholder>
           )}

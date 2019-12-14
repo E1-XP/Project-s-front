@@ -12,7 +12,7 @@ import {
   concatMap,
   catchError,
 } from 'rxjs/operators';
-import { of } from 'rxjs';
+import { of, concat } from 'rxjs';
 
 import { fetch$ } from '../utils/fetchStream';
 
@@ -177,7 +177,7 @@ export const drawingTakeIntoOwnershipOnMouseDownEpic: Epic<any, any, State> = (
 export const canvasImageSaveEpic: Epic<any, any, State> = (action$, state$) =>
   action$.ofType(types.CANVAS_INIT_CANVAS_TO_IMAGE).pipe(
     debounceTime(700),
-    map(({ boardRef, backBoardRef }) => {
+    map(({ boardRef, backBoardRef, shouldSentImgToServer }) => {
       const combinedDrawing = document.createElement('canvas');
       combinedDrawing.width = 1280;
       combinedDrawing.height = 720;
@@ -189,18 +189,28 @@ export const canvasImageSaveEpic: Epic<any, any, State> = (action$, state$) =>
       ctx!.drawImage(backBoardRef, 0, 0);
       ctx!.drawImage(boardRef, 0, 0);
 
-      return combinedDrawing.toDataURL('image/jpeg', 0.5);
+      return {
+        shouldSentImgToServer,
+        image: combinedDrawing.toDataURL('image/jpeg', 0.5),
+      };
     }),
-    mergeMap(image =>
-      fetch$(
-        `${config.API_URL}/drawings/${state$.value.canvas.currentDrawing}/save`,
-        'POST',
-        { image },
-      ).pipe(
-        mapTo(
-          actions.user.incrDrawingVersion(state$.value.canvas.currentDrawing),
-        ),
-        catchError(err => of(actions.global.networkError(err))),
+    mergeMap(({ image, shouldSentImgToServer }) =>
+      concat(
+        of(actions.canvas.setCurrentThumbnail(image)),
+        shouldSentImgToServer
+          ? fetch$(
+              `${config.API_URL}/drawings/${state$.value.canvas.currentDrawing}/save`,
+              'POST',
+              { image },
+            ).pipe(
+              mapTo(
+                actions.user.incrDrawingVersion(
+                  state$.value.canvas.currentDrawing,
+                ),
+              ),
+              catchError(err => of(actions.global.networkError(err))),
+            )
+          : of({ type: 'NULL' }),
       ),
     ),
   );

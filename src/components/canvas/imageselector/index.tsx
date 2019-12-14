@@ -12,18 +12,18 @@ import { State, DrawingObject } from '../../../store/interfaces';
 
 import { ImageSelectorComponent, getItems } from './template';
 
-import config from './../../../config';
-
 interface Props extends HandlersProps, WithTheme {
   drawings: DrawingObject[];
   currentDrawing: number | null;
   state: CState;
   setState: (v: CState) => void;
   isMouseDown: boolean;
+  currentThumbnail: null | string;
 }
 
 interface HandlersProps {
   createSliderRef: (ref: any) => void;
+  getSliderRef: () => CanvasRenderingContext2D;
   setItems: (
     drawings: CombinedProps['drawings'],
     state: CombinedProps['state'],
@@ -53,15 +53,19 @@ const hooks: ReactLifeCycleFunctions<CombinedProps, {}, {}> = {
   componentDidMount() {
     const {
       state,
+      setState,
       drawings,
       handleImageChange,
       currentDrawing,
       calcCurrThumb,
     } = this.props;
 
-    this.props.setItems(drawings, state, handleImageChange);
-
     const idx = drawings.findIndex(itm => itm.id === currentDrawing!);
+
+    const newState = { ...state, idx };
+    setState(newState);
+
+    this.props.setItems(drawings, newState, handleImageChange);
 
     requestAnimationFrame(() => {
       this.props.onSlideChange();
@@ -71,17 +75,22 @@ const hooks: ReactLifeCycleFunctions<CombinedProps, {}, {}> = {
   UNSAFE_componentWillReceiveProps(nextP) {
     const { drawings, state, handleImageChange, currentDrawing } = nextP;
 
-    const diffLength = drawings.length !== this.props.drawings.length;
-    if (diffLength) {
-      const idx = drawings.findIndex(itm => itm.id === currentDrawing!);
+    const drawingsQuantityChanged =
+      drawings.length !== this.props.drawings.length;
+    const shouldReplaceThumbnail =
+      !this.props.isMouseDown &&
+      this.props.currentThumbnail !== nextP.currentThumbnail;
+      
+    const idx = drawings.findIndex(itm => itm.id === currentDrawing!);
 
+    if (drawingsQuantityChanged) {
       nextP.setItems(drawings, state, handleImageChange);
 
       requestAnimationFrame(() => {
         nextP.slideTo(nextP.calcCurrThumb(idx));
         nextP.onSlideChange();
       });
-    } else if (this.props.drawings !== drawings && !this.props.isMouseDown) {
+    } else if (shouldReplaceThumbnail) {
       requestAnimationFrame(this.props.replaceImage);
     }
   },
@@ -91,8 +100,8 @@ const hooks: ReactLifeCycleFunctions<CombinedProps, {}, {}> = {
     if (!state.items || prevP.currentDrawing === currentDrawing) return;
 
     const idx = state.items.findIndex(itm => +itm.key! === currentDrawing!);
-
     setState({ ...state, idx });
+
     this.props.onSlideChange();
   },
 };
@@ -102,6 +111,7 @@ const handlers = () => {
 
   return {
     createSliderRef: () => (ref: any) => (sliderRef = ref),
+    getSliderRef: () => () => sliderRef,
     setItems: ({ setState }: CombinedProps) => (
       drawings: CombinedProps['drawings'],
       state: CombinedProps['state'],
@@ -133,43 +143,27 @@ const handlers = () => {
 
       activeItm && activeItm.classList.add('img-active');
     },
-    replaceImage: ({ drawings }: Props) => () => {
-      if (!sliderRef) return;
+    replaceImage: ({ drawings, currentThumbnail, state }: Props) => () => {
+      if (!currentThumbnail || !sliderRef) return;
 
       const items = sliderRef.rootComponent.querySelectorAll(
         'ul > li:not(.__cloned) img',
       );
       if (!items) return;
 
-      const getUrl = (itm: DrawingObject) =>
-        `${config.API_URL}/static/images/${itm.id}-v${itm.version}.jpg`;
-
-      const loadAndReplace = (elm: HTMLImageElement, data: DrawingObject) => {
-        const img = new Image();
-
-        const onLoad = () => (elm.src = img.src);
-        img.addEventListener('load', onLoad, {
-          once: true,
-        });
-
-        img.src = getUrl(data);
-
-        elm.dataset.v = `${data.version}`;
-      };
-      const findAndReplace = (itm: DrawingObject, i: number) => {
-        const shouldUpdate = items[i] && itm.version !== +items[i].dataset.v;
-        if (shouldUpdate) loadAndReplace(items[i], itm);
-      };
-
-      drawings.forEach(findAndReplace);
+      drawings.forEach(
+        (itm, i) => i === state.idx && (items[i].src = currentThumbnail),
+      );
     },
     calcCurrThumb: ({ drawings, state }: Props) => (idx = state.idx) => {
       const stageLen = window.innerWidth >= 445 ? 3 : 2;
 
       if (drawings!.length <= stageLen) return 0;
+
       if (idx >= drawings!.length - 1) {
         return drawings.length - 1 - (stageLen === 3 ? 2 : 1);
       }
+
       return idx === 0 ? 0 : idx - 1;
     },
     onPrev: () => () => sliderRef.slidePrev(),
@@ -182,6 +176,7 @@ const mapStateToProps = ({ user, canvas }: State) => ({
   drawings: user.drawings,
   currentDrawing: canvas.currentDrawing,
   isMouseDown: canvas.isMouseDown,
+  currentThumbnail: canvas.cachedCurrDrawingThumb,
 });
 
 export const ImageSelector = compose<CombinedProps, PassedProps>(

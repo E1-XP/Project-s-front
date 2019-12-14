@@ -4,6 +4,8 @@ import styled from 'styled-components';
 import ButtonBase from '@material-ui/core/ButtonBase';
 import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 
+import config from './../../../config';
+
 export const StyledExpansionPanelDetails = styled(ExpansionPanelDetails)`
   @media only screen and (max-width: 445px) {
     padding: 0 !important;
@@ -44,10 +46,22 @@ export const ImageContainer = styled.div`
 
 export const StyledButtonBase = styled(ButtonBase)`
   height: 150px;
+  width: 100%;
   cursor: grab !important;
 
   & > img {
     border: 1px solid #ccc;
+
+    &::before {
+      content: ' ';
+      display: block;
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: 100%;
+      background-image: url(${config.API_URL}/static/default.jpg);
+    }
   }
 `;
 

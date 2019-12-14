@@ -16,6 +16,7 @@ const initialCanvas: Canvas = {
   broadcastedDrawingPoints: {},
   drawingPointsCache: [],
   latestPoint: null,
+  cachedCurrDrawingThumb: null,
 };
 
 export const canvasReducer = (state = initialCanvas, action: PlainAction) => {
@@ -145,6 +146,9 @@ export const canvasReducer = (state = initialCanvas, action: PlainAction) => {
     }
     case types.CANVAS_SET_WEIGHT: {
       return { ...state, weight: action.payload };
+    }
+    case types.CANVAS_SET_CURRENT_THUMBNAIL: {
+      return { ...state, cachedCurrDrawingThumb: action.payload };
     }
     default:
       return state;

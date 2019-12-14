@@ -40,10 +40,10 @@ export const getCombinedDrawingPoints = createSelector(
         .concat(drawingPoints)
         .sort(sortByDate);
 
-    const combineWithCache = () => {
-      const notCached = (itm: DrawingPoint[]) =>
-        itm[0].date > drawingPointsCache[cacheLen - 1][0].date;
+    const notCached = (itm: DrawingPoint[]) =>
+      itm[0] && itm[0].date > drawingPointsCache[cacheLen - 1][0].date;
 
+    const combineWithCache = () => {
       const newValues = Object.values(broadcastedDrawingPoints)
         .reduce((acc, itm) => acc.concat(itm.filter(notCached)), [])
         .concat(drawingPoints.filter(notCached))
