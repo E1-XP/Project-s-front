@@ -60,6 +60,8 @@ const hooks: ReactLifeCycleFunctions<CombinedProps, {}, {}> = {
       calcCurrThumb,
     } = this.props;
 
+    if (!drawings) return;
+
     const idx = drawings.findIndex(itm => itm.id === currentDrawing!);
 
     const newState = { ...state, idx };
@@ -74,21 +76,22 @@ const hooks: ReactLifeCycleFunctions<CombinedProps, {}, {}> = {
   },
   UNSAFE_componentWillReceiveProps(nextP) {
     const { drawings, state, handleImageChange, currentDrawing } = nextP;
+    if (!drawings) return;
 
     const drawingsQuantityChanged =
       drawings.length !== this.props.drawings.length;
     const shouldReplaceThumbnail =
       !this.props.isMouseDown &&
       this.props.currentThumbnail !== nextP.currentThumbnail;
-      
+
     const idx = drawings.findIndex(itm => itm.id === currentDrawing!);
 
     if (drawingsQuantityChanged) {
       nextP.setItems(drawings, state, handleImageChange);
 
       requestAnimationFrame(() => {
-        nextP.slideTo(nextP.calcCurrThumb(idx));
         nextP.onSlideChange();
+        nextP.slideTo(nextP.calcCurrThumb(idx));
       });
     } else if (shouldReplaceThumbnail) {
       requestAnimationFrame(this.props.replaceImage);
@@ -158,9 +161,9 @@ const handlers = () => {
     calcCurrThumb: ({ drawings, state }: Props) => (idx = state.idx) => {
       const stageLen = window.innerWidth >= 445 ? 3 : 2;
 
-      if (drawings!.length <= stageLen) return 0;
+      if (drawings.length <= stageLen) return 0;
 
-      if (idx >= drawings!.length - 1) {
+      if (idx >= drawings.length - 1) {
         return drawings.length - 1 - (stageLen === 3 ? 2 : 1);
       }
 
