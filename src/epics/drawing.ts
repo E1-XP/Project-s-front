@@ -145,12 +145,13 @@ export const drawCanvasEpic: Epic<any, any, State> = (action$, state$) =>
         ctx.lineCap = 'round';
 
         toDraw.forEach(group => {
-          group.forEach((point, i) => {
-            const { x, y, fill, weight } = point;
+          const { fill, weight } = group[0];
 
-            ctx.strokeStyle = fill;
-            ctx.lineWidth = weight;
+          ctx.strokeStyle = fill;
+          ctx.fillStyle = fill;
+          ctx.lineWidth = weight;
 
+          group.forEach(({ x, y }, i) => {
             if (group.length === 1) {
               ctx.beginPath();
               ctx.arc(x, y, weight / 2, 0, 2 * Math.PI);
