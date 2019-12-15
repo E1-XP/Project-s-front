@@ -79,7 +79,7 @@ const hooks: ReactLifeCycleFunctions<CombinedProps, {}, {}> = {
     if (!drawings) return;
 
     const drawingsQuantityChanged =
-      drawings.length !== this.props.drawings.length;
+      !this.props.drawings || drawings.length !== this.props.drawings.length;
     const shouldReplaceThumbnail =
       !this.props.isMouseDown &&
       this.props.currentThumbnail !== nextP.currentThumbnail;
