@@ -88,6 +88,7 @@ export const canvasReducer = (state = initialCanvas, action: PlainAction) => {
     }
     case types.CANVAS_SET_BROADCASTED_DRAWING_POINTS_BULK: {
       const { userId: currUser, data } = action.payload;
+
       const userPoints: DrawingPoint[][] = [];
 
       const groupByUserIdAndGroupId = (acc: any, itm: DrawingPoint) => {

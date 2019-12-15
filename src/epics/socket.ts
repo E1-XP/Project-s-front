@@ -24,7 +24,9 @@ export const startSocketEpic: Epic<any, any, State> = (action$, state$) =>
       socket.on('connect', () => {
         store.dispatch(actions.socket.setSocketConnectionStatus(true));
         store.dispatch(actions.socket.bindHandlers());
+      });
 
+      socket.on('reconnect', () => {
         const { pathname } = state$.value.router.location;
         const isOnRoomRoute = /^\/room\/\d+$/.test(pathname);
 
@@ -185,7 +187,7 @@ export const bindRoomHandlersEpic: Epic<any, any, State> = (action$, state$) =>
       });
 
       socket.on(`${roomId}/draw/getexisting`, (data: DrawingPoint[]) => {
-        const drawingGroupCount = data
+        const latestUserPoint = data
           .slice()
           .reverse()
           .find(p => p.userId === userId);
@@ -194,9 +196,9 @@ export const bindRoomHandlersEpic: Epic<any, any, State> = (action$, state$) =>
           actions.canvas.setBroadcastedDrawingPointsBulk({ data, userId }),
         );
 
-        if (drawingGroupCount) {
+        if (latestUserPoint) {
           store.dispatch(
-            actions.canvas.setGroupCount(drawingGroupCount.group + 1),
+            actions.canvas.setGroupCount(latestUserPoint.group + 1),
           );
         }
       });
@@ -248,5 +250,5 @@ export const unbindSocketRoomHandlersEpic: Epic = (action$, state$) =>
 export const reconnectInRoomEpic: Epic<any, any, State> = (action$, state$) =>
   action$.ofType(types.SOCKET_RECONNECT_IN_ROOM).pipe(
     tap(() => console.log('reconnecting')),
-    map(() => actions.rooms.initRoomEnterSuccess()),
+    map(actions.rooms.initRoomEnterSuccess),
   );
