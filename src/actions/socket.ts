@@ -1,4 +1,5 @@
 import { types } from './types';
+import { DrawingPoint } from '../store/interfaces';
 
 export const setSocketConnectionStatus = (bool: boolean) => ({
   type: types.SOCKET_SET_CONNECTION_STATUS,
@@ -37,6 +38,11 @@ export const emitRoomDrawChange = (data: any) => ({
 
 export const emitRoomDrawMouseup = (data: any) => ({
   type: types.SOCKET_EMIT_ROOM_DRAW_MOUSEUP,
+  payload: data,
+});
+
+export const emitRoomDrawReconnect = (data: DrawingPoint[]) => ({
+  type: types.SOCKET_EMIT_ROOM_DRAW_RECONNECT,
   payload: data,
 });
 

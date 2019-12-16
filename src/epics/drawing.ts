@@ -7,10 +7,13 @@ import {
   tap,
   ignoreElements,
   pluck,
+  reduce,
   take,
+  takeWhile,
   throttleTime,
 } from 'rxjs/operators';
-import { of, animationFrameScheduler } from 'rxjs';
+import { of, animationFrameScheduler, combineLatest } from 'rxjs';
+import identity from 'lodash/identity';
 
 import { DrawingPoint, State } from './../store/interfaces';
 import { store } from '../store';
@@ -180,6 +183,30 @@ export const drawCanvasEpic: Epic<any, any, State> = (action$, state$) =>
       },
     ),
     ignoreElements(),
+  );
+
+export const collectUserDPointsWhenOfflineEpic: Epic<any, any, State> = (
+  action$,
+  state$,
+) =>
+  combineLatest([
+    action$.ofType(types.CANVAS_CREATE_DRAWING_POINT),
+    action$
+      .ofType(types.SOCKET_SET_CONNECTION_STATUS)
+      .pipe(filter(identity), take(1)),
+  ]).pipe(
+    // action$.ofType(types.CANVAS_CREATE_DRAWING_POINT).pipe(
+    //   filter(() => !state$.value.global.isSocketConnected),
+    //   pluck('payload'),
+    //   // fires when this happens
+    //   takeWhile(
+    //     action$.ofType(types.SOCKET_SET_CONNECTION_STATUS).pipe(filter(identity)),
+    //   ),
+    map(([v1, v2]) => v1),
+    pluck('payload'),
+    reduce<DrawingPoint, DrawingPoint[]>((acc, point) => [...acc, point], []),
+    tap(v => console.log('collected data', v)),
+    map(offlinePoints => actions.socket.emitRoomDrawReconnect(offlinePoints)),
   );
 
 export const drawMouseUpEpic: Epic<any, any, State> = (action$, state$) =>

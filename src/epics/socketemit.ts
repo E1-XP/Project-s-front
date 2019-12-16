@@ -47,6 +47,16 @@ export const emitRoomDrawMouseUpEpic: Epic = (action$, state$) =>
     ignoreElements(),
   );
 
+export const emitRoomDrawReconnectEpic: Epic = (action$, state$) =>
+  action$.ofType(types.SOCKET_EMIT_ROOM_DRAW_RECONNECT).pipe(
+    pluck('payload'),
+    tap(offlinePoints => {
+      const roomId = state$.value.rooms.active;
+      socket.emit(`${roomId}/draw/reconnect`, offlinePoints);
+    }),
+    ignoreElements(),
+  );
+
 export const emitRoomDrawResetEpic: Epic = (action$, state$) =>
   action$.ofType(types.SOCKET_EMIT_ROOM_DRAW_RESET).pipe(
     pluck('payload'),
