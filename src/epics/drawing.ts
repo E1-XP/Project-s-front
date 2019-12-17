@@ -12,7 +12,6 @@ import {
   throttleTime,
 } from 'rxjs/operators';
 import { of, animationFrameScheduler, combineLatest } from 'rxjs';
-import identity from 'lodash/identity';
 
 import { DrawingPoint, State } from './../store/interfaces';
 import { store } from '../store';
@@ -197,9 +196,13 @@ export const collectUserDPointsWhenOfflineEpic: Epic<any, any, State> = (
     }),
     pluck('payload'),
     buffer(
-      action$.ofType(types.SOCKET_SET_CONNECTION_STATUS).pipe(filter(identity)),
+      combineLatest([
+        action$.ofType(types.SOCKET_RECONNECT_IN_ROOM),
+        action$.ofType(types.SOCKET_BIND_ROOM_HANDLERS).pipe(take(1)),
+      ]),
     ),
     tap(v => console.log('collected data', v)),
+    filter(buffer => buffer.length > 0),
     map(offlinePoints => actions.socket.emitRoomDrawReconnect(offlinePoints)),
   );
 

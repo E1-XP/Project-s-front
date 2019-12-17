@@ -1,6 +1,6 @@
 import { connect } from 'socket.io-client';
 import { Epic } from 'redux-observable';
-import { tap, ignoreElements, pluck, map, mapTo } from 'rxjs/operators';
+import { tap, ignoreElements, pluck, map, mergeMap } from 'rxjs/operators';
 import { of } from 'rxjs';
 
 import { State, UserData, DrawingPoint } from '../store/interfaces';
@@ -250,5 +250,10 @@ export const unbindSocketRoomHandlersEpic: Epic = (action$, state$) =>
 export const reconnectInRoomEpic: Epic<any, any, State> = (action$, state$) =>
   action$.ofType(types.SOCKET_RECONNECT_IN_ROOM).pipe(
     tap(() => console.log('reconnecting')),
-    map(actions.rooms.initRoomEnterSuccess),
+    mergeMap(() =>
+      of(
+        actions.socket.bindRoomHandlers(),
+        actions.canvas.initGetImagesFromServer(),
+      ),
+    ),
   );
