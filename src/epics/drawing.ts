@@ -7,9 +7,8 @@ import {
   tap,
   ignoreElements,
   pluck,
-  reduce,
   take,
-  takeWhile,
+  buffer,
   throttleTime,
 } from 'rxjs/operators';
 import { of, animationFrameScheduler, combineLatest } from 'rxjs';
@@ -189,22 +188,12 @@ export const collectUserDPointsWhenOfflineEpic: Epic<any, any, State> = (
   action$,
   state$,
 ) =>
-  combineLatest([
-    action$.ofType(types.CANVAS_CREATE_DRAWING_POINT),
-    action$
-      .ofType(types.SOCKET_SET_CONNECTION_STATUS)
-      .pipe(filter(identity), take(1)),
-  ]).pipe(
-    // action$.ofType(types.CANVAS_CREATE_DRAWING_POINT).pipe(
-    //   filter(() => !state$.value.global.isSocketConnected),
-    //   pluck('payload'),
-    //   // fires when this happens
-    //   takeWhile(
-    //     action$.ofType(types.SOCKET_SET_CONNECTION_STATUS).pipe(filter(identity)),
-    //   ),
-    map(([v1, v2]) => v1),
+  action$.ofType(types.CANVAS_CREATE_DRAWING_POINT).pipe(
+    filter(() => !state$.value.global.isSocketConnected),
     pluck('payload'),
-    reduce<DrawingPoint, DrawingPoint[]>((acc, point) => [...acc, point], []),
+    buffer(
+      action$.ofType(types.SOCKET_SET_CONNECTION_STATUS).pipe(filter(identity)),
+    ),
     tap(v => console.log('collected data', v)),
     map(offlinePoints => actions.socket.emitRoomDrawReconnect(offlinePoints)),
   );
