@@ -188,8 +188,13 @@ export const collectUserDPointsWhenOfflineEpic: Epic<any, any, State> = (
   action$,
   state$,
 ) =>
-  action$.ofType(types.CANVAS_CREATE_DRAWING_POINT).pipe(
-    filter(() => !state$.value.global.isSocketConnected),
+  action$.ofType(types.CANVAS_SET_DRAWING_POINT).pipe(
+    filter(() => {
+      const { pathname } = state$.value.router.location;
+      const isOnRoomRoute = /^\/room\/\d+$/.test(pathname);
+
+      return isOnRoomRoute && !state$.value.global.isSocketConnected;
+    }),
     pluck('payload'),
     buffer(
       action$.ofType(types.SOCKET_SET_CONNECTION_STATUS).pipe(filter(identity)),
