@@ -10,8 +10,9 @@ import {
   take,
   buffer,
   throttleTime,
+  withLatestFrom,
 } from 'rxjs/operators';
-import { of, animationFrameScheduler, combineLatest } from 'rxjs';
+import { of, animationFrameScheduler, zip } from 'rxjs';
 
 import { DrawingPoint, State } from './../store/interfaces';
 import { store } from '../store';
@@ -196,10 +197,9 @@ export const collectUserDPointsWhenOfflineEpic: Epic<any, any, State> = (
     }),
     pluck('payload'),
     buffer(
-      combineLatest([
-        action$.ofType(types.SOCKET_RECONNECT_IN_ROOM),
-        action$.ofType(types.SOCKET_BIND_ROOM_HANDLERS).pipe(take(1)),
-      ]),
+      action$
+        .ofType(types.SOCKET_BIND_ROOM_HANDLERS)
+        .pipe(withLatestFrom(action$.ofType(types.SOCKET_RECONNECT_IN_ROOM))),
     ),
     tap(v => console.log('collected data', v)),
     filter(buffer => buffer.length > 0),
