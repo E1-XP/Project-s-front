@@ -11,6 +11,7 @@ import {
   buffer,
   throttleTime,
   withLatestFrom,
+  skip,
 } from 'rxjs/operators';
 import { of, animationFrameScheduler, zip } from 'rxjs';
 
@@ -199,7 +200,10 @@ export const collectUserDPointsWhenOfflineEpic: Epic<any, any, State> = (
     buffer(
       action$
         .ofType(types.SOCKET_BIND_ROOM_HANDLERS)
-        .pipe(withLatestFrom(action$.ofType(types.SOCKET_RECONNECT_IN_ROOM))),
+        .pipe(
+          skip(1),
+          withLatestFrom(action$.ofType(types.SOCKET_RECONNECT_IN_ROOM)),
+        ),
     ),
     tap(v => console.log('collected data', v)),
     filter(buffer => buffer.length > 0),
