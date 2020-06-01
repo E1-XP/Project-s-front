@@ -12,6 +12,7 @@ import {
   throttleTime,
   withLatestFrom,
   skip,
+  delay,
 } from 'rxjs/operators';
 import { of, animationFrameScheduler, zip } from 'rxjs';
 
@@ -207,6 +208,7 @@ export const collectUserDPointsWhenOfflineEpic: Epic<any, any, State> = (
     ),
     tap(v => console.log('collected data', v)),
     filter(buffer => buffer.length > 0),
+    delay(200),
     map(offlinePoints => actions.socket.emitRoomDrawReconnect(offlinePoints)),
   );
 
