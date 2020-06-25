@@ -208,7 +208,7 @@ export const collectUserDPointsWhenOfflineEpic: Epic<any, any, State> = (
     ),
     tap(v => console.log('collected data', v)),
     filter(buffer => buffer.length > 0),
-    delay(200),
+    delay(2000),
     map(offlinePoints => actions.socket.emitRoomDrawReconnect(offlinePoints)),
   );
 
