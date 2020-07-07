@@ -11,6 +11,7 @@ import {
   buffer,
   throttleTime,
   withLatestFrom,
+  concatMap,
   skip,
   delay,
 } from 'rxjs/operators';
@@ -199,21 +200,16 @@ export const collectUserDPointsWhenOfflineEpic: Epic<any, any, State> = (
     }),
     pluck('payload'),
     buffer(
-      action$
-        .ofType(types.SOCKET_BIND_ROOM_HANDLERS)
-        .pipe(
-          skip(1),
-          withLatestFrom(
-            action$.ofType(types.SOCKET_RECONNECT_IN_ROOM),
-            action$
-              .ofType(types.CANVAS_SET_BROADCASTED_DRAWING_POINTS_BULK)
-              .pipe(take(1)),
-          ),
+      action$.ofType(types.SOCKET_BIND_ROOM_HANDLERS).pipe(
+        skip(1),
+        withLatestFrom(action$.ofType(types.SOCKET_RECONNECT_IN_ROOM)),
+        concatMap(() =>
+          action$.ofType(types.CANVAS_SET_BROADCASTED_DRAWING_POINTS_BULK),
         ),
+      ),
     ),
     tap(v => console.log('collected data', v)),
     filter(buffer => !!buffer.length),
-    // delay(2000),
     map(offlinePoints => actions.socket.emitRoomDrawReconnect(offlinePoints)),
   );
 
