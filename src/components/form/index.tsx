@@ -115,6 +115,17 @@ export const Form = ({
   };
   const inputProps = { values, errors, touched, handleChange, setFieldTouched };
 
+  const errorMessage = [
+    ...new Set(
+      [
+        formMessage,
+        touched.username && errors.username,
+        touched.email && errors.email,
+        touched.password && errors.password,
+      ].filter(Boolean),
+    ),
+  ].join(', ');
+
   return (
     <form onSubmit={handleSubmit}>
       <FormControl margin="normal" fullWidth={true}>
@@ -127,16 +138,7 @@ export const Form = ({
           color="error"
           style={minHeight}
         >
-          {[
-            ...new Set(
-              [
-                formMessage,
-                (!!values.username || touched.username) && errors.username,
-                (!!values.email || touched.email) && errors.email,
-                (!!values.password || touched.password) && errors.password,
-              ].filter(Boolean),
-            ),
-          ].join(', ')}
+          {errorMessage}
         </Typography>
         <GradientButton
           type="submit"
