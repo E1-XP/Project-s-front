@@ -11,20 +11,22 @@ import { MainContainer } from './../../styles';
 
 import { Props } from './';
 
+const paddingVertical = { paddingTop: '3rem' };
+
 export const FormComponent = (props: Props) => {
   const { currentRoute } = props;
 
   const formDescription =
     currentRoute === 'login'
-      ? 'Log in to enter Project-S'
-      : 'Sign up to enter Project-S';
+      ? 'Log in to enter Project-S.'
+      : 'Sign up to enter Project-S.';
   const FormHeading = currentRoute === 'login' ? 'Login Form' : 'Register Form';
 
   return (
     <MainContainer>
       <Grid container={true} spacing={16} justify="center">
         <Grid item={true} md={7} sm={9} xs={12}>
-          <Paper>
+          <Paper style={paddingVertical}>
             <Heading icon="exit_to_app" text={FormHeading} justify="center" />
             <Grid container={true} justify="center">
               <Typography align="center" variant="h6">

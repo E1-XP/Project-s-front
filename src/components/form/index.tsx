@@ -94,7 +94,8 @@ const PasswordField = ({
   />
 );
 
-const minHeight = { minHeight: '21px' };
+const minHeight = { minHeight: '6.8rem' };
+const marginVertical = { margin: '1rem 0' };
 
 export const Form = ({
   values,
@@ -115,6 +116,11 @@ export const Form = ({
   };
   const inputProps = { values, errors, touched, handleChange, setFieldTouched };
 
+  const infoText =
+    currentRoute === 'login' && !Object.keys(touched).length
+      ? `Test account credentials, login: admin@admin.com, password: Admin123`
+      : '';
+
   const errorMessage = [
     ...new Set(
       [
@@ -132,22 +138,23 @@ export const Form = ({
         {currentRoute === 'signup' && <UsernameField {...inputProps} />}
         <EmailField {...inputProps} />
         <PasswordField {...inputProps} />
-        <Typography
-          align="center"
-          variant="subtitle2"
-          color="error"
-          style={minHeight}
-        >
-          {errorMessage}
-        </Typography>
         <GradientButton
           type="submit"
           variant="contained"
           color="primary"
+          style={marginVertical}
           disabled={isFetching}
         >
           {isFetching ? <CircularProgress size={24} /> : 'Submit'}
         </GradientButton>
+        <Typography
+          align="center"
+          variant="subtitle2"
+          color={infoText ? 'primary' : 'error'}
+          style={minHeight}
+        >
+          {infoText || errorMessage}
+        </Typography>
       </FormControl>
     </form>
   );
