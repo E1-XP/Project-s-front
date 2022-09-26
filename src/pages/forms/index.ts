@@ -52,7 +52,12 @@ const formikConfig: WithFormikConfig<Props, FormState> = {
   mapPropsToValues: props => ({ email: '', username: '', password: '' }),
   validate: (values, props) => props.validateUser(values),
   handleSubmit: (values, { props }) => {
-    props.initAuthentication(values);
+    const trimmedValues = Object.entries(values).reduce((acc, [key, val]) => {
+      acc[key as keyof typeof values] = val.trim();
+      return acc;
+    }, {} as typeof values);
+
+    props.initAuthentication(trimmedValues);
   },
 };
 

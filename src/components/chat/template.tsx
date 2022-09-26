@@ -9,9 +9,9 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import Avatar from '@material-ui/core/Avatar';
 import Icon from '@material-ui/core/Icon';
+import IconButton from '@material-ui/core/IconButton';
 import RootRef from '@material-ui/core/RootRef';
 import Popover, { PopoverOrigin } from '@material-ui/core/Popover';
-
 import { CombinedProps } from './index';
 
 import { Heading } from './../shared/heading';
@@ -20,7 +20,6 @@ import {
   Wrapper,
   Dot,
   ChatListWrapper,
-  PositionedIconButton,
   TextFieldWithPadding,
   ChipWithOpacity,
 } from './style';
@@ -35,10 +34,13 @@ const BouncingDots = () => (
   </Wrapper>
 );
 
-const posRelative = { position: 'relative' as 'relative' };
+const textFieldContainerStyle: Record<string, string | number> = {
+  position: 'relative',
+  justifyContent: 'end',
+};
 
-const wordBreakStyle = {
-  wordBreak: 'break-all' as 'break-all',
+const wordBreakStyle: Record<string, string | number> = {
+  wordBreak: 'break-all',
 };
 
 const getMessages = (
@@ -95,6 +97,7 @@ export const ChatComponent = ({
   const formatChip = () => {
     if (writers.length === 1) return `${writers[0]} is writing...`;
     if (writers.length <= 3) return `${writers.join(', ')} are writing...`;
+
     return `${writers.slice(0, 2).join(', ')} and ${
       writers.slice(2).length
     } others are writing...`;
@@ -125,7 +128,7 @@ export const ChatComponent = ({
       >
         <EmojiPicker onEmojiClick={handleEmojiClick} />
       </Popover>
-      <Grid container={true} style={posRelative}>
+      <Grid container={true} style={textFieldContainerStyle}>
         <TextFieldWithPadding
           variant="filled"
           multiline={true}
@@ -139,13 +142,16 @@ export const ChatComponent = ({
           autoFocus={shouldAutofocus}
           fullWidth={true}
         />
-        <PositionedIconButton
+        <IconButton
           aria-label="select emoji"
           disableRipple={true}
           onClick={toggleEmojiPicker}
         >
           <Icon fontSize="small">insert_emoticon</Icon>
-        </PositionedIconButton>
+        </IconButton>
+        <IconButton aria-label="send message" onClick={handleMessageSubmit}>
+          <Icon fontSize="small">send</Icon>
+        </IconButton>
       </Grid>
     </Paper>
   );
