@@ -93,7 +93,7 @@ export const RoomComponent = ({
 
       <Prompt
         when={isUserAdmin(user.id)}
-        message={'Are you want to leave? This will close your room.'}
+        message={'Are you sure? This will close your room.'}
       />
     </MainContainer>
   );
