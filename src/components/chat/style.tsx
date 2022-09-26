@@ -1,7 +1,6 @@
 import * as React from 'react';
 import styled, { keyframes } from 'styled-components';
 
-import IconButton from '@material-ui/core/IconButton';
 import TextField from '@material-ui/core/TextField';
 import Chip, { ChipProps } from '@material-ui/core/Chip';
 
@@ -44,16 +43,6 @@ export const ChatListWrapper = styled.div<{ chatHeight: string | undefined }>`
 
   @media only screen and (max-width: 960px) {
     height: ${({ chatHeight }) => chatHeight || '350px'};
-  }
-`;
-
-export const PositionedIconButton = styled(IconButton)`
-  position: absolute !important;
-  right: 0;
-  top: 0;
-
-  & :hover {
-    background-color: transparent;
   }
 `;
 
