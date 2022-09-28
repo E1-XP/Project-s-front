@@ -21,7 +21,9 @@ interface Params {
 
 export interface Props extends RouteComponentProps<Params> {
   isModalOpen: boolean;
-  setState: (v: boolean) => void;
+  isUserInvited: boolean;
+  setIsUserInvited: (v: boolean) => void;
+  setIsModalOpen: (v: boolean) => void;
   closeModal: () => void;
   openModal: () => void;
   rooms: Rooms;
@@ -62,6 +64,7 @@ const handlers = {
 
     if (senderId === null) throw new Error('senderId is not a value');
 
+    props.setIsUserInvited(true);
     props.initSendRoomInvitation({ roomId, senderId, senderName, receiverId });
   },
   toggleColorPicker: (props: Props & PassedProps) => () => {
@@ -69,10 +72,11 @@ const handlers = {
     props.setIsColorPickerOpen(value);
   },
   openModal: (props: Props) => () => {
-    props.setState(true);
+    props.setIsModalOpen(true);
   },
   closeModal: (props: Props) => () => {
-    props.setState(false);
+    props.setIsUserInvited(false);
+    props.setIsModalOpen(false);
   },
 };
 
@@ -89,11 +93,9 @@ const mapDispatchToProps = (dispatch: Dispatch) => ({
 
 export const CanvasNavbar = compose<CombinedProps, PassedProps>(
   withRouter,
-  connect(
-    mapStateToProps,
-    mapDispatchToProps,
-  ),
-  withState('isModalOpen', 'setState', false),
+  connect(mapStateToProps, mapDispatchToProps),
+  withState('isModalOpen', 'setIsModalOpen', false),
+  withState('isUserInvited', 'setIsUserInvited', false),
   withHandlers(handlers),
   onlyUpdateForKeys([
     'users',
@@ -102,5 +104,6 @@ export const CanvasNavbar = compose<CombinedProps, PassedProps>(
     'isModalOpen',
     'isColorPickerOpen',
     'weight',
+    'isUserInvited',
   ]),
 )(CanvasNavbarComponent);

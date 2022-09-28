@@ -36,6 +36,7 @@ export const Inbox = compose<Props, {}>(
     },
     getDateFormat: ({}: Props) => (d: Date) => {
       const addZero = (num: number) => (num < 10 ? `0${num}` : num);
+
       return `${d.getFullYear()}.${addZero(d.getMonth() + 1)}.${addZero(
         d.getDate(),
       )}`;

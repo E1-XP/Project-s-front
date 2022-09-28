@@ -53,6 +53,7 @@ export const CanvasNavbarComponent = ({
   isModalOpen,
   closeModal,
   openModal,
+  isUserInvited,
   sendInvitationLink,
   isColorPickerOpen,
   toggleColorPicker,
@@ -120,6 +121,7 @@ export const CanvasNavbarComponent = ({
                         <GradientButton
                           variant="contained"
                           color="primary"
+                          disabled={isUserInvited}
                           onClick={sendInvitationLink}
                         >
                           Send Invitation
