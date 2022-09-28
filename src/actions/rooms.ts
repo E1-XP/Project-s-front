@@ -48,8 +48,9 @@ export const initCheckRoomPassword: ActionType = (data: any) => ({
   payload: data,
 });
 
-export const initCheckRoomPasswordFailure: ActionType = () => ({
+export const initCheckRoomPasswordFailure: ActionType = (status: number) => ({
   type: types.ROOMS_CHECK_PASSWORD_FAILURE,
+  payload: status,
 });
 
 export const initRoomEnterSuccess: ActionType = (id: string) => ({

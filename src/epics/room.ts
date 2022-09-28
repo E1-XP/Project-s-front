@@ -84,7 +84,7 @@ export const checkRoomPasswordEpic: Epic = (action$, state$) =>
               ),
               actions.rooms.initRoomEnterSuccess(),
             ),
-            of(actions.rooms.initCheckRoomPasswordFailure()),
+            of(actions.rooms.initCheckRoomPasswordFailure(resp.status)),
           ),
         ),
         catchError(err => of(actions.global.networkError(err))),
@@ -94,8 +94,16 @@ export const checkRoomPasswordEpic: Epic = (action$, state$) =>
 
 export const checkRoomPasswordFailureEpic: Epic = (action$, state$) =>
   action$.ofType(types.ROOMS_CHECK_PASSWORD_FAILURE).pipe(
+    pluck('payload'),
     tap(v => isRoomPasswordCheckedAndValid$.next(null)),
-    mapTo(actions.global.setFormMessage('provided password is incorrect')),
+    tap(status => status === 404 && alert('This room is closed.')),
+    map(status =>
+      actions.global.setFormMessage(
+        status === 404
+          ? 'This room is closed.'
+          : 'provided password is incorrect.',
+      ),
+    ),
   );
 
 export const handleRoomEnterSuccessEpic: Epic = (action$, state$) =>
