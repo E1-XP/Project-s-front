@@ -252,6 +252,7 @@ export const reconnectInRoomEpic: Epic<any, any, State> = (action$, state$) =>
     tap(() => console.log('reconnecting')),
     mergeMap(() =>
       of(
+        actions.socket.unbindRoomHandlers(),
         actions.socket.bindRoomHandlers(),
         actions.canvas.initGetImagesFromServer(),
       ),
