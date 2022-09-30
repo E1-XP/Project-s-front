@@ -82,7 +82,9 @@ export const InboxComponent = ({
                               disabled={!rooms[itm.roomId]}
                             >
                               Enter
-                              <ButtonIcon>meeting_room</ButtonIcon>
+                              <ButtonIcon hideOnMobile={true}>
+                                meeting_room
+                              </ButtonIcon>
                             </GradientButton>
                           </ListItem>
                         ))}

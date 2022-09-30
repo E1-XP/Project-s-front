@@ -48,9 +48,18 @@ export const GradientButton = styled(Button)`
   color: #fff !important;
 `;
 
+interface ButtonIconProps {
+  hideOnMobile?: boolean;
+}
+
 export const ButtonIcon = styled(Icon)`
   margin-left: 0.5rem;
   color: #fff;
+
+  @media only screen and (max-width: 550px) {
+    display: ${({ hideOnMobile }: ButtonIconProps) =>
+      hideOnMobile ? 'none' : 'unset'};
+  }
 `;
 
 export const HeadingSection = styled(Grid)`
