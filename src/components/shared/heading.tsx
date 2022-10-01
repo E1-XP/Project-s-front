@@ -17,10 +17,15 @@ interface Props {
   justify?: Justify;
 }
 
+const HeadingStyle: Record<string, string | number> = {
+  textAlign: 'initial',
+  wordBreak: 'break-all',
+};
+
 export const Heading = ({ text, icon, justify }: Props) => (
   <HeadingSection container={true} justify={justify} alignItems="center">
-    <HeadlineIcon>{icon}</HeadlineIcon>
-    <Typography align="center" variant="h4">
+    <Typography align="center" variant="h4" style={HeadingStyle}>
+      <HeadlineIcon>{icon}</HeadlineIcon>
       {text}
     </Typography>
   </HeadingSection>

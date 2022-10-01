@@ -58,10 +58,7 @@ export const RoomDashboard = compose<CombinedProps, PassedProps>(
     user,
   }: CombinedProps) => (
     <FullHeightPaper>
-      <Heading
-        text={`Room ${rooms.list[match.params.id].name}`}
-        icon="people"
-      />
+      <Heading text={`${rooms.list[match.params.id].name}`} icon="people" />
       <Typography variant="h5">
         Currently online: {Object.keys(users.selectedRoom).length}
       </Typography>

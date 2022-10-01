@@ -54,6 +54,7 @@ export const RoomCreateForm = ({
                       placeholder="Name"
                       value={state.name}
                       onChange={setName}
+                      inputProps={{ maxLength: 18 }}
                     />
                   </FormControl>
                   <FormControlLabel
