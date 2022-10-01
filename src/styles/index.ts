@@ -73,6 +73,7 @@ export const HeadingSection = styled(Grid)`
 export const HeadlineIcon = styled(Icon)`
   font-size: 2.5rem !important;
   margin-right: 1rem;
+  vertical-align: middle;
 
   @media only screen and (max-width: 400px) {
     font-size: 1.7rem !important;
