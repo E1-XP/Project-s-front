@@ -10,7 +10,7 @@ S like Stream/sockets. Client part of my most complicated application. It allows
 
 ## Demo
 
-https://project-s-front.gtxcodeworks.online/
+https://project-s-front.gtxcodeworks.com.pl/
 
 ## Tech Stack
 
